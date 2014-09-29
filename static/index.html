@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html ng-app="webPGQ" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html ng-app="webPGQ" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html ng-app="webPGQ" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html ng-app="webPGQ" class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>web-pgq - a PostgreSQL query tool</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="semantic-ui/build/packaged/css/semantic.css">
+		<link rel="stylesheet" href="angular-table/src/main/webapp/css/lib/angular-table.css">
+		<link rel="stylesheet" href="css/main.css">
+
+		<!--[if lt IE 9]>
+			<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+			<script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
+		<![endif]-->
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="js/vendor/jquery-2.0.3.min.js"><\/script>')</script>
+
+		<script src="semantic-ui/build/packaged/javascript/semantic.js"></script>
+
+		<!--script src="unisocket/src/unisocket.js"></script-->
+		<script src="js/vendor/unisocket.js"></script>
+
+		<script src="ace-builds/src-min-noconflict/ace.js"></script>
+
+		<script src="angular/angular.js"></script>
+		<script src="angular-ui-ace/ui-ace.js"></script>
+		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.js"></script>
+		<!--
+		<script src="angular/angular.min.js"></script>
+		<script src="angular-ui-ace/ui-ace.min.js"></script>
+		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.min.js"></script>
+		-->
+	</head>
+
+	<body ng-controller="MainController">
+		<!--[if lt IE 7]>
+			<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+		<![endif]-->
+
+		<div class="ui dimmer active" ng-if="!pageLoaded">
+			<div class="ui text loader">Loading</div>
+		</div>
+
+		<div id="editor" class="container inverted ui segment" ui-ace="{theme: 'monokai', mode: 'pgsql'}" ng-model="queryText"></div>
+
+		<div class="transparent small inverted left right attached compact main ui menu">
+			<div class="right text item">
+				&copy; 2014 David H. Bronke
+			</div>
+
+			<div class="container">
+				<div class="header item">
+					<i class="table icon"></i>
+					<b>web-pgq</b>
+				</div>
+				<!--div class="text item">
+					Put in a query. Hit run or explain. Done.
+				</div-->
+				<div class="ui simple dropdown item">
+					<span ng-if="!currentConnection" class="value placeholder">Connect to...</span>
+					<span ng-if="currentConnection" class="value" ng-class="{teal: connected}">{{ currentConnection }}</span>
+					<i class="dropdown icon"></i>
+					<div class="menu">
+						<div class="item" ng-repeat="(name, conn) in connections" ng-click="connect(name)"
+							title="{{ conn|json }}">{{ name }}</div>
+					</div>
+				</div>
+				<div class="item" ng-if="connecting">
+					<i class="spinner loading icon" title="Running query"></i>
+				</div>
+
+				<div class="item right compact ui buttons">
+					<a class="orange icon ui button" ng-click="explainQuery().then(showPlan)"
+							ng-class="{disabled: !connected || queryRunning}">
+						<i class="question icon"></i>
+						Explain
+					</a>
+					<a class="orange ui button" ng-click="explainQuery(true).then(showPlan)"
+							ng-class="{disabled: !connected || queryRunning}">
+						Analyze
+					</a>
+					<a id="settings-button" class="orange icon ui button">
+						<i class="settings icon"></i>
+					</a>
+					<div id="settings-popup" class="popup vertical ui menu">
+						<div class="header item">EXPLAIN settings</div>
+						<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
+								ng-class="{active: val.enabled, teal: val.enabled}" title="{{ val.description }}">
+							<i class="left icon" ng-class="val.icon"></i>
+							{{ key }}
+							<!--div class="circular ui label" ng-class="{teal: val.enabled}">
+								<i class="checkmark sign icon" ng-class="{disabled: !val.enabled}"></i>
+							</div-->
+							<div class="squarish ui label" ng-class="{teal: val.enabled}">
+								<i class="checkbox icon" ng-class="{disabled: !val.enabled, empty: !val.enabled, checked: val.enabled}"></i>
+							</div>
+						</a>
+					</div>
+				</div>
+				<div class="item right compact ui buttons">
+					<!--a class="red icon ui button" title="Cancel query" ng-if="queryRunning" ng-click="cancelQuery().then(showMessages)">
+						<i class="spinner loading icon"></i>
+					</a-->
+					<a class="teal labeled icon ui button" ng-click="runQuery().then(showResults)"
+							ng-class="{disabled: !connected || queryRunning}">
+						<i class="play icon"></i>
+						Run
+					</a>
+				</div>
+				<div class="item right compact ui buttons">
+					<a class="red right labeled icon ui button" title="Cancel query" ng-if="queryRunning" ng-click="cancelQuery().then(showMessages)">
+						Running...
+						<i class="close icon"></i>
+						<div class="floating ui red label" title="Rows returned"><i class="reorder icon"></i>{{ pendingQuery.rowCount }}</div>
+					</a>
+				</div>
+				<div class="item right" ng-if="queryRunning">
+					<i class="spinner loading icon" title="Running query"></i>
+				</div>
+			</div>
+		</div>
+
+		<div class="tabbed container">
+			<div class="transparent top attached small tabular ui menu">
+				<a class="item" ng-class="{active: (resultsTab == 'Results')}" ng-click="showResults()">
+					<i class="table icon"></i>
+					Results
+				</a>
+				<a class="item" ng-class="{active: (resultsTab == 'Query Plan')}" ng-click="showPlan()">
+					<i class="sitemap icon"></i>
+					Query Plan
+				</a>
+				<a class="item" ng-class="{active: (resultsTab == 'Messages')}" ng-click="showMessages()">
+					<i class="browser icon"></i>
+					Messages
+				</a>
+			</div>
+
+			<div id="resultsArea" class="dimmable bottom attached ui segment">
+
+				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer">
+					<div class="content">
+						<!--a class="blue left corner ui label" title="Re-render" ng-click="reRender()">
+							<i class="refresh icon"></i>
+						</a-->
+						<a class="green corner ui label" title="Zoom to fit" ng-click="zoomFit()">
+							<i class="fullscreen icon"></i>
+						</a>
+						<svg digraph graph="graph" class="fill-parent"></svg>
+					</div>
+				</div>
+
+				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Messages')}" id="messages-dimmer">
+					<div class="left aligned content ui segment">
+						<pre class="vertical ui segment" ng-repeat="msg in sqlMessages" ng-class="msg.segmentClass"
+							><code>{{ msg.text }}</code></pre>
+					</div>
+				</div>
+
+				<div class="small floating icon ui message" ng-repeat="(idx, banner) in logger.bannerMessages" ng-class="banner.severity">
+					<i class="icon" ng-class="banner.icon"></i>
+					<i class="close icon" ng-click="logger.removeBannerAt(idx)"></i>
+					<div class="header">
+						{{ banner.header }}
+					</div>
+					<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
+					<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
+						<li ng-repeat="(key, val) in banner.detail">
+							<strong>{{ key }}:</strong>
+							<pre ng-if="!val.indexOf"><code>{{ val|json }}</code></pre>
+							<pre ng-if="val.indexOf && val.indexOf('\n') != -1"><code>{{ val }}</code></pre>
+							<code ng-if="val.indexOf && val.indexOf('\n') == -1">{{ val }}</code>
+						</li>
+					</ul>
+				</div>
+
+				<div ng-if="!queryRunning && rows.length == 0 && resultsTab == 'Results'" class="red ribbon ui label">
+					No rows returned.
+				</div>
+
+				<div id="resultsContainer">
+					<table ng-if="rows.length > 0" filter-query-model="filterQuery" class="sortable celled ui table">
+						<thead>
+							<tr>
+								<th ng-repeat="column in resultColumns">{{ column }}</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr ng-repeat="row in rows">
+								<td ng-repeat="column in resultColumns">{{ row[column] }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="bottom right attached ui labels">
+					<div class="small compact ui label">
+						Rows
+						<div class="detail">{{ rows.length }}</div>
+					</div>
+					<div class="small compact ui label" ng-if="queryResponse && queryResponse.affected">
+						Affected
+						<div class="detail">{{ queryResponse.affected }}</div>
+					</div>
+				</div>
+			</div>
+
+			<script src="http://d3js.org/d3.v3.js"></script>
+			<script src="http://cpettitt.github.io/project/dagre-d3/v0.2.9/dagre-d3.js"></script>
+			<!--
+			<script src="http://d3js.org/d3.v3.min.js"></script>
+			<script src="http://cpettitt.github.io/project/dagre-d3/v0.2.9/dagre-d3.min.js"></script>
+			-->
+
+			<script src="js/modules.js"></script>
+			<script src="js/directives/digraph.js"></script>
+			<script src="js/services/promise.js"></script>
+			<script src="js/services/queue-digest.js"></script>
+			<script src="js/services/graph.js"></script>
+			<script src="js/services/logger.js"></script>
+			<script src="js/services/socket.js"></script>
+			<script src="js/services/sql.js"></script>
+			<script src="js/main.js"></script>
+		</div>
+	</body>
+</html>
