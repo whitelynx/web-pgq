@@ -1,0 +1,39 @@
+{
+  "name": "web-pgq",
+  "version": "1.0.0",
+  "authors": [
+    "David H. Bronke <dbronke@armt.com>"
+  ],
+  "description": "Web-based query runner/explainer for PostgreSQL.",
+  "main": "server.js",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "pg",
+    "postgres",
+    "query",
+    "explain"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "private": true,
+  "dependencies": {
+    "angular-ui-ace": "bower",
+    "semantic-ui": "~0.19.3",
+    "history.js": "~1.8.0",
+    "jquery-address": "*",
+    "angular-table": "git://github.com/garaboncias/angular-table#master",
+    "angular-tiny-eventemitter": "~0.1.0",
+    "unisocket": "git://github.com/Morgul/unisocket"
+  },
+  "resolutions": {
+    "angular": "~1.x"
+  }
+}

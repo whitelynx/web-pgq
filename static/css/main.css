@@ -1,0 +1,342 @@
+html, body {
+	margin: 0;
+	height: 100%;
+}
+body {
+	background-color: #eee;
+	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
+}
+
+.container,
+.container.fill-parent,
+.container.segment {
+	margin-right: auto;
+	margin-left: auto;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+@media (min-width: 768px) {
+	.container, .container.fill-parent { width: 750px; }
+}
+@media (min-width: 992px) {
+	.container, .container.fill-parent { width: 970px; }
+}
+@media (min-width: 1200px) {
+	.container, .container.fill-parent { width: 1170px; }
+}
+
+.fill-parent {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+.fill-parent-abs {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: auto;
+	height: auto;
+}
+
+.ui.left.right.attached + .ui.left.right.attached {
+	margin-top: 1rem;
+}
+
+body {
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	-ms-flex-direction: column;
+	flex-direction: column;
+	-webkit-flex-wrap: nowrap;
+	-ms-flex-wrap: nowrap;
+	flex-wrap: nowrap;
+	-webkit-justify-content: flex-start;
+	-ms-flex-pack: start;
+	justify-content: flex-start;
+	-webkit-align-content: flex-start;
+	-ms-flex-line-pack: start;
+	align-content: flex-start;
+	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
+	align-items: flex-start;
+}
+
+body > :nth-child(1),
+body > :nth-child(3) {
+	-webkit-flex: 1 1 auto;
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;
+	-webkit-align-self: stretch;
+	-ms-flex-item-align: stretch;
+	align-self: stretch;
+}
+
+body > :nth-child(2) {
+	-webkit-flex: 0 1 auto;
+	-ms-flex: 0 1 auto;
+	flex: 0 1 auto;
+	-webkit-align-self: stretch;
+	-ms-flex-item-align: stretch;
+	align-self: stretch;
+}
+
+svg {
+	display: block;
+    overflow: hidden;
+	background: #fff;
+}
+
+svg .node rect {
+    stroke: #333;
+    stroke-width: 1.5px;
+    fill: #fff;
+}
+
+svg .node#output rect {
+    stroke: none;
+    stroke-width: 0;
+    fill: transparent;
+}
+
+svg .edgeLabel rect {
+    fill: rgba(255, 255, 255, .75);
+	padding: 1px 3px;
+}
+
+svg .edgePath {
+    stroke: #333;
+    stroke-width: 1.5px;
+    fill: none;
+}
+
+.tabbed {
+	margin-top: 1rem;
+	position: relative;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	-ms-flex-direction: column;
+	flex-direction: column;
+	-webkit-flex-wrap: nowrap;
+	-ms-flex-wrap: nowrap;
+	flex-wrap: nowrap;
+	-webkit-justify-content: flex-start;
+	-ms-flex-pack: start;
+	justify-content: flex-start;
+	-webkit-align-content: flex-start;
+	-ms-flex-line-pack: start;
+	align-content: flex-start;
+	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
+	align-items: flex-start;
+}
+
+.tabbed > :nth-child(1) {
+	position: relative;
+	-webkit-flex: 0 1 auto;
+	-ms-flex: 0 1 auto;
+	flex: 0 1 auto;
+	-webkit-align-self: stretch;
+	-ms-flex-item-align: stretch;
+	align-self: stretch;
+}
+
+.tabbed > :nth-child(2) {
+	position: relative;
+	-webkit-flex: 1 1 auto;
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;
+	-webkit-align-self: stretch;
+	-ms-flex-item-align: stretch;
+	align-self: stretch;
+}
+
+#plan-diagram-dimmer.ui.dimmer > .content,
+#messages-dimmer.ui.dimmer > .content {
+	display: block;
+}
+
+.square.ui.button {
+	border-radius: 0;
+}
+
+.compact.ui.label {
+	padding-top: 0.25em;
+	padding-bottom: 0.25em;
+}
+
+#editor {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	border-top: none;
+}
+
+#resultsArea {
+	height: 50%;
+	z-index: 0;
+	border-radius: 0;
+	border-bottom: none;
+}
+
+#resultsArea > .ui.bottom.right.attached.label {
+	border-bottom-right-radius: 0;
+}
+
+#resultsContainer {
+	clear: both;
+	overflow: auto;
+	position: absolute;
+	top: 1em; bottom: 1em;
+	left: 1em; right: 1em;
+}
+
+#settings-button {
+	border-top-right-radius: 0.25em;
+	border-bottom-right-radius: 0.25em;
+}
+
+.squarish.ui.label {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	width: 1em;
+	box-sizing: content-box;
+	text-align: center;
+}
+.ui.menu .item > .label {
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+}
+
+.ui.popup.menu {
+	padding: 0;
+}
+
+.ui.vertical.menu .item > i.icon.left {
+	float: left;
+	margin: 0em 0.5em 0em 0em;
+}
+
+.ui.bottom.right.attached.labels {
+	position: absolute;
+	top: auto;
+	bottom: 0;
+	left: auto;
+	right: 0;
+	width: auto;
+}
+
+.ui.bottom.right.attached.labels .label {
+	border-radius: 4px 4px 0 0;
+}
+
+.ui.bottom.right.attached.labels .label:last-child {
+	border-radius: 4px 0 0 0;
+}
+
+/* FIX: Remove right margin and transparency from any icon that is the only child of a label. */
+.ui.label > .icon:first-child:last-child {
+	margin-right: 0;
+	opacity: 1;
+}
+
+/* FIX: Semantic's attached labels have some messed up border radii. */
+.ui.bottom.right.attached.label {
+	border-radius: 4px 0 4px 0;
+}
+
+/* FIX: Semantic artificially moves buttons inside items in non-vertical lists up by .05em for some reason; looks like
+ * for non-attached menus, it should be moved down by 0.1em instead. */
+.ui.menu:not(.vertical) .item > .button {
+	top: 0.1em;
+}
+
+/* FIX: Vertical menu items that are checkboxes get their input elements set to the wrong position. */
+.ui.menu.vertical .item.ui.checkbox input {
+	top: 1em;
+}
+
+/* FIX: Non-inverted popup menus inside inverted menus get the wrong colors on their items. */
+.ui.menu .item .popup.menu:not(.inverted) > .green.active.item,
+.ui.popup.green.menu:not(.inverted) > .active.item {
+	border-color: #A1CF64 !important;
+	color: #A1CF64 !important;
+}
+.ui.menu .item .popup.menu:not(.inverted) > .red.active.item,
+.ui.popup.red.menu:not(.inverted) > .active.item {
+	border-color: #D95C5C !important;
+	color: #D95C5C !important;
+}
+.ui.menu .item .popup.menu:not(.inverted) > .blue.active.item,
+.ui.popup.blue.menu:not(.inverted) > .active.item {
+	border-color: #6ECFF5 !important;
+	color: #6ECFF5 !important;
+}
+.ui.menu .item .popup.menu:not(.inverted) > .purple.active.item,
+.ui.popup.purple.menu:not(.inverted) > .active.item {
+	border-color: #564F8A !important;
+	color: #564F8A !important;
+}
+.ui.menu .item .popup.menu:not(.inverted) > .orange.active.item,
+.ui.popup.orange.menu:not(.inverted) > .active.item {
+	border-color: #F05940 !important;
+	color: #F05940 !important;
+}
+.ui.menu .item .popup.menu:not(.inverted) > .teal.active.item,
+.ui.popup.teal.menu:not(.inverted) > .active.item {
+	border-color: #00B5AD !important;
+	color: #00B5AD !important;
+}
+
+.ui.menu .item .popup.menu:not(.inverted) > .item,
+.ui.menu .item .popup.menu:not(.inverted) > .item > a:not(.button),
+.ui.menu .item .popup.menu:not(.inverted) > .item:hover,
+.ui.menu .item .popup.menu:not(.inverted) > .item > a:not(.button):hover {
+	color: rgba(0, 0, 0, 0.75);
+}
+.ui.menu .item .popup.menu:not(.inverted) > .item .item,
+.ui.menu .item .popup.menu:not(.inverted) > .item .item > a:not(.button),
+.ui.menu .item .popup.menu:not(.inverted) > .item .item:hover,
+.ui.menu .item .popup.menu:not(.inverted) > .item .item > a:not(.button):hover {
+	color: rgba(30, 30, 30, 0.7);
+}
+.ui.menu .item .popup.menu:not(.inverted) > .item .item .item,
+.ui.menu .item .popup.menu:not(.inverted) > .item .item .item > a:not(.button),
+.ui.menu .item .popup.menu:not(.inverted) > .item .item .item:hover,
+.ui.menu .item .popup.menu:not(.inverted) > .item .item .item > a:not(.button):hover {
+	color: rgba(30, 30, 30, 0.6);
+}
+.ui.menu .item .popup.menu:not(.inverted) > .dropdown .menu .item,
+.ui.menu .item .popup.menu:not(.inverted) > .dropdown .menu .item a:not(.button),
+.ui.menu .item .popup.menu:not(.inverted) > .dropdown .menu .item:hover,
+.ui.menu .item .popup.menu:not(.inverted) > .dropdown .menu .item a:not(.button):hover {
+	color: rgba(0, 0, 0, 0.75);
+}
+.ui.menu .item .popup.menu:not(.inverted) > .item .menu a.item:hover,
+.ui.menu .item .popup.menu:not(.inverted) > .item .menu .link.item:hover {
+	color: rgba(0, 0, 0, 0.85);
+}
+
+.ui.popup.link.menu:not(.inverted) > .item:hover,
+.ui.menu .item .popup.menu:not(.inverted) > .link.item:hover,
+.ui.menu .item .popup.menu:not(.inverted) > a.item:hover,
+.ui.menu .item .popup.menu:not(.inverted) > .ui.dropdown .menu .item:hover {
+	cursor: pointer;
+	background-color: rgba(0, 0, 0, 0.02);
+}
+.ui.menu .item .popup.menu:not(.inverted) > .ui.dropdown.item.active {
+	background-color: rgba(0, 0, 0, 0.02);
+}
+
+.ui.popup.menu .header.item {
+	padding: 0.83em 0.95em;
+}
+.ui.menu .item .popup.menu:not(.inverted) > .header.item {
+	background-color: rgba(0, 0, 0, 0.04);
+}

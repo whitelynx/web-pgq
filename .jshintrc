@@ -1,0 +1,9 @@
+{
+  "immed": true,
+  "laxbreak": true,
+  "multistr": true,
+  "node": true,
+  "trailing": true,
+  "undef": true,
+  "unused": true
+}

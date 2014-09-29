@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>d3 test</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="semantic-ui/build/packaged/css/semantic.css">
+
+	<!--[if lt IE 9]>
+		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
+	<![endif]-->
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="js/vendor/jquery-2.0.3.min.js"><\/script>')</script>
+
+	<script src="semantic-ui/build/packaged/javascript/semantic.js"></script>
+
+	<style>
+		html, body {
+			margin: 0;
+			height: 100%;
+		}
+		body {
+			background-color: #eee;
+			font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
+		}
+
+		svg {
+			position: absolute;
+			left: 0; right: 0;
+			top: 0; bottom: 0;
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<svg></svg>
+
+	<script src="http://d3js.org/d3.v3.js"></script>
+
+	<script>
+	//Create the SVG Viewport
+	var svgContainer = d3.select("svg");
+
+	//Create the Scale we will use for the Axis
+	var axisScale = d3.scale.linear()
+		.domain([0, 100])
+		.range([0, 400]);
+
+	//Create the Axis
+	var xAxis = d3.svg.axis()
+		.scale(axisScale);
+
+	var zoom = d3.behavior.zoom();
+
+	function transition(selection)
+	{
+		return selection.transition().duration(500);
+	} // end transition
+
+	zoom.event(transition(svgContainer));
+	//zoom(svgContainer);
+
+	var x = d3.time.scale().range([0, w]);
+	var y = d3.scale.linear().range([h, 0]);
+
+	var xAxis = d3.svg.axis()
+		.scale(x)
+		.orient("bottom")
+		.tickSize(-h, 0)
+		.tickPadding(6);
+
+	var yAxis = d3.svg.axis()
+		.scale(y)
+		.orient("right")
+		.tickSize(-w)
+		.tickPadding(6);
+
+	//Create an SVG group Element for the Axis elements and call the xAxis function
+	var xAxisGroup = svgContainer.append("g")
+		.call(xAxis)
+
+	// An area generator.
+	var area = d3.svg.area()
+		.interpolate("step-after")
+		.x(function(d) { return x(d.date); })
+		.y0(y(0))
+		.y1(function(d) { return y(d.value); });
+
+	var notes = [
+		{startDate: new Date(), endDate: new Date(Date.now() + 1000), noteName: "E", velocity: 1.0}
+	];
+
+	var timer;
+	function pauseUnpause()
+	{
+		if(timer)
+		{
+			clearInterval(timer);
+			timer = null;
+		}
+		else
+		{
+			timer = setInterval(function()
+			{
+				notes.push({startDate: new Date(), endDate: new Date(Date.now() + 1000), noteName: "E", velocity: Math.random()});
+			}, 500);
+		} // end if
+	};
+
+	</script>
+
+</body>
+</html>
