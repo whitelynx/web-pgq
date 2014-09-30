@@ -54,11 +54,22 @@ var server = http.createServer(app).listen(3000);
 
 new UniSocketServer()
     .attach(server)
-    .on('connection', function()//client)
+    .on('connection', function(client)
     {
         //logger.info("Client connected.", logger.dump(client));
         logger.info("Client connected.");
-    })
+
+        client
+            .on('foo', function()
+            {
+                logger.info("Got 'foo' from client.");
+            })
+            .on('bar', function(callback)
+            {
+                logger.info("Got 'bar' from client; responding.");
+                callback('bleh');
+            });
+    }) // end 'connection' handler
     .channel('sql', function(channel)
     {
         //logger.info("Client connected to the 'sql' channel.", logger.dump(channel));
@@ -150,4 +161,5 @@ new UniSocketServer()
                 callback();
             }); // end 'disconnect' handler
 
+        return true;
     }); // end 'sql' channel handler
