@@ -116,7 +116,7 @@ new UniSocketServer()
              * @fires Connection#row
              *
              * @param {Connection#QueryDef} queryDef - the definition of the query to run
-             * @param {function(err, {rows: number, affected: number)} callback - called with an error on failure, or
+             * @param {function(err, {rows: number, affected: number})} callback - called with an error on failure, or
              *          query statistics on success
              */
             .on('query', function(queryDef, callback)
@@ -150,4 +150,4 @@ new UniSocketServer()
                 callback();
             }); // end 'disconnect' handler
 
-    }); // end 'connection' handler
+    }); // end 'sql' channel handler
