@@ -40,13 +40,16 @@ angular.module('webPGQ.services')
     {
         var channel;
 
-        socket.channel('sql')
-            .then(function(chan)
-            {
-                channel = chan;
+        socket.on('connected', function()
+        {
+            socket.channel('sql')
+                .then(function(chan)
+                {
+                    channel = chan;
 
-                channel.on('notify', sqlService.emit.bind(sqlService, 'notify'));
-            });
+                    channel.on('notify', sqlService.emit.bind(sqlService, 'notify'));
+                });
+        });
 
         var explainOptions = {
             VERBOSE: {

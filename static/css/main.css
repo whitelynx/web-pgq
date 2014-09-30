@@ -10,19 +10,19 @@ body {
 .container,
 .container.fill-parent,
 .container.segment {
-	margin-right: auto;
-	margin-left: auto;
-	padding-left: 15px;
-	padding-right: 15px;
+	margin-right: auto !important;
+	margin-left: auto !important;
+	padding-left: 15px !important;
+	padding-right: 15px !important;
 }
 @media (min-width: 768px) {
-	.container, .container.fill-parent { width: 750px; }
+	.container, .container.fill-parent { width: 750px !important; }
 }
 @media (min-width: 992px) {
-	.container, .container.fill-parent { width: 970px; }
+	.container, .container.fill-parent { width: 970px !important; }
 }
 @media (min-width: 1200px) {
-	.container, .container.fill-parent { width: 1170px; }
+	.container, .container.fill-parent { width: 1170px !important; }
 }
 
 .fill-parent {
@@ -32,7 +32,7 @@ body {
 	margin: 0;
 }
 
-.fill-parent-abs {
+.fill-parent-abs, .left-half-abs, .right-half-abs {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -40,6 +40,20 @@ body {
 	left: 0;
 	width: auto;
 	height: auto;
+}
+
+.left-half-abs {
+	right: 50%;
+}
+
+.right-half-abs {
+	left: 50%;
+}
+
+.fill-height {
+	position: relative;
+	height: 100%;
+	margin: 0;
 }
 
 .ui.left.right.attached + .ui.left.right.attached {
@@ -172,10 +186,25 @@ svg .edgePath {
 	padding-bottom: 0.25em;
 }
 
-#editor {
+#editorArea {
+	display: block;
+	position: relative;
+	margin-bottom: 1em;
+}
+
+#editorArea .left-half-abs.ui.segment,
+#editorArea .right-half-abs.ui.segment {
+	position: absolute;
+	margin: 0;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 	border-top: none;
+}
+#editorArea .left-half-abs.ui.segment {
+	border-bottom-right-radius: 0;
+}
+#editorArea .right-half-abs.ui.segment {
+	border-bottom-left-radius: 0;
 }
 
 #resultsArea {

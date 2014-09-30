@@ -18,6 +18,7 @@ angular.module('webPGQ.services')
             });
         });
 
+        /*
         var originalRequest = socket.request;
         socket.request = function()
         {
@@ -47,6 +48,7 @@ angular.module('webPGQ.services')
                 } // end try
             });
         }; // end socket.request override
+        */
 
         return socket;
     }]);

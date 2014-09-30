@@ -117,6 +117,16 @@ GROUP BY\n\
 LIMIT 2;";
             //*/
 
+            $scope.queryParams = [];
+
+            $scope.addQueryParam = function()
+            {
+                return queueDigest(function()
+                {
+                    $scope.queryParams.push({value: '', type: 'text'});
+                }, maxUpdateDelay);
+            }; // end $scope.addQueryParam
+
             // SQL messages //
             $scope.sqlMessages = sql.messages;
 
@@ -289,6 +299,8 @@ LIMIT 2;";
                     });
 
                 $('[title]').popup({ delay: 500 });
+
+                $('.ui.dropdown').dropdown();
 
                 $scope.pageLoaded = true;
             });

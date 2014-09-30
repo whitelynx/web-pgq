@@ -49,7 +49,65 @@
 			<div class="ui text loader">Loading</div>
 		</div>
 
-		<div id="editor" class="container inverted ui segment" ui-ace="{theme: 'monokai', mode: 'pgsql'}" ng-model="queryText"></div>
+		<div id="editorArea" class="container">
+			<!--div id="editor" class="column inverted ui segment" ui-ace="{theme: 'monokai', mode: 'pgsql'}" ng-model="queryText"></div-->
+			<div id="editor" class="left-half-abs inverted ui segment" ui-ace="{theme: 'monokai', mode: 'pgsql'}" ng-model="queryText"></div>
+
+			<div class="right-half-abs inverted ui segment">
+				<h3 class="ui header">Parameters</h3>
+				<div class="ui inverted form">
+					<div class="inline fields" ng-repeat="param in queryParams">
+						<div class="field">
+							<label>{{ $index + 1 }}</label>
+							<div class="labeled icon ui input">
+								<input type="text" placeholder="Value" ng-model="param.value">
+								<i class="asterisk icon"></i>
+								<div class="ui corner label">
+									<i class="asterisk icon"></i>
+								</div>
+							</div>
+							<div class="ui selection dropdown">
+								<input type="hidden" name="type_{{ $index + 1 }}" ng-model="param.type">
+								<div class="default text">Type</div>
+								<i class="dropdown icon"></i>
+								<div class="menu">
+									<div class="item" data-value="text">Text</div>
+									<div class="item" data-value="integer">Integer</div>
+								</div>
+							</div>
+							<div class="icon ui button" ng-click="queryParams.splice($index, 1)">
+								<i class="close icon"></i>
+							</div>
+						</div>
+					</div>
+
+					<div class="inline fields">
+						<div class="field" ng-click="addQueryParam">
+							<label class="disabled">{{ queryParams.length + 1 }}</label>
+							<div class="labeled icon ui input">
+								<input type="text" placeholder="New parameter...">
+								<i class="asterisk icon"></i>
+								<div class="ui corner label">
+									<i class="asterisk icon"></i>
+								</div>
+							</div>
+							<div class="ui selection dropdown">
+								<input type="hidden" name="type__new_">
+								<div class="default text">Type</div>
+								<i class="dropdown icon"></i>
+								<div class="menu">
+									<div class="item" data-value="text">Text</div>
+									<div class="item" data-value="integer">Integer</div>
+								</div>
+							</div>
+							<div class="disabled icon ui button">
+								<i class="close icon"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<div class="transparent small inverted left right attached compact main ui menu">
 			<div class="right text item">
@@ -58,7 +116,8 @@
 
 			<div class="container">
 				<div class="header item">
-					<i class="table icon"></i>
+					<!--i class="database icon"></i-->
+					<i class="hdd icon"></i>
 					<b>web-pgq</b>
 				</div>
 				<!--div class="text item">
