@@ -20,7 +20,7 @@ angular.module('webPGQ')
             // Connections //
             //$scope.connections = {};
             $scope.connections = {
-                "local": { database: 'postgres', host: 'localhost' },
+                "local": { database: 'shakespeare', host: 'localhost' },
                 "pgmapdev1-svr": { database: 'armgis', host: 'pgmapdev1-svr' }
             };
             $scope.currentConnection = null;
@@ -66,7 +66,7 @@ angular.module('webPGQ')
 
             // Queries //
             //$scope.queryText = "SELECT * FROM clu.release LIMIT 10;";
-            //*
+            /*
             $scope.queryText = "SELECT\n\
     db_insureds.bond_id,\n\
     db_insureds.layout_layer_id,\n\
@@ -101,7 +101,7 @@ FROM db_insureds\n\
         ON GOLayoutPage.goLayoutRID = GOLayout.rid\n\
 LIMIT 2;";
             //*/
-            /*
+            //*
             $scope.queryText = "SELECT\n\
     work.workID, work.title, work.year,\n\
     character.charName, character.abbrev, character.speechCount,\n\
@@ -113,7 +113,7 @@ FROM work\n\
     NATURAL LEFT JOIN character\n\
 GROUP BY\n\
     work.workID, work.title, work.year,\n\
-    character.charName, character.abbrev, character.speechCount\n\0
+    character.charName, character.abbrev, character.speechCount\n\
 LIMIT 2;";
             //*/
 
@@ -220,23 +220,24 @@ LIMIT 2;";
                 function onEnd(args)
                 {
                     var response = args[0];
-                    console.log("Done:", response);
+                    console.log("Done:", args);
 
                     sql.removeListener('notify', onNotify);
+
+                    response.rows = rows;
+                    response.columns = orderedResultColumns;
+                    response.notifyMessages = pendingNotifyMessages;
 
                     queueDigest(function()
                     {
                         $scope.results = response;
-                        $scope.results.rows = rows;
-                        $scope.results.columns = orderedResultColumns;
-                        $scope.results.notifyMessages = pendingNotifyMessages;
 
                         delete $scope.pending;
 
                         $scope.queryRunning = false;
                     }, maxUpdateDelay);
 
-                    return true;
+                    return response;
                 } // end onEnd
 
                 sql.on('notify', onNotify);
@@ -253,10 +254,10 @@ LIMIT 2;";
 
             $scope.explainQuery = function(analyze)
             {
-                runSQL({text: sql.explain($scope.explainOptions, analyze) + $scope.queryText})
-                    .then(function(succeeded)
+                runSQL({text: sql.formatExplain($scope.explainOptions, analyze) + $scope.queryText})
+                    .then(function(results)
                     {
-                        $scope.graph = succeeded ? graph.fromPlan($scope.rows[0]["QUERY PLAN"][0].Plan) : null;
+                        $scope.graph = results ? graph.fromPlan(results.rows[0]["QUERY PLAN"][0].Plan) : null;
                     });
             }; // end $scope.explainQuery
 

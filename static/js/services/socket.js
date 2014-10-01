@@ -30,6 +30,7 @@ angular.module('webPGQ.services')
                     originalRequest.apply(this, args)
                         .then(function(responseArgs)
                         {
+                            console.log("Got response with args:", responseArgs);
                             var error = responseArgs[0];
                             if(error)
                             {
