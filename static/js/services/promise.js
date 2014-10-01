@@ -9,7 +9,7 @@ angular.module('webPGQ.services')
 
             try
             {
-                func(deferred.resolve, deferred.reject, deferred.notify);
+                func(deferred.resolve.bind(deferred), deferred.reject.bind(deferred), deferred.notify.bind(deferred));
             }
             catch(exc)
             {

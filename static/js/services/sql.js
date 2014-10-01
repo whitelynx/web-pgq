@@ -8,30 +8,6 @@ function onOff(value)
     return value ? 'on' : 'off';
 } // end onOff
 
-function formatExplain(explainOptions, analyze)
-{
-    return "EXPLAIN(" +
-        ["ANALYZE " + onOff(analyze)]
-            .concat(
-                Object.keys(explainOptions)
-                    .map(function(key)
-                    {
-                        var value = explainOptions[key].enabled;
-
-                        if(!analyze && (key == 'BUFFERS' || key == 'TIMING'))
-                        {
-                            // BUFFERS and TIMING are not valid unless using ANALYZE.
-                            value = false;
-                        } // end if
-
-                        return key + ' ' + onOff(value);
-                    }),
-                "FORMAT JSON"
-            )
-        .join(', ') +
-        ") ";
-} // end formatExplain
-
 var queryID = 0;
 
 
@@ -190,7 +166,7 @@ angular.module('webPGQ.services')
                         .then(function(response)
                         {
                             console.log("Success!", response);
-                            return response;
+                            return response.slice(1);
                         })
                         .catch(function(error)
                         {
@@ -200,12 +176,36 @@ angular.module('webPGQ.services')
                 });
             }, // end run
 
-            explain: function(queryDef, explainOptions, analyze)
+            formatExplain: function(explainOptions, analyze)
             {
-                console.log("Explaining query" + (analyze ? " with ANALYZE" : "") + ":", queryDef);
+                console.log("Explaining query" + (analyze ? " with ANALYZE" : ""));
                 console.log("explainOptions:", explainOptions);
 
-                queryDef.text = formatExplain(analyze) + queryDef.text;
+                return "EXPLAIN(" +
+                    ["ANALYZE " + onOff(analyze)]
+                        .concat(
+                            Object.keys(explainOptions)
+                                .map(function(key)
+                                {
+                                    var value = explainOptions[key].enabled;
+
+                                    if(!analyze && (key == 'BUFFERS' || key == 'TIMING'))
+                                    {
+                                        // BUFFERS and TIMING are not valid unless using ANALYZE.
+                                        value = false;
+                                    } // end if
+
+                                    return key + ' ' + onOff(value);
+                                }),
+                            "FORMAT JSON"
+                        )
+                    .join(', ') +
+                    ") ";
+            }, // end formatExplain
+
+            explain: function(queryDef, explainOptions, analyze)
+            {
+                queryDef.text = this.formatExplain(explainOptions, analyze) + queryDef.text;
 
                 return this.run(queryDef);
             } // end explain
