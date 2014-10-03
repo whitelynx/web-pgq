@@ -1,7 +1,7 @@
-/* global angular: true, dagreD3: true */
+/* global angular: true */
 
 angular.module('webPGQ.services')
-    .service('graph', function()
+    .service('graph', ['dagreD3', function(dagreD3)
     {
         var maxTotalCost;
 
@@ -54,4 +54,4 @@ angular.module('webPGQ.services')
         }; // end graphService
 
         return graphService;
-    });
+    }]);

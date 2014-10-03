@@ -28,7 +28,15 @@
 		<!--script src="unisocket/src/unisocket.js"></script-->
 		<script src="js/vendor/unisocket.js"></script>
 
+		<!--script src="ace-builds/src-noconflict/ace.js"></script-->
 		<script src="ace-builds/src-min-noconflict/ace.js"></script>
+
+		<script src="http://d3js.org/d3.v3.js"></script>
+		<script src="http://cpettitt.github.io/project/dagre-d3/v0.2.9/dagre-d3.js"></script>
+		<!--
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+		<script src="http://cpettitt.github.io/project/dagre-d3/v0.2.9/dagre-d3.min.js"></script>
+		-->
 
 		<script src="angular/angular.js"></script>
 		<script src="angular-ui-ace/ui-ace.js"></script>
@@ -38,6 +46,17 @@
 		<script src="angular-ui-ace/ui-ace.min.js"></script>
 		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.min.js"></script>
 		-->
+		<script>
+			angular.module('jQuery', []).factory('$', function($window) { return $window.$.noConflict(true); });
+			//angular.module('jQuery', []).factory('$', function($window) { return $window.$; });
+			// Not currently used:
+			//angular.module('lodash', []).factory('_', function($window) { return $window._.noConflict(); });
+			angular.module('unisocket', []).factory('unisocket', function($window) { var u = $window.unisocket; delete $window.unisocket; return u; });
+			// Only needed by ui-ace:
+			//angular.module('ace', []).factory('ace', function($window) { return $window.ace; });
+			angular.module('d3', []).factory('d3', function($window) { return $window.d3; });
+			angular.module('dagreD3', ['d3']).factory('dagreD3', function($window) { return $window.dagreD3; });
+		</script>
 	</head>
 
 	<body ng-controller="MainController">
@@ -50,71 +69,65 @@
 		</div>
 
 		<div id="editorArea" class="container">
-			<!--div id="editor" class="column inverted ui segment" ui-ace="{theme: 'monokai', mode: 'pgsql'}" ng-model="queryText"></div-->
-			<div id="editor" class="left-half-abs inverted ui segment" ui-ace="{theme: 'monokai', mode: 'pgsql'}" ng-model="queryText"></div>
+			<div id="editor" class="fill left two thirds inverted ui segment" ui-ace="{theme: 'monokai', mode: 'pgsql'}"
+				ng-model="queryText"></div>
 
-			<div class="right-half-abs inverted ui segment">
+			<div class="fill activator icon ui button" ng-click="showParamsSidebar = !showParamsSidebar">
+				<i class="menu icon"></i>
+			</div>
+
+			<div class="fill right third secondary inverted ui segment" ng-class="{active: showParamsSidebar}">
 				<h3 class="ui header">Parameters</h3>
 				<div class="ui inverted form">
-					<div class="inline fields" ng-repeat="param in queryParams">
-						<div class="field">
-							<label>{{ $index + 1 }}</label>
-							<div class="labeled icon ui input">
-								<input type="text" placeholder="Value" ng-model="param.value">
-								<i class="asterisk icon"></i>
-								<div class="ui corner label">
-									<i class="asterisk icon"></i>
-								</div>
-							</div>
-							<div class="ui selection dropdown">
-								<input type="hidden" name="type_{{ $index + 1 }}" ng-model="param.type">
-								<div class="default text">Type</div>
-								<i class="dropdown icon"></i>
-								<div class="menu">
-									<div class="item" data-value="text">Text</div>
-									<div class="item" data-value="integer">Integer</div>
-								</div>
-							</div>
-							<div class="icon ui button" ng-click="queryParams.splice($index, 1)">
-								<i class="close icon"></i>
-							</div>
-						</div>
-					</div>
+					<table class="top attached inverted compact definition ui table segment">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Value</th>
+								<th>Type</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-cloak ng-repeat="param in queryParams">
+								<td><code>${{ $index + 1 }}</code></td>
+								<td>
+									<div class="fluid mini ui input">
+										<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
+											ng-model="param.value">
+									</div>
+								</td>
+								<td>
+									<div class="fluid mini top pointing dropdown labeled right icon ui button">
+										<i class="dropdown icon"></i>
+										<span class="text">{{ param.type }}</span>
+										<div class="menu">
+											<div class="item" ng-click="param.type = 'text'">Text</div>
+											<div class="item" ng-click="param.type = 'integer'">Integer</div>
+										</div>
+									</div>
+								</td>
+								<td ng-click="removeQueryParam($index)">
+									<i class="close ui icon"></i>
+								</td>
+							</tr>
+						</tbody>
+					</table>
 
-					<div class="inline fields">
-						<div class="field" ng-click="addQueryParam">
-							<label class="disabled">{{ queryParams.length + 1 }}</label>
-							<div class="labeled icon ui input">
-								<input type="text" placeholder="New parameter...">
-								<i class="asterisk icon"></i>
-								<div class="ui corner label">
-									<i class="asterisk icon"></i>
-								</div>
-							</div>
-							<div class="ui selection dropdown">
-								<input type="hidden" name="type__new_">
-								<div class="default text">Type</div>
-								<i class="dropdown icon"></i>
-								<div class="menu">
-									<div class="item" data-value="text">Text</div>
-									<div class="item" data-value="integer">Integer</div>
-								</div>
-							</div>
-							<div class="disabled icon ui button">
-								<i class="close icon"></i>
-							</div>
-						</div>
+					<div class="bottom attached mini black labeled icon ui button" ng-click="addQueryParam()">
+						<i class="add icon"></i>
+						Add parameter
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="transparent small inverted left right attached compact main ui menu">
-			<div class="right text item">
-				&copy; 2014 David H. Bronke
-			</div>
-
+		<div id="mainMenu" class="transparent small inverted attached compact main ui menu">
 			<div class="container">
+				<div id="copyright">
+					&copy; 2014 David H. Bronke
+				</div>
+
 				<div class="header item">
 					<!--i class="database icon"></i-->
 					<i class="hdd icon"></i>
@@ -125,7 +138,7 @@
 				</div-->
 				<div class="ui simple dropdown item">
 					<span ng-if="!currentConnection" class="value placeholder">Connect to...</span>
-					<span ng-if="currentConnection" class="value" ng-class="{teal: connected}">{{ currentConnection }}</span>
+					<span ng-cloak ng-if="currentConnection" class="value" ng-class="{teal: connected}">{{ currentConnection }}</span>
 					<i class="dropdown icon"></i>
 					<div class="menu">
 						<div class="item" ng-repeat="(name, conn) in connections" ng-click="connect(name)"
@@ -168,7 +181,7 @@
 					<!--a class="red icon ui button" title="Cancel query" ng-if="queryRunning" ng-click="cancelQuery().then(showMessages)">
 						<i class="spinner loading icon"></i>
 					</a-->
-					<a class="teal labeled icon ui button" ng-click="runQuery().then(showResults)"
+					<a class="teal labeled icon ui button" ng-click="runQuery()"
 							ng-class="{disabled: !connected || queryRunning}">
 						<i class="play icon"></i>
 						Run
@@ -187,7 +200,7 @@
 			</div>
 		</div>
 
-		<div class="tabbed container">
+		<div id="resultsArea" class="container">
 			<div class="transparent top attached small tabular ui menu">
 				<a class="item" ng-class="{active: (resultsTab == 'Results')}" ng-click="showResults()">
 					<i class="table icon"></i>
@@ -203,7 +216,7 @@
 				</a>
 			</div>
 
-			<div id="resultsArea" class="dimmable bottom attached ui segment">
+			<div id="resultsTabs" class="dimmable bottom attached ui segment">
 
 				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer">
 					<div class="content">
@@ -273,15 +286,9 @@
 				</div>
 			</div>
 
-			<script src="http://d3js.org/d3.v3.js"></script>
-			<script src="http://cpettitt.github.io/project/dagre-d3/v0.2.9/dagre-d3.js"></script>
-			<!--
-			<script src="http://d3js.org/d3.v3.min.js"></script>
-			<script src="http://cpettitt.github.io/project/dagre-d3/v0.2.9/dagre-d3.min.js"></script>
-			-->
-
 			<script src="js/modules.js"></script>
 			<script src="js/directives/digraph.js"></script>
+			<script src="js/services/await.js"></script>
 			<script src="js/services/promise.js"></script>
 			<script src="js/services/queue-digest.js"></script>
 			<script src="js/services/graph.js"></script>

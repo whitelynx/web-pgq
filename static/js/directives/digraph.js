@@ -1,7 +1,7 @@
-/* global $: true, angular: true, d3: true, dagreD3: true */
+/* global angular: true */
 
 angular.module('webPGQ.directives')
-    .directive('digraph', function($timeout, $window)
+    .directive('digraph', ['$timeout', '$window', 'd3', 'dagreD3', function($timeout, $window, d3, dagreD3)
     {
         function link(scope, element)//, attrs)
         {
@@ -35,7 +35,8 @@ angular.module('webPGQ.directives')
                 return selection.transition().duration(500);
             } // end transition
 
-            $($window).resize(function() { console.log("Element resized."); scope.$broadcast('Render'); });
+            //angular.element($window).resize(function() { console.log("Element resized."); scope.$broadcast('Render'); });
+            angular.element($window).resize(function() { scope.$broadcast('Render'); });
 
             scope.$on('ZoomFit', function()
             {
@@ -95,7 +96,7 @@ angular.module('webPGQ.directives')
                     {
                         if(element.is(":hidden"))
                         {
-                            console.log("Element is hidden; delaying render.");
+                            //console.log("Element is hidden; delaying render.");
                             needsRender = true;
                             return;
                         }
@@ -134,4 +135,4 @@ angular.module('webPGQ.directives')
             },
             link: link
         };
-    });
+    }]);
