@@ -46,6 +46,15 @@ body {
 	}
 }
 
+/* Fix for menu overflow. */
+.container::after {
+	content: '.';
+	display: block;
+	height: 0px;
+	clear: both;
+	visibility: hidden;
+}
+
 #mainMenu > .container > #copyright {
 	font-size: smaller;
 	position: absolute;
