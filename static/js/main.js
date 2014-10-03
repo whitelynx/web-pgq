@@ -1,9 +1,9 @@
-/* global $: true, angular: true */
+/* global angular: true */
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$http', '$timeout', 'graph', 'logger', 'queueDigest', 'sql',
-        function($scope, $http, $timeout, graph, logger, queueDigest, sql)
+        '$scope', '$http', '$timeout', '$', 'graph', 'logger', 'queueDigest', 'sql',
+        function($scope, $http, $timeout, $, graph, logger, queueDigest, sql)
         {
             $scope.aceLoaded = function(_editor)
             {
@@ -121,11 +121,33 @@ LIMIT 2;";
 
             $scope.addQueryParam = function()
             {
-                return queueDigest(function()
+                console.log("Adding new query param...");
+                queueDigest(function()
                 {
                     $scope.queryParams.push({value: '', type: 'text'});
-                }, maxUpdateDelay);
+                }, maxUpdateDelay)
+                .then(function()
+                {
+                    $timeout(function()
+                    {
+                        console.log("Query param(s) added, digest done.");
+                        $('.ui.dropdown').dropdown();
+                        $("#queryParam_" + $scope.queryParams.length).focus();
+                    }, 0, false);
+                });
             }; // end $scope.addQueryParam
+
+            /*
+            $scope.focusLastQueryParam = function()
+            {
+                $("#queryParam_" + $scope.queryParams.length).focus();
+            }; // end $scope.addQueryParam
+            */
+
+            $scope.removeQueryParam = function(index)
+            {
+                $scope.queryParams.splice(index, 1);
+            }; // end $scope.removeQueryParam
 
             // SQL messages //
             $scope.sqlMessages = sql.messages;
@@ -249,7 +271,8 @@ LIMIT 2;";
             $scope.runQuery = function()
             {
                 console.log("$scope.runQuery()", new Error("called from:").stack);
-                runSQL({text: $scope.queryText});
+                runSQL({text: $scope.queryText})
+                    .then($scope.showResults);
             }; // end $scope.runQuery
 
             $scope.explainQuery = function(analyze)
@@ -258,7 +281,8 @@ LIMIT 2;";
                     .then(function(results)
                     {
                         $scope.graph = results ? graph.fromPlan(results.rows[0]["QUERY PLAN"][0].Plan) : null;
-                    });
+                    })
+                    .then($scope.showPlan);
             }; // end $scope.explainQuery
 
             // Query results //
