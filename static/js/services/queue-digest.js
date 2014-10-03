@@ -1,7 +1,7 @@
 /* global angular: true */
 
 angular.module('webPGQ.services')
-    .service('queueDigest', ['$exceptionHandler', '$q', '$timeout', function($exceptionHandler, $q, $timeout)
+    .service('queueDigest', ['$exceptionHandler', 'await', '$timeout', function($exceptionHandler, await, $timeout)
     {
         var currentTimer;
         var currentTimerTargetTime;
@@ -11,36 +11,19 @@ angular.module('webPGQ.services')
         {
             var funcs = queuedFuncs;
             queuedFuncs = [];
+            currentTimer = undefined;
+            currentTimerTargetTime = undefined;
 
             funcs.forEach(function(call) { call(); });
         } // end runDigest
 
-        function wrap(func)
-        {
-            var deferred = $q.defer();
-
-            return {
-                call: function()
-                {
-                    try
-                    {
-                        deferred.resolve(func());
-                    }
-                    catch(exc)
-                    {
-                        deferred.reject();
-                        $exceptionHandler(exc);
-                    } // end try
-                }, // end call
-                promise: deferred.promise
-            };
-        } // end wrap
-
         return function queueDigest(func, maxDelay)
         {
-            var wrapped = wrap(func);
+            maxDelay = maxDelay || 0;
 
-            queuedFuncs.push(wrapped.call);
+            var wrapped = await(func);
+
+            queuedFuncs.push(wrapped.trigger);
 
             var targetTime = Date.now() + maxDelay;
 
@@ -59,5 +42,5 @@ angular.module('webPGQ.services')
             currentTimer = $timeout(runDigest, maxDelay);
 
             return wrapped.promise;
-        }; // end promise
+        }; // end queueDigest
     }]);
