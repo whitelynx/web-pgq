@@ -83,46 +83,96 @@ body {
 	left: 0;
 	width: auto;
 	height: auto;
+	-webkit-transition: left 0.5s, right 0.5s;
+	transition: left 0.5s, right 0.5s;
 }
 
-.fill.right.half, .fill.right.third {
-	z-index: 1;
-	display: none;
+#paramsSidebar {
+	position: absolute;
+	top: 0;
+	right: auto;
+	bottom: 0;
+	left: 100%;
+	width: 100%;
+	height: auto;
+	margin: 0;
+	padding-right: 2em;
+	border-radius: 5px 0 0 5px;
+	z-index: 900;
+	-webkit-transition: left 0.5s;
+	transition: left 0.5s;
 }
 
-.fill.right.half.active, .fill.right.third.active {
-	display: block;
+#paramsSidebar.active {
+	left: 1em;
+}
+
+#paramsSidebar > h3 {
+	margin-left: 1em;
+}
+
+#paramsSidebar .launch.button.container {
+	position: absolute;
+	top: 0.75em;
+	left: 0;
+}
+
+#paramsSidebar .launch.button.container .launch.icon.ui.button {
+	position: relative;
+	top: 0;
+	right: 0;
+	margin-left: -100%;
+	border-radius: 0.25em 0em 0em 0.25em;
+	z-index: 901;
+	-webkit-transition: margin-left 0.5s;
+	transition: margin-left 0.5s;
+}
+
+#paramsSidebar.active .launch.button.container .launch.icon.ui.button {
+	right: auto;
+	margin-left: -0.5em;
+	border-radius: 0em 0.25em 0.25em 0em;
+}
+
+#paramsSidebar.active .launch.button.container .launch.icon.ui.button:after {
+	position: absolute;
+	content: "";
+	top: 100%;
+	left: 0%;
+	border-top: 0em solid transparent;
+	border-right-width: 0.5em;
+	border-right-color: #444444;
+	border-right-style: solid;
+	border-bottom: 0.5em solid transparent;
+	border-left: 0em solid transparent;
+	width: 0em;
+	height: 0em;
 }
 
 @media (min-width: 769px) {
-	.fill.activator.ui.button {
-		display: none;
-	}
-
-	.fill.left.half {
-		right: 50%;
-	}
-	.fill.right.half {
-		left: 50%;
-	}
-
-	.fill.left.third {
-		right: 67%;
-	}
-	.fill.right.third {
+	#paramsSidebar,
+	#paramsSidebar.active {
 		left: 67%;
+		right: 0;
+		width: auto;
+		padding-right: 1em;
+		border-radius: 0 0 0.25em 0;
 	}
 
-	.fill.left.two.thirds {
-		right: 33%;
-	}
-	.fill.right.two.thirds {
-		left: 33%;
+	#paramsSidebar > h3 {
+		margin-left: 0;
 	}
 
-	.fill.right.half, .fill.right.third {
-		display: block;
-	}
+	#paramsSidebar .launch.button.container .launch.icon.ui.button { display: none; }
+
+	.fill.left.half { right: 50%; }
+	.fill.right.half { left: 50%; }
+
+	.fill.left.third { right: 67%; }
+	.fill.right.third { left: 67%; }
+
+	.fill.left.two.thirds { right: 33%; }
+	.fill.right.two.thirds { left: 33%; }
 }
 
 .fill-height {
@@ -265,21 +315,52 @@ svg .edgePath {
 	display: block;
 	position: relative;
 	margin-bottom: 1em;
+	overflow: hidden;
 }
 
-#editorArea .fill.left.ui.segment,
-#editorArea .fill.right.ui.segment {
+#editor {
 	position: absolute;
 	margin: 0;
+	border-top: none;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
-	border-top: none;
-}
-#editorArea .fill.left.ui.segment {
 	border-bottom-right-radius: 0;
 }
-#editorArea .fill.right.ui.segment {
-	border-bottom-left-radius: 0;
+
+.heading.row {
+	font-weight: bold;
+}
+
+#paramsGrid {
+	padding: 0;
+}
+
+#paramsGrid .ui.grid {
+	margin: 0;
+}
+
+#paramsGrid .ui.grid > .row {
+	margin: 0;
+	padding: 0.25rem 0;
+}
+
+/*
+#paramsGrid .column > .ui.input input {
+	padding: 0.125em 0.25em;
+}
+*/
+
+#paramsGrid .column .ui.left.labeled.icon.button {
+	padding-left: 2.3em !important;
+	padding-right: 0.7em !important;
+}
+#paramsGrid .column .ui.right.labeled.icon.button {
+	padding-left: 0.7em !important;
+	padding-right: 2.3em !important;
+}
+
+#paramsGrid .column .ui.labeled.icon.button > .icon {
+	width: 1.75em;
 }
 
 #resultsTabs {

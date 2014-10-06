@@ -72,33 +72,58 @@
 			<div id="editor" class="fill left two thirds inverted ui segment" ui-ace="{theme: 'monokai', mode: 'pgsql'}"
 				ng-model="queryText"></div>
 
-			<div class="fill activator icon ui button" ng-click="showParamsSidebar = !showParamsSidebar">
-				<i class="menu icon"></i>
-			</div>
-
-			<div class="fill right third secondary inverted ui segment" ng-class="{active: showParamsSidebar}">
+			<div id="paramsSidebar" class="secondary inverted ui segment" ng-class="{active: showParamsSidebar}">
 				<h3 class="ui header">Parameters</h3>
-				<div class="ui inverted form">
-					<table class="top attached inverted compact definition ui table segment">
-						<thead>
-							<tr>
-								<th>#</th>
-								<th>Value</th>
-								<th>Type</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-cloak ng-repeat="param in queryParams">
-								<td><code>${{ $index + 1 }}</code></td>
-								<td>
-									<div class="fluid mini ui input">
-										<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
-											ng-model="param.value">
+
+				<!--table class="top attached inverted compact definition ui table segment">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Value</th>
+							<th>Type</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-cloak ng-repeat="param in queryParams">
+							<td><code>${{ $index + 1 }}</code></td>
+							<td>
+								<div class="fluid mini ui input">
+									<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
+										ng-model="param.value">
+								</div>
+							</td>
+							<td>
+								<div class="fluid mini top pointing dropdown labeled right icon ui button">
+									<i class="dropdown icon"></i>
+									<span class="text">{{ param.type }}</span>
+									<div class="menu">
+										<div class="item" ng-click="param.type = 'text'">Text</div>
+										<div class="item" ng-click="param.type = 'integer'">Integer</div>
 									</div>
-								</td>
-								<td>
-									<div class="fluid mini top pointing dropdown labeled right icon ui button">
+								</div>
+							</td>
+							<td ng-click="removeQueryParam($index)">
+								<i class="close ui icon"></i>
+							</td>
+						</tr>
+					</tbody>
+				</table-->
+
+				<div id="paramsGrid" class="top attached inverted ui segment">
+					<div class="ui grid">
+						<div class="heading row">
+							<div class="two wide column">#</div>
+							<div class="twelve wide column">Value / Type</div>
+						</div>
+						<div class="row" ng-cloak ng-repeat="param in queryParams">
+							<div class="two wide column"><code>${{ $index + 1 }}</code></div>
+							<div class="twelve wide column">
+								<div class="fluid mini action ui input">
+									<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
+										ng-model="param.value">
+
+									<div class="mini top pointing dropdown labeled right icon ui button">
 										<i class="dropdown icon"></i>
 										<span class="text">{{ param.type }}</span>
 										<div class="menu">
@@ -106,17 +131,23 @@
 											<div class="item" ng-click="param.type = 'integer'">Integer</div>
 										</div>
 									</div>
-								</td>
-								<td ng-click="removeQueryParam($index)">
-									<i class="close ui icon"></i>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+								</div>
+							</div>
+							<div class="two wide column" ng-click="removeQueryParam($index)">
+								<i class="close ui icon"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="bottom attached mini black labeled icon ui button" ng-click="addQueryParam()">
+					<i class="add icon"></i>
+					Add parameter
+				</div>
 
-					<div class="bottom attached mini black labeled icon ui button" ng-click="addQueryParam()">
-						<i class="add icon"></i>
-						Add parameter
+				<div class="launch button container">
+					<div class="small black icon launch ui button" ng-click="showParamsSidebar = !showParamsSidebar">
+						<!--i class="menu icon"></i-->
+						<i class="list layout icon"></i>
 					</div>
 				</div>
 			</div>
@@ -142,15 +173,32 @@
 					<i class="dropdown icon"></i>
 					<div class="menu">
 						<div class="item" ng-repeat="(name, conn) in connections" ng-click="connect(name)"
-							title="{{ conn|json }}">{{ name }}</div>
+							data-content="{{ conn|json }}">{{ name }}</div>
 					</div>
 				</div>
 				<div class="item" ng-if="connecting">
-					<i class="spinner loading icon" title="Running query"></i>
+					<i class="spinner loading icon" data-content="Running query"></i>
 				</div>
 
-				<div class="item right compact ui buttons">
-					<a class="orange icon ui button" ng-click="explainQuery().then(showPlan)"
+				<div class="borderless item right compact ui buttons">
+					<a id="settings-button" class="orange icon ui button">
+						<i class="settings icon"></i>
+					</a>
+					<div id="settings-popup" class="popup vertical ui menu">
+						<div class="header item">EXPLAIN settings</div>
+						<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
+								ng-class="{active: val.enabled, teal: val.enabled}" data-content="{{ val.description }}">
+							<i class="left icon" ng-class="val.icon"></i>
+							{{ key }}
+							<div class="squarish ui label" ng-class="{teal: val.enabled}">
+								<i class="checkbox icon" ng-class="{disabled: !val.enabled, empty: !val.enabled, checked: val.enabled}"></i>
+							</div>
+						</a>
+					</div>
+				</div>
+
+				<div class="horizontally fitted borderless item right compact ui buttons">
+					<a class="orange labeled icon ui button" ng-click="explainQuery().then(showPlan)"
 							ng-class="{disabled: !connected || queryRunning}">
 						<i class="question icon"></i>
 						Explain
@@ -159,43 +207,22 @@
 							ng-class="{disabled: !connected || queryRunning}">
 						Analyze
 					</a>
-					<a id="settings-button" class="orange icon ui button">
-						<i class="settings icon"></i>
-					</a>
-					<div id="settings-popup" class="popup vertical ui menu">
-						<div class="header item">EXPLAIN settings</div>
-						<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
-								ng-class="{active: val.enabled, teal: val.enabled}" title="{{ val.description }}">
-							<i class="left icon" ng-class="val.icon"></i>
-							{{ key }}
-							<!--div class="circular ui label" ng-class="{teal: val.enabled}">
-								<i class="checkmark sign icon" ng-class="{disabled: !val.enabled}"></i>
-							</div-->
-							<div class="squarish ui label" ng-class="{teal: val.enabled}">
-								<i class="checkbox icon" ng-class="{disabled: !val.enabled, empty: !val.enabled, checked: val.enabled}"></i>
-							</div>
-						</a>
-					</div>
 				</div>
-				<div class="item right compact ui buttons">
-					<!--a class="red icon ui button" title="Cancel query" ng-if="queryRunning" ng-click="cancelQuery().then(showMessages)">
-						<i class="spinner loading icon"></i>
-					</a-->
+
+				<div class="borderless item right compact ui buttons">
 					<a class="teal labeled icon ui button" ng-click="runQuery()"
 							ng-class="{disabled: !connected || queryRunning}">
 						<i class="play icon"></i>
 						Run
 					</a>
 				</div>
-				<div class="item right compact ui buttons">
-					<a class="red right labeled icon ui button" title="Cancel query" ng-if="queryRunning" ng-click="cancelQuery().then(showMessages)">
-						Running...
-						<i class="close icon"></i>
-						<div class="floating ui red label" title="Rows returned"><i class="reorder icon"></i>{{ pendingQuery.rowCount }}</div>
+
+				<div class="horizontally fitted borderless item right compact ui buttons">
+					<a class="red icon ui button" data-content="Cancel query" ng-if="queryRunning"
+							ng-click="cancelQuery().then(showMessages)">
+
+						<i class="spinner loading icon"></i>
 					</a>
-				</div>
-				<div class="item right" ng-if="queryRunning">
-					<i class="spinner loading icon" title="Running query"></i>
 				</div>
 			</div>
 		</div>
@@ -220,10 +247,10 @@
 
 				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer">
 					<div class="content">
-						<!--a class="blue left corner ui label" title="Re-render" ng-click="reRender()">
+						<!--a class="blue left corner ui label" data-content="Re-render" ng-click="reRender()">
 							<i class="refresh icon"></i>
 						</a-->
-						<a class="green corner ui label" title="Zoom to fit" ng-click="zoomFit()">
+						<a class="green corner ui label" data-content="Zoom to fit" ng-click="zoomFit()">
 							<i class="fullscreen icon"></i>
 						</a>
 						<svg digraph graph="graph" class="fill-parent"></svg>
