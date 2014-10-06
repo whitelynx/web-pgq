@@ -320,7 +320,8 @@ LIMIT 2;";
                         inline: true,
                         preserve: true,
                         on: 'click',
-                        position: 'bottom left'
+                        position: 'bottom left',
+                        transition: 'slide down'
                     });
 
                 $('[title]').popup({ delay: 500 });
