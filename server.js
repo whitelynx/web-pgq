@@ -1,8 +1,5 @@
 var http = require('http');
 
-var _ = require('lodash');
-var UniSocketServer = require('unisocket');
-
 var connect = require('connect');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
@@ -12,7 +9,7 @@ var responseTime = require('response-time');
 var serveStatic = require('serve-static');
 var session = require('cookie-session');
 
-var sql = require('./lib/sql');
+var socket = require('./lib/socket');
 
 
 // For debugging!
@@ -25,13 +22,6 @@ var sessionOpts = {
     name: 'web-pgq:sess',
     keys: ['asontehusntohir', 'octbxrcao.dri', '38rcbixr', 'opdi9r842d3', 'iu8d98d']
 };
-
-function errorToJSON(error)
-{
-    var ret = _.assign({severity: error}, _.pick(error, 'message', 'stack', 'type'), error);
-    logger.warn("Returning error message:", logger.dump(ret));
-    return ret;
-} // end errorToJSON
 
 
 var app = connect()
@@ -50,116 +40,10 @@ var app = connect()
         res.end("404 Not Found");
     });
 
-var server = http.createServer(app).listen(3000);
+var server = http.createServer(app).listen(3000, function()
+{
+    socket.attach(server);
 
-new UniSocketServer()
-    .attach(server)
-    .on('connection', function(client)
-    {
-        //logger.info("Client connected.", logger.dump(client));
-        logger.info("Client connected.");
-
-        client
-            .on('foo', function()
-            {
-                logger.info("Got 'foo' from client.");
-            })
-            .on('bar', function(callback)
-            {
-                logger.info("Got 'bar' from client; responding.");
-                callback('bleh');
-            });
-    }) // end 'connection' handler
-    .channel('sql', function(channel)
-    {
-        //logger.info("Client connected to the 'sql' channel.", logger.dump(channel));
-        logger.info("Client connected to the 'sql' channel.");
-        var connection;
-
-        var onError = channel.emit.bind(channel, 'error');
-        var onRow = channel.emit.bind(channel, 'row');
-
-        function disconnect()
-        {
-            if(connection)
-            {
-                connection.removeListener('error', onError);
-                connection.removeListener('row', onRow);
-
-                connection.close();
-
-                connection = undefined;
-            } // end if
-        } // end disconnect
-
-        channel
-            /**
-             * Connect to the given database.
-             *
-             * @todo Document parameters.
-             */
-            .on('connect', function(connectionInfo, callback)
-            {
-                logger.info("'sql' channel got 'connect': %s", logger.dump(connectionInfo));
-
-                disconnect();
-
-                sql.connect(connectionInfo)
-                    .then(function(conn)
-                    {
-                        connection = conn;
-
-                        connection.on('error', onError);
-                        connection.on('row', onRow);
-
-                        callback();
-                    })
-                    .catch(function(error)
-                    {
-                        logger.warn("Returning error to client:", error);
-                        callback(errorToJSON(error));
-                    });
-            }) // end 'connect' handler
-
-            /**
-             * Execute a query on the current database connection.
-             *
-             * @fires Connection#row
-             *
-             * @param {Connection#QueryDef} queryDef - the definition of the query to run
-             * @param {function(err, {rows: number, affected: number})} callback - called with an error on failure, or
-             *          query statistics on success
-             */
-            .on('query', function(queryDef, callback)
-            {
-                logger.info("'sql' channel got 'query': %s", logger.dump(queryDef));
-
-                if(!connection)
-                {
-                    return callback({message: "Not connected!", hint: "You need to connect to a database first."});
-                } // end if
-
-                connection
-                    .query(queryDef)
-                    .catch(function(error)
-                    {
-                        callback(errorToJSON(error));
-                    })
-                    .nodeify(callback);
-            }) // end 'query' handler
-
-            /**
-             * Close the current connection.
-             *
-             * @todo Document parameters.
-             */
-            .on('disconnect', function(callback)
-            {
-                logger.info("'sql' channel got 'disconnect'.");
-
-                disconnect();
-                callback();
-            }); // end 'disconnect' handler
-
-        return true;
-    }); // end 'sql' channel handler
+    var addr = server.address();
+    logger.info("Listening on %s:%s", addr.address, addr.port);
+});
