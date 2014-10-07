@@ -334,7 +334,7 @@ LIMIT 2;";
                         transition: 'slide down'
                     });
 
-                $('[title]').popup({ delay: 500 });
+                $('[data-content]').popup({ delay: 500 });
 
                 $('.ui.dropdown').dropdown();
 
