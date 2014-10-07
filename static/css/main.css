@@ -212,6 +212,24 @@ body {
 	.fill.right.two.thirds { left: 33%; }
 }
 
+.query-plan.ui.popup {
+	max-width: 100%;
+	padding: 0;
+}
+.query-plan.ui.popup table {
+	max-width: 100%;
+	position: relative;
+	z-index: 10;
+}
+
+.smallest.ui.table {
+	font-size: 0.7em;
+}
+
+td > pre:first-child:last-child {
+	margin: 0;
+}
+
 .fill-height {
 	position: relative;
 	height: 100%;
