@@ -21,6 +21,10 @@ body {
 }
 @media (min-width: 993px) {
 	.container, .container.fill-parent { width: 970px !important; }
+
+	#editor {
+		border-bottom-right-radius: 0;
+	}
 }
 @media (min-width: 1201px) {
 	.container, .container.fill-parent { width: 1170px !important; }
@@ -90,34 +94,32 @@ body {
 #paramsSidebar {
 	position: absolute;
 	top: 0;
-	right: auto;
 	bottom: 0;
-	left: 100%;
+	right: -100%;
 	width: 100%;
 	height: auto;
 	margin: 0;
-	padding-right: 2em;
 	border-radius: 5px 0 0 5px;
 	z-index: 900;
-	-webkit-transition: left 0.5s;
-	transition: left 0.5s;
+	-webkit-transition: left 0.5s, right 0.5s;
+	transition: left 0.5s, right 0.5s;
 }
 
 #paramsSidebar.active {
-	left: 1em;
+	right: 0;
 }
 
 #paramsSidebar > h3 {
 	margin-left: 1em;
 }
 
-#paramsSidebar .launch.button.container {
+#paramsSidebar .launch.button.wrapper {
 	position: absolute;
 	top: 0.75em;
 	left: 0;
 }
 
-#paramsSidebar .launch.button.container .launch.icon.ui.button {
+#paramsSidebar .launch.button.wrapper .launch.icon.ui.button {
 	position: relative;
 	top: 0;
 	right: 0;
@@ -128,13 +130,13 @@ body {
 	transition: margin-left 0.5s;
 }
 
-#paramsSidebar.active .launch.button.container .launch.icon.ui.button {
+#paramsSidebar.active .launch.button.wrapper .launch.icon.ui.button {
 	right: auto;
 	margin-left: -0.5em;
 	border-radius: 0em 0.25em 0.25em 0em;
 }
 
-#paramsSidebar.active .launch.button.container .launch.icon.ui.button:after {
+#paramsSidebar.active .launch.button.wrapper .launch.icon.ui.button:after {
 	position: absolute;
 	content: "";
 	top: 100%;
@@ -149,13 +151,12 @@ body {
 	height: 0em;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 993px) {
 	#paramsSidebar,
 	#paramsSidebar.active {
 		left: 67%;
 		right: 0;
 		width: auto;
-		padding-right: 1em;
 		border-radius: 0 0 0.25em 0;
 	}
 
@@ -163,7 +164,7 @@ body {
 		margin-left: 0;
 	}
 
-	#paramsSidebar .launch.button.container .launch.icon.ui.button { display: none; }
+	#paramsSidebar .launch.button.wrapper .launch.icon.ui.button { display: none; }
 
 	.fill.left.half { right: 50%; }
 	.fill.right.half { left: 50%; }
@@ -173,6 +174,19 @@ body {
 
 	.fill.left.two.thirds { right: 33%; }
 	.fill.right.two.thirds { left: 33%; }
+}
+
+@media (min-width: 769px) {
+	#paramsSidebar {
+		border-bottom-right-radius: 5px;
+	}
+}
+
+@media (min-width: 320px) {
+	#paramsSidebar {
+		right: -320px;
+		width: 320px;
+	}
 }
 
 .fill-height {
@@ -324,7 +338,6 @@ svg .edgePath {
 	border-top: none;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
 }
 
 .heading.row {
