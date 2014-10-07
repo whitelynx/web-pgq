@@ -1,7 +1,7 @@
 /* global angular: true */
 
 angular.module('webPGQ.services')
-    .service('socket', ['$window', 'promise', function($window, promise)
+    .service('socket', ['$window', 'promise', function($window)//, promise)
     {
         var socket = $window.unisocket.connect($window.location.href);
 
@@ -17,39 +17,6 @@ angular.module('webPGQ.services')
                 console.log('got bar response');
             });
         });
-
-        /*
-        var originalRequest = socket.request;
-        socket.request = function()
-        {
-            var args = arguments;
-            return promise(function(resolve, reject)
-            {
-                try
-                {
-                    originalRequest.apply(this, args)
-                        .then(function(responseArgs)
-                        {
-                            console.log("Got response with args:", responseArgs);
-                            var error = responseArgs[0];
-                            if(error)
-                            {
-                                reject(error);
-                            }
-                            else
-                            {
-                                resolve(responseArgs.slice(1));
-                            } // end if
-                        });
-                }
-                catch(exc)
-                {
-                    console.error("FIXME: socket.request() threw an exception:", exc);
-                    reject(exc);
-                } // end try
-            });
-        }; // end socket.request override
-        */
 
         return socket;
     }]);
