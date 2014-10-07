@@ -91,6 +91,21 @@ body {
 	transition: left 0.5s, right 0.5s;
 }
 
+#editor {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: auto;
+	height: auto;
+	margin: 0;
+	border-radius: 0;
+	z-index: 100;
+	-webkit-transition: left 0.5s, right 0.5s;
+	transition: left 0.5s, right 0.5s;
+}
+
 #paramsSidebar {
 	position: absolute;
 	top: 0;
@@ -151,12 +166,33 @@ body {
 	height: 0em;
 }
 
+@media (min-width: 320px) {
+	#paramsSidebar {
+		right: -320px;
+		width: 320px;
+	}
+}
+
+@media (min-width: 769px) {
+	#editor {
+		border-bottom-right-radius: 5px;
+		border-bottom-left-radius: 5px;
+	}
+
+	#paramsSidebar {
+		border-bottom-right-radius: 5px;
+	}
+}
+
 @media (min-width: 993px) {
+	#editor {
+		border-bottom-right-radius: 0;
+		right: 320px;
+	}
+
 	#paramsSidebar,
 	#paramsSidebar.active {
-		left: 67%;
 		right: 0;
-		width: auto;
 		border-radius: 0 0 0.25em 0;
 	}
 
@@ -174,19 +210,6 @@ body {
 
 	.fill.left.two.thirds { right: 33%; }
 	.fill.right.two.thirds { left: 33%; }
-}
-
-@media (min-width: 769px) {
-	#paramsSidebar {
-		border-bottom-right-radius: 5px;
-	}
-}
-
-@media (min-width: 320px) {
-	#paramsSidebar {
-		right: -320px;
-		width: 320px;
-	}
 }
 
 .fill-height {
