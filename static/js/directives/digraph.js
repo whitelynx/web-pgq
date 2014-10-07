@@ -1,7 +1,7 @@
 /* global angular: true */
 
 angular.module('webPGQ.directives')
-    .directive('digraph', ['$timeout', '$window', 'd3', 'dagreD3', function($timeout, $window, d3, dagreD3)
+    .directive('digraph', ['$timeout', '$window', '$', 'd3', 'dagreD3', function($timeout, $window, $, d3, dagreD3)
     {
         function link(scope, element)//, attrs)
         {
@@ -19,13 +19,58 @@ angular.module('webPGQ.directives')
             var renderer = new dagreD3.Renderer()
                 .layout(layout)
                 .transition(transition)
-                .zoom(function (graph, svg)
+                .zoom(function(graph, svg)
                 {
                     return zoom.on('zoom', function()
                     {
                         svg.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
                     });
                 });
+
+            // Override drawNodes to set up the hover.
+            var oldDrawNodes = renderer.drawNodes();
+
+            renderer.drawNodes(function(g, svg)
+            {
+                var svgNodes = oldDrawNodes(g, svg);
+
+                svgNodes
+                    .each(function(d)
+                    {
+                        console.log("Visiting SVG child node:", this);
+                        console.log("g.node(d):", g.node(d));
+                        var $this = $(this);
+                        var node = g.node(d);
+                        var metadata = node.metadata;
+
+                        var popupSettings = {
+                            delay: 500,
+                            title: node.label,
+                            //preserve: true,
+                            position: 'top left',
+                            html: '<table class="compact smallest definition ui table">' +
+                                Object.keys(metadata)
+                                    .filter(function(key)
+                                    {
+                                        return key != 'Output';
+                                    })
+                                    .map(function(key)
+                                    {
+                                        return '<tr><th>' + key + '</th><td><code>' + metadata[key] + '</code></td></tr>';
+                                    })
+                                    .join('') +
+                                '</table>',
+                            className: {
+                                popup: 'query-plan ui popup',
+                            },
+                        };
+
+                        console.log("popupSettings:", popupSettings);
+                        $this.popup(popupSettings);
+                    });
+
+                return svgNodes;
+            });
 
             var graph, renderedLayout;
             var needsRender = false, needsZoomFit = false;
