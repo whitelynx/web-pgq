@@ -12,7 +12,8 @@ var queryID = 0;
 
 
 angular.module('webPGQ.services')
-    .service('sql', ['$exceptionHandler', 'socket', 'promise', function($exceptionHandler, socket, promise)
+    .service('sql', ['$exceptionHandler', 'eventEmitter', 'socket', 'promise',
+    function($exceptionHandler, eventEmitter, socket, promise)
     {
         var channel;
 
@@ -23,7 +24,7 @@ angular.module('webPGQ.services')
                 {
                     channel = chan;
 
-                    channel.on('notify', sqlService.emit.bind(sqlService, 'notify'));
+                    channel.on('notice', sqlService.emit.bind(sqlService, 'notice'));
                 });
         });
 
@@ -52,76 +53,9 @@ angular.module('webPGQ.services')
 
         var messages = [];
 
-        function callListener(args, listener)
-        {
-            try
-            {
-                listener.apply(this, args);
-            }
-            catch(exc)
-            {
-                $exceptionHandler(exc);
-            } // end try
-        } // end callListener
-
-        function removeListenerFromThis(event, listener)
-        {
-            var listeners = this[event] = [];
-
-            listeners = listeners.filter(function(l) { return l !== listener; });
-
-            if(listeners.length > 0)
-            {
-                this[event] = listeners;
-            }
-            else
-            {
-                delete this[event];
-            } // end if
-
-            return this;
-        } // end removeListenerFromThis
-
         var sqlService = {
             explainOptions: explainOptions,
             messages: messages,
-
-            _onListeners: {__remove: removeListenerFromThis},
-            _onceListeners: {__remove: removeListenerFromThis},
-
-            on: function(event, listener)
-            {
-                var listeners = this._onListeners[event] = this._onListeners[event] || [];
-                listeners.push(listener);
-                return this;
-            }, // end on
-
-            once: function(event, listener)
-            {
-                var listeners = this._onceListeners[event] = this._onceListeners[event] || [];
-                listeners.push(listener);
-                return this;
-            }, // end once
-
-            removeListener: function(event, listener)
-            {
-                this._onListeners.__remove(event, listener);
-                this._onceListeners.__remove(event, listener);
-
-                return this;
-            }, // end removeListener
-
-            emit: function(event)//, ...args)
-            {
-                var call = callListener.bind(this, arguments);
-
-                (this._onListeners[event] || []).forEach(call);
-                (this._onceListeners[event] || []).forEach(call);
-
-                delete this._onceListeners[event];
-
-                return this;
-            }, // end once
 
             connect: function(connectionInfo)
             {
@@ -148,14 +82,9 @@ angular.module('webPGQ.services')
                 queryDef.queryID = queryID;
                 console.log("Running query:", queryDef);
 
-                return promise(function(resolve, reject, notify)
+                return promise(function(resolve)
                 {
-                    function onRow(row)
-                    {
-                        console.log("Got row; notifying:", row);
-                        notify(row);
-                    } // end onRow
-
+                    var onRow = this.emit.bind(this, 'row');
                     channel.on('row', onRow);
 
                     resolve(channel.request('query', queryDef)
@@ -166,7 +95,7 @@ angular.module('webPGQ.services')
                         .then(function(response)
                         {
                             console.log("Success!", response);
-                            return response.slice(1);
+                            return response;
                         })
                         .catch(function(error)
                         {
@@ -210,6 +139,9 @@ angular.module('webPGQ.services')
                 return this.run(queryDef);
             } // end explain
         };
+
+        eventEmitter.inject({prototype: sqlService});
+        sqlService.removeListener = sqlService.off;
 
         return sqlService;
     }]);

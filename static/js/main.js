@@ -159,15 +159,18 @@ LIMIT 2;";
             // Running queries //
             var maxUpdateDelay = 100;
 
+            var runSQLCallCount = 0;
             function runSQL(queryDef)
             {
+                var runSQLCall = ++runSQLCallCount;
+                console.log("Starting runSQL call #" + runSQLCall);
                 $scope.queryRunning = true;
 
                 $scope.pendingQuery = {
                     rowCount: 0,
-                    notifyMessages: [],
+                    noticeMessages: [],
                 };
-                var pendingNotifyMessages = [];
+                var pendingNoticeMessages = [];
 
                 function queueUpdate(func)
                 {
@@ -178,7 +181,7 @@ LIMIT 2;";
                 {
                     $scope.pendingQuery = {
                         rowCount: rows.length,
-                        notifyMessages: pendingNotifyMessages,
+                        noticeMessages: pendingNoticeMessages,
                     };
                 } // end updatePending
 
@@ -188,7 +191,7 @@ LIMIT 2;";
 
                 function onError(error)
                 {
-                    console.error("Query failed with error:", error);
+                    console.error("runSQL call #" + runSQLCall + ": Query failed with error:", error);
 
                     if(typeof error == 'string')
                     {
@@ -212,18 +215,18 @@ LIMIT 2;";
                     return false;
                 } // end onError
 
-                function onNotify(notifyMessage)
+                function onNotice(noticeMessage)
                 {
-                    logger.notify(notifyMessage);
+                    logger.notify(noticeMessage);
 
-                    pendingNotifyMessages.push(notifyMessage);
+                    pendingNoticeMessages.push(noticeMessage);
 
                     queueUpdate();
-                } // end onNotify
+                } // end onNotice
 
                 function onRow(row)
                 {
-                    console.log("Got row:", row);
+                    console.log("runSQL call #" + runSQLCall + ": Got row:", row);
 
                     rows.push(row);
 
@@ -242,13 +245,16 @@ LIMIT 2;";
                 function onEnd(args)
                 {
                     var response = args[0];
-                    console.log("Done:", args);
+                    console.log("runSQL call #" + runSQLCall + ": Done:", args);
 
-                    sql.removeListener('notify', onNotify);
+                    sql.removeListener('notice', onNotice);
+                    queryPromise.removeListener('row', onRow);
 
                     response.rows = rows;
                     response.columns = orderedResultColumns;
-                    response.notifyMessages = pendingNotifyMessages;
+                    response.noticeMessages = pendingNoticeMessages;
+
+                    console.log("runSQL call #" + runSQLCall + ": Complete response:", response);
 
                     queueDigest(function()
                     {
@@ -262,10 +268,13 @@ LIMIT 2;";
                     return response;
                 } // end onEnd
 
-                sql.on('notify', onNotify);
+                sql.on('notice', onNotice);
 
-                return sql.run(queryDef)
-                .then(onEnd, onError, onRow);
+                var queryPromise = sql.run(queryDef);
+
+                queryPromise.on('row', onRow);
+
+                return queryPromise.then(onEnd, onError);
             } // end runSQL
 
             $scope.runQuery = function()
@@ -280,6 +289,7 @@ LIMIT 2;";
                 runSQL({text: sql.formatExplain($scope.explainOptions, analyze) + $scope.queryText})
                     .then(function(results)
                     {
+                        console.log("$scope.explainQuery got results:", results);
                         $scope.graph = results ? graph.fromPlan(results.rows[0]["QUERY PLAN"][0].Plan) : null;
                     })
                     .then($scope.showPlan);
