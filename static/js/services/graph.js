@@ -10,17 +10,26 @@ angular.module('webPGQ.services')
             {
                 maxTotalCost = Math.max(maxTotalCost, plan['Total Cost']);
 
+                var metadata = {};
+                for(var key in plan)
+                {
+                    if(key != 'Plans')
+                    {
+                        metadata[key] = plan[key];
+                    } // end if
+                } // end for
+
                 var thisNodeID = graph.addNode(null, {
                     label: plan['Node Type'] + (plan.Strategy ? ' ' + plan.Strategy : ''),
+                    metadata: metadata,
+                    style: 'fill: #bbb',
                 });
 
                 (plan.Plans || [])
-                    .map(function(childPlan)
+                    .forEach(function(childPlan)
                     {
-                        return graphService.nodesFromPlan(graph, childPlan);
-                    })
-                    .forEach(function(childInfo)
-                    {
+                        var childInfo = graphService.nodesFromPlan(graph, childPlan);
+
                         // Calculate an edge size of between 1 and 40 pixels, based on percentage of the maximum total cost.
                         var edgeSize = (childInfo['Total Cost'] / maxTotalCost * 39) + 1;
                         console.log('Edge size for child ' + childInfo.id + ': ' + edgeSize + 'px');
