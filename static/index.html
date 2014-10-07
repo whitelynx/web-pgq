@@ -286,7 +286,7 @@
 				</div>
 
 				<div id="resultsContainer">
-					<table ng-if="rows.length > 0" filter-query-model="filterQuery" class="sortable celled ui table">
+					<table ng-if="rows.length > 0" filter-query-model="filterQuery" class="compact sortable celled ui table">
 						<thead>
 							<tr>
 								<th ng-repeat="column in resultColumns">{{ column }}</th>
@@ -295,7 +295,7 @@
 
 						<tbody>
 							<tr ng-repeat="row in rows">
-								<td ng-repeat="column in resultColumns">{{ row[column] }}</td>
+								<td ng-repeat="column in resultColumns"><pre><code>{{ row[column] }}</code></pre></td>
 							</tr>
 						</tbody>
 					</table>
