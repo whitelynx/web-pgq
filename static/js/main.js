@@ -183,10 +183,12 @@ LIMIT 2;";
                         rowCount: rows.length,
                         noticeMessages: pendingNoticeMessages,
                     };
+                    $scope.rows = rows.slice();
+                    $scope.resultColumns = orderedResultColumns.slice();
                 } // end updatePending
 
                 var rows = [];
-                var resultsColumns = {};
+                var resultColumns = {};
                 var orderedResultColumns = [];
 
                 function onError(error)
@@ -232,10 +234,10 @@ LIMIT 2;";
 
                     for(var key in row)
                     {
-                        if(!resultsColumns[key])
+                        if(!resultColumns[key])
                         {
                             orderedResultColumns.push(key);
-                            resultsColumns[key] = true;
+                            resultColumns[key] = true;
                         } // end if
                     } // end for
 
