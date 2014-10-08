@@ -219,7 +219,7 @@ LIMIT 2;";
 
                 function onNotice(noticeMessage)
                 {
-                    logger.notify(noticeMessage);
+                    logger.info(noticeMessage);
 
                     pendingNoticeMessages.push(noticeMessage);
 
