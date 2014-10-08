@@ -106,7 +106,7 @@ body {
 	transition: left 0.5s, right 0.5s;
 }
 
-#paramsSidebar {
+#querySidebar {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -120,21 +120,21 @@ body {
 	transition: left 0.5s, right 0.5s;
 }
 
-#paramsSidebar.active {
+#querySidebar.active {
 	right: 0;
 }
 
-#paramsSidebar > h3 {
+#querySidebar > h3 {
 	margin-left: 1em;
 }
 
-#paramsSidebar .launch.button.wrapper {
+#querySidebar .launch.button.wrapper {
 	position: absolute;
 	top: 0.75em;
 	left: 0;
 }
 
-#paramsSidebar .launch.button.wrapper .launch.icon.ui.button {
+#querySidebar .launch.button.wrapper .launch.icon.ui.button {
 	position: relative;
 	top: 0;
 	right: 0;
@@ -145,13 +145,13 @@ body {
 	transition: margin-left 0.5s;
 }
 
-#paramsSidebar.active .launch.button.wrapper .launch.icon.ui.button {
+#querySidebar.active .launch.button.wrapper .launch.icon.ui.button {
 	right: auto;
 	margin-left: -0.5em;
 	border-radius: 0em 0.25em 0.25em 0em;
 }
 
-#paramsSidebar.active .launch.button.wrapper .launch.icon.ui.button:after {
+#querySidebar.active .launch.button.wrapper .launch.icon.ui.button:after {
 	position: absolute;
 	content: "";
 	top: 100%;
@@ -167,7 +167,7 @@ body {
 }
 
 @media (min-width: 320px) {
-	#paramsSidebar {
+	#querySidebar {
 		right: -320px;
 		width: 320px;
 	}
@@ -179,7 +179,7 @@ body {
 		border-bottom-left-radius: 5px;
 	}
 
-	#paramsSidebar {
+	#querySidebar {
 		border-bottom-right-radius: 5px;
 	}
 }
@@ -190,17 +190,17 @@ body {
 		right: 320px;
 	}
 
-	#paramsSidebar,
-	#paramsSidebar.active {
+	#querySidebar,
+	#querySidebar.active {
 		right: 0;
 		border-radius: 0 0 0.25em 0;
 	}
 
-	#paramsSidebar > h3 {
+	#querySidebar > h3 {
 		margin-left: 0;
 	}
 
-	#paramsSidebar .launch.button.wrapper .launch.icon.ui.button { display: none; }
+	#querySidebar .launch.button.wrapper .launch.icon.ui.button { display: none; }
 
 	.fill.left.half { right: 50%; }
 	.fill.right.half { left: 50%; }
