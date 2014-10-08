@@ -118,6 +118,8 @@ GROUP BY\n\
 LIMIT 2;";
             //*/
 
+            $scope.currentFileName = "untitled.sql";
+
             $scope.fileLoaded = function(file, content)
             {
                 $scope.queryText = content;
