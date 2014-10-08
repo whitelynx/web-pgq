@@ -1,2 +1,7 @@
-<input type="file" style="display:none">
-<div class="teal ui button" ng-class="{loading: loading}">Open File</div>
+<div class="teal vertical animated ui button {{ class }}" ng-class="{loading: loading}">
+	<input type="file" style="display:none">
+	<div class="hidden content">Open</div>
+	<div class="visible content">
+		<i class="open folder outline icon"></i>
+	</div>
+</div>

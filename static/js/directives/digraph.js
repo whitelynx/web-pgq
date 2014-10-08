@@ -44,7 +44,8 @@ angular.module('webPGQ.directives')
                         var metadata = node.metadata;
 
                         var popupSettings = {
-                            delay: 500,
+                            on: 'click',
+                            //delay: 500,
                             title: node.label,
                             //preserve: true,
                             position: 'top left',

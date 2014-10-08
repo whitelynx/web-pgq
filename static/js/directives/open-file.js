@@ -6,14 +6,13 @@ angular.module('webPGQ.directives')
         function link(scope, element)//, attrs)
         {
             var input = element.find('input');
-            var button = element.find('.ui.button');
-            console.log("input:", input);
-            console.log("button:", button);
 
             input.change(function()
             {
                 var file = this.files[0];
                 console.log("Loading file:", file);
+
+                scope.$apply(function() { scope.loading = true; });
 
                 var reader = new FileReader();
 
@@ -23,20 +22,23 @@ angular.module('webPGQ.directives')
                     {
                         console.log("Loaded file " + file.name + ".");
                         scope.onOpen({file: file, content: ev.target.result});
+                        scope.loading = false;
                     });
                 }; // end reader.onload
 
                 reader.readAsText(file);
             });
 
-            button.click(function() { input.click(); });
+            element.click(function() { input.click(); });
         } // end link
 
         return {
             restrict: 'E',
             scope: {
-                onOpen: '&'
+                onOpen: '&',
+                class: '@'
             },
+            replace: true,
             link: link,
             templateUrl: '/js/directives/open-file.html'
         };
