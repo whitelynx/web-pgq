@@ -72,7 +72,7 @@
 			<div id="editor" class="inverted ui segment" ui-ace="{theme: 'monokai', mode: 'pgsql'}"
 				ng-model="queryText"></div>
 
-			<div id="paramsSidebar" class="secondary inverted ui segment" ng-class="{active: showParamsSidebar}">
+			<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
 				<h3 class="ui header">Parameters</h3>
 
 				<!--table class="top attached inverted compact definition ui table segment">
@@ -145,7 +145,7 @@
 				</div>
 
 				<div class="launch button wrapper">
-					<div class="small black icon launch ui button" ng-click="showParamsSidebar = !showParamsSidebar">
+					<div class="small black icon launch ui button" ng-click="showQuerySidebar = !showQuerySidebar">
 						<!--i class="menu icon"></i-->
 						<i class="list layout icon"></i>
 					</div>
