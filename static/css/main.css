@@ -244,6 +244,18 @@ body {
 	margin-top: 1rem;
 }
 
+.animated.ui.button > .visible.content > i.icon {
+	margin: 0 0.5em;
+}
+
+.animated.ui.button > .visible.content > i.open.folder.outline.icon {
+	margin: 0 0.4em 0 0.6em;
+}
+
+.animated.left.attached.ui.button {
+	text-align: center;
+}
+
 body {
 	display: -ms-flexbox;
 	display: -webkit-flex;
