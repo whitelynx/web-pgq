@@ -73,6 +73,8 @@
 				ng-model="queryText"></div>
 
 			<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
+				<open-file on-open="fileLoaded(file, content)"></open-file>
+
 				<h3 class="ui header">Parameters</h3>
 
 				<!--table class="top attached inverted compact definition ui table segment">
@@ -315,6 +317,7 @@
 
 			<script src="js/modules.js"></script>
 			<script src="js/directives/digraph.js"></script>
+			<script src="js/directives/open-file.js"></script>
 			<script src="js/services/await.js"></script>
 			<script src="js/services/promise.js"></script>
 			<script src="js/services/queue-digest.js"></script>

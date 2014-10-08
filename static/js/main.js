@@ -51,6 +51,7 @@ angular.module('webPGQ')
                 return sql.connect(connInfo)
                 .then(function()
                 {
+                    logger.info("Connected to database " + connectionName + ".");
                     $scope.connecting = false;
                     $scope.connected = true;
                     return true;
@@ -116,6 +117,12 @@ GROUP BY\n\
     character.charName, character.abbrev, character.speechCount\n\
 LIMIT 2;";
             //*/
+
+            $scope.fileLoaded = function(file, content)
+            {
+                $scope.queryText = content;
+                logger.info("Loaded file " + file.name + ".");
+            }; // end $scope.fileLoaded
 
             $scope.queryParams = [];
 
