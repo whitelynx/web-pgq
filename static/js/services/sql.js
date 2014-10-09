@@ -24,7 +24,17 @@ angular.module('webPGQ.services')
                 {
                     channel = chan;
 
-                    channel.on('notice', sqlService.emit.bind(sqlService, 'notice'));
+                    channel.on('notice', function(notice)
+                    {
+                        console.log("Got notice:", notice);
+                        messages.push({
+                            type: 'server',
+                            text: notice,
+                            segmentClass: 'primary'
+                        });
+
+                        sqlService.emit.apply(sqlService, ['notice'].concat(Array.slice.call(arguments)));
+                    });
                 });
         });
 
@@ -100,6 +110,12 @@ angular.module('webPGQ.services')
                         .catch(function(error)
                         {
                             console.error("Error:", error);
+                            messages.push({
+                                type: 'server',
+                                text: JSON.stringify(error, null, '    '),
+                                segmentClass: 'primary inverted red'
+                            });
+                            throw error;
                         })
                     );
                 });
