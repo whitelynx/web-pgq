@@ -7,6 +7,11 @@ angular.module('webPGQ.directives')
         {
             var input = element.find('input');
 
+            input.click(function(event)
+            {
+                event.stopPropagation();
+            });
+
             input.change(function()
             {
                 var file = this.files[0];
