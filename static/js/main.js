@@ -228,8 +228,6 @@ LIMIT 2;";
 
                 function onNotice(noticeMessage)
                 {
-                    logger.info(noticeMessage);
-
                     pendingNoticeMessages.push(noticeMessage);
 
                     queueUpdate();
