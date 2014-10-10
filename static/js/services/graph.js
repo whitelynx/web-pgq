@@ -5,6 +5,21 @@ angular.module('webPGQ.services')
     {
         var maxTotalCost;
 
+        var nodeTypeIcons = [
+            'Aggregate',
+            'Append',
+            'Hash Anti Join',
+            'Hash Join',
+            'Hash',
+            'Index Scan',
+            'Limit',
+            'Materialize',
+            'Nested Loop',
+            'Seq Scan',
+            'Sort',
+            'Window Agg'
+        ];
+
         var graphService = {
             nodesFromPlan: function(graph, plan)
             {
@@ -19,10 +34,17 @@ angular.module('webPGQ.services')
                     } // end if
                 } // end for
 
+                var useDef;
+                if(nodeTypeIcons.indexOf(plan['Node Type']) != -1)
+                {
+                    useDef = plan['Node Type'];
+                } // end if
+
                 var thisNodeID = graph.addNode(null, {
                     label: plan['Node Type'] + (plan.Strategy ? ' ' + plan.Strategy : ''),
                     metadata: metadata,
                     style: 'fill: #bbb',
+                    useDef: useDef
                 });
 
                 (plan.Plans || [])

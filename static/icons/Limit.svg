@@ -1,0 +1,32 @@
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="64px" width="64px" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<metadata>
+<rdf:RDF>
+<cc:Work rdf:about="">
+<dc:format>image/svg+xml</dc:format>
+<dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+<dc:title/>
+</cc:Work>
+</rdf:RDF>
+</metadata>
+<rect ry="8" height="64" width="64" y="0" x="0" fill="#808080"/>
+<rect id="rect6441" ry="2" height="8" width="12" y="8" x="12" fill="#FFF"/>
+<use id="use6443" xlink:href="#rect6441" transform="translate(14,0)" height="64" width="64" y="0" x="0"/>
+<use id="use6451" xlink:href="#rect6441" transform="translate(28,0)" height="64" width="64" y="0" x="0"/>
+<use id="use6453" xlink:href="#rect6441" transform="translate(0,10)" height="64" width="64" y="0" x="0"/>
+<use id="use6455" xlink:href="#use6443" transform="translate(0,10)" height="64" width="64" y="0" x="0"/>
+<use id="use6457" xlink:href="#use6451" transform="translate(0,10)" height="64" width="64" y="0" x="0"/>
+<use id="use6459" xlink:href="#use6453" transform="translate(0,10)" height="64" width="64" y="0" x="0"/>
+<use id="use6461" xlink:href="#use6455" transform="translate(0,10)" height="64" width="64" y="0" x="0"/>
+<use id="use6463" xlink:href="#use6457" transform="translate(0,10)" height="64" width="64" y="0" x="0"/>
+<use xlink:href="#use6459" transform="translate(0,24)" height="64" width="64" y="0" x="0"/>
+<use xlink:href="#use6461" transform="translate(0,24)" height="64" width="64" y="0" x="0"/>
+<use xlink:href="#use6463" transform="translate(0,24)" height="64" width="64" y="0" x="0"/>
+<rect id="rect6611" ry="0" height="2" width="36" y="4" x="14" fill="#FFF"/>
+<use xlink:href="#rect6441" transform="translate(0,34)" height="64" width="64" y="0" x="0"/>
+<use xlink:href="#use6443" transform="translate(0,34)" height="64" width="64" y="0" x="0"/>
+<use xlink:href="#use6451" transform="translate(0,34)" height="64" width="64" y="0" x="0"/>
+<use xlink:href="#rect6611" transform="translate(0,34)" height="64" width="64" y="0" x="0"/>
+<path id="path6621" fill="#FFF" d="m12,4-4,0,0,36,4,0,0-2-2,0,0-32,2,0z"/>
+<use xlink:href="#path6621" transform="matrix(-1,0,0,1,64,0)" height="64" width="64" y="0" x="0"/>
+</svg>
