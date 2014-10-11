@@ -292,7 +292,18 @@ LIMIT 2;";
                     .then(function(results)
                     {
                         console.log("$scope.explainQuery got results:", results);
+
                         $scope.graph = results ? graph.fromPlan(results.rows[0]["QUERY PLAN"][0].Plan) : null;
+
+                        $scope.graphNodes = [];
+                        if($scope.graph)
+                        {
+                            $scope.graphNodes = $scope.graph.nodes()
+                                .map(function(id)
+                                {
+                                    return $scope.graph.node(id);
+                                });
+                        } // end if
                     })
                     .then($scope.showPlan);
             }; // end $scope.explainQuery
