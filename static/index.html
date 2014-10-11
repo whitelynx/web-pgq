@@ -311,24 +311,7 @@
 						</a>
 						<svg digraph graph="graph" class="fill-parent">
 							<defs>
-								<image xlink:href="icons/Aggregate.svg" id="Aggregate" x="-32" y="-32" width="64px" height="64px"></image>
-								<image xlink:href="icons/Append.svg" id="Append" x="-32" y="-32" width="64px" height="64px"></image>
-								<image xlink:href="icons/Hash Anti Join.svg" id="Hash Anti Join" x="-32" y="-32" width="64px" height="64px"></image>
-								<image xlink:href="icons/Hash Join.svg" id="Hash Join" x="-32" y="-32" width="64px" height="64px"></image>
-								<image xlink:href="icons/Hash.svg" id="Hash" x="-32" y="-32" width="64px" height="64px"></image>
-								<image xlink:href="icons/Index Scan.svg" id="Index Scan" x="-32" y="-32" width="64px" height="64px"></image>
-								<image xlink:href="icons/Limit.svg" id="Limit" x="-32" y="-32" width="64px" height="64px"></image>
-								<image xlink:href="icons/Materialize.svg" id="Materialize" x="-32" y="-32" width="64px" height="64px"></image>
-								<!--image xlink:href="icons/Nested Loop.svg" id="Nested Loop" x="-32" y="-32" width="64px" height="64px"></image-->
-								<g id="Nested Loop" transform="translate(-32,-32)">
-									<image xlink:href="icons/Nested Loop.svg" width="64px" height="64px"></image>
-									<text text-anchor="center">
-										Nested Loop
-									</text>
-								</g>
-								<image xlink:href="icons/Seq Scan.svg" id="Seq Scan" x="-32" y="-32" width="64px" height="64px"></image>
-								<image xlink:href="icons/Sort.svg" id="Sort" x="-32" y="-32" width="64px" height="64px"></image>
-								<image xlink:href="icons/Window Agg.svg" id="Window Agg" x="-32" y="-32" width="64px" height="64px"></image>
+								<g ng-repeat="node in graphNodes" id="{{ node.useDef }}" ng-include="'/icons/wrapper.svg'"></g>
 							</defs>
 						</svg>
 					</div>
