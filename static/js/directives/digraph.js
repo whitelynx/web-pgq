@@ -57,7 +57,13 @@ angular.module('webPGQ.directives')
                                     })
                                     .map(function(key)
                                     {
-                                        return '<tr><th>' + key + '</th><td><code>' + metadata[key] + '</code></td></tr>';
+                                        var val = metadata[key];
+                                        if(typeof val == 'string')
+                                        {
+                                            val = val.replace(/,/g, ',\n');
+                                        } // end if
+
+                                        return '<tr><th>' + key + '</th><td><code>' + val + '</code></td></tr>';
                                     })
                                     .join('') +
                                 '</table>',
