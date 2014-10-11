@@ -10,42 +10,90 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" type="text/css" href="semantic-ui/build/packaged/css/semantic.css">
-		<link rel="stylesheet" href="angular-table/src/main/webapp/css/lib/angular-table.css">
-		<link rel="stylesheet" href="css/main.css">
-
 		<!--[if lt IE 9]>
 			<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 			<script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
 		<![endif]-->
 
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<!--
+		==================
+		==== CDN libs ====
+		-->
+
+		<!-- Non-minified -->
+		<!--
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" type="text/css">
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-2.0.3.min.js"><\/script>')</script>
-
-		<script src="semantic-ui/build/packaged/javascript/semantic.js"></script>
-
-		<!--script src="unisocket/src/unisocket.js"></script-->
-		<script src="js/vendor/unisocket.js"></script>
-
-		<!--script src="ace-builds/src-noconflict/ace.js"></script-->
-		<script src="ace-builds/src-min-noconflict/ace.js"></script>
 
 		<script src="http://d3js.org/d3.v3.js"></script>
 		<script src="http://cpettitt.github.io/project/dagre-d3/v0.2.9/dagre-d3.js"></script>
+		-->
+
+		<!-- Minified -->
 		<!--
+		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" type="text/css">
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="js/vendor/jquery-2.0.3.min.js"><\/script>')</script>
+
 		<script src="http://d3js.org/d3.v3.min.js"></script>
 		<script src="http://cpettitt.github.io/project/dagre-d3/v0.2.9/dagre-d3.min.js"></script>
 		-->
 
-		<script src="angular/angular.js"></script>
-		<script src="angular-ui-ace/ui-ace.js"></script>
-		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.js"></script>
+		<!-- Local copy (offline) -->
+		<link rel="stylesheet" href="css/vendor/SourceSansPro-OpenSans-fonts.css">
+
+		<script src="js/vendor/jquery-2.0.3.min.js"></script>
+
+		<script src="js/vendor/d3.v3.min.js"></script>
+		<script src="js/vendor/dagre-d3.min.js"></script>
+
+
 		<!--
+		============================================
+		==== Non-CDN (bower or local-only) libs ====
+		-->
+
+		<!-- Non-minified -->
+		<link rel="stylesheet" href="semantic-ui/build/packaged/css/semantic.css">
+		<script src="semantic-ui/build/packaged/javascript/semantic.js"></script>
+
+		<script src="js/vendor/unisocket.js"></script>
+
+		<script src="ace-builds/src-noconflict/ace.js"></script>
+
+		<script src="angular/angular.js"></script>
+
+		<script src="angular-ui-ace/ui-ace.js"></script>
+
+		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.js"></script>
+
+		<!-- Minified -->
+		<!--
+		<link rel="stylesheet" href="semantic-ui/build/packaged/css/semantic.css">
+		<script src="semantic-ui/build/packaged/javascript/semantic.min.js"></script>
+
+		<script src="js/vendor/unisocket.js"></script>
+
+		<script src="ace-builds/src-min-noconflict/ace.js"></script>
+
 		<script src="angular/angular.min.js"></script>
+
 		<script src="angular-ui-ace/ui-ace.min.js"></script>
+
 		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.min.js"></script>
 		-->
+
+
+		<!--
+		===============================
+		==== Application resources ====
+		-->
+
+		<link rel="stylesheet" href="css/main.css">
+
 		<script>
 			angular.module('jQuery', []).factory('$', function($window) { return $window.$.noConflict(true); });
 			//angular.module('jQuery', []).factory('$', function($window) { return $window.$; });
