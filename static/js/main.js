@@ -146,13 +146,6 @@ LIMIT 2;";
                 });
             }; // end $scope.addQueryParam
 
-            /*
-            $scope.focusLastQueryParam = function()
-            {
-                $("#queryParam_" + $scope.queryParams.length).focus();
-            }; // end $scope.addQueryParam
-            */
-
             $scope.removeQueryParam = function(index)
             {
                 $scope.queryParams.splice(index, 1);
