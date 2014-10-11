@@ -3,7 +3,7 @@
 angular.module('webPGQ.services')
     .service('graph', ['dagreD3', function(dagreD3)
     {
-        var maxTotalCost;
+        var maxTotalCost, lastNodeDefID = 0;
 
         var nodeTypeIcons = [
             'Aggregate',
@@ -37,14 +37,15 @@ angular.module('webPGQ.services')
                 var useDef;
                 if(nodeTypeIcons.indexOf(plan['Node Type']) != -1)
                 {
-                    useDef = plan['Node Type'];
+                    useDef = 'node-def-' + (++lastNodeDefID);
                 } // end if
 
                 var thisNodeID = graph.addNode(null, {
                     label: plan['Node Type'] + (plan.Strategy ? ' ' + plan.Strategy : ''),
                     metadata: metadata,
                     style: 'fill: #bbb',
-                    useDef: useDef
+                    useDef: useDef,
+                    iconURL: 'icons/' + plan['Node Type'] + '.svg'
                 });
 
                 (plan.Plans || [])
