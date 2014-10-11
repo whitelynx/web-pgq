@@ -62,10 +62,9 @@
 
 		<script src="js/vendor/unisocket.js"></script>
 
-		<script src="ace-builds/src-noconflict/ace.js"></script>
-
 		<script src="angular/angular.js"></script>
 
+		<script src="ace-builds/src-noconflict/ace.js"></script>
 		<script src="angular-ui-ace/ui-ace.js"></script>
 
 		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.js"></script>
@@ -77,10 +76,9 @@
 
 		<script src="js/vendor/unisocket.js"></script>
 
-		<script src="ace-builds/src-min-noconflict/ace.js"></script>
-
 		<script src="angular/angular.min.js"></script>
 
+		<script src="ace-builds/src-min-noconflict/ace.js"></script>
 		<script src="angular-ui-ace/ui-ace.min.js"></script>
 
 		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.min.js"></script>
@@ -94,17 +92,21 @@
 
 		<link rel="stylesheet" href="css/main.css">
 
-		<script>
-			angular.module('jQuery', []).factory('$', function($window) { return $window.$.noConflict(true); });
-			//angular.module('jQuery', []).factory('$', function($window) { return $window.$; });
-			// Not currently used:
-			//angular.module('lodash', []).factory('_', function($window) { return $window._.noConflict(); });
-			angular.module('unisocket', []).factory('unisocket', function($window) { var u = $window.unisocket; delete $window.unisocket; return u; });
-			// Only needed by ui-ace:
-			//angular.module('ace', []).factory('ace', function($window) { return $window.ace; });
-			angular.module('d3', []).factory('d3', function($window) { return $window.d3; });
-			angular.module('dagreD3', ['d3']).factory('dagreD3', function($window) { return $window.dagreD3; });
-		</script>
+		<script src="js/modules.js"></script>
+
+		<script src="js/directives/digraph.js"></script>
+		<script src="js/directives/open-file.js"></script>
+		<script src="js/directives/save-file.js"></script>
+
+		<script src="js/services/await.js"></script>
+		<script src="js/services/promise.js"></script>
+		<script src="js/services/queue-digest.js"></script>
+		<script src="js/services/graph.js"></script>
+		<script src="js/services/logger.js"></script>
+		<script src="js/services/socket.js"></script>
+		<script src="js/services/sql.js"></script>
+
+		<script src="js/main.js"></script>
 	</head>
 
 	<body ng-controller="MainController">
@@ -387,19 +389,6 @@
 					</div>
 				</div>
 			</div>
-
-			<script src="js/modules.js"></script>
-			<script src="js/directives/digraph.js"></script>
-			<script src="js/directives/open-file.js"></script>
-			<script src="js/directives/save-file.js"></script>
-			<script src="js/services/await.js"></script>
-			<script src="js/services/promise.js"></script>
-			<script src="js/services/queue-digest.js"></script>
-			<script src="js/services/graph.js"></script>
-			<script src="js/services/logger.js"></script>
-			<script src="js/services/socket.js"></script>
-			<script src="js/services/sql.js"></script>
-			<script src="js/main.js"></script>
 		</div>
 	</body>
 </html>
