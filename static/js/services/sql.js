@@ -35,6 +35,8 @@ angular.module('webPGQ.services')
 
                         sqlService.emit.apply(sqlService, ['notice'].concat(Array.slice.call(arguments)));
                     });
+
+                    sqlService.emit('ready');
                 });
         });
 
