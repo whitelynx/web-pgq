@@ -79,6 +79,20 @@ angular.module('webPGQ.directives')
                 return svgNodes;
             });
 
+            var defaultPostRender = renderer.postRender();
+
+            renderer.postRender(function(g, svg)
+            {
+                defaultPostRender(g, svg);
+
+                var defs = svg.select("defs");
+                defs.select("marker")
+                    .attr("refX", 5)
+                    .attr("markerWidth", 2)
+                    .attr("markerHeight", 2);
+            });
+
+
             var graph, renderedLayout;
             var needsRender = false, needsZoomFit = false;
 
