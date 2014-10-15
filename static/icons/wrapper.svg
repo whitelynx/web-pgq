@@ -1,9 +1,0 @@
-<g id="Nested Loop">
-	<text text-anchor="middle" y="-32">
-		{{ node.metadata['Node Type'] }}
-	</text>
-	<image xlink:href="{{ node.iconURL }}" x="-32" y="-32" width="64px" height="64px"></image>
-	<text text-anchor="middle" baseline-shift="-100%" y="32">
-		{{ node.metadata['Alias'] }}
-	</text>
-</g>
