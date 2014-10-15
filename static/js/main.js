@@ -151,6 +151,22 @@ LIMIT 2;";
                 $scope.queryParams.splice(index, 1);
             }; // end $scope.removeQueryParam
 
+            function getQueryParams()
+            {
+                return $scope.queryParams.map(function(param)
+                {
+                    switch(param.type)
+                    {
+                        case 'integer':
+                            return parseInt(param.value, 10);
+                        case 'text':
+                            return param.value;
+                        default:
+                            throw new Error("Unrecognized param type " + JSON.stringify(param.type));
+                    } // end switch
+                });
+            } // end getQueryParams
+
             // SQL messages //
             $scope.sqlMessages = sql.messages;
 
@@ -282,13 +298,14 @@ LIMIT 2;";
             $scope.runQuery = function()
             {
                 console.log("$scope.runQuery()", new Error("called from:").stack);
-                runSQL({text: $scope.queryText})
+                runSQL({text: $scope.queryText, values: getQueryParams()})
                     .then($scope.showResults);
             }; // end $scope.runQuery
 
             $scope.explainQuery = function(analyze)
             {
-                runSQL({text: sql.formatExplain($scope.explainOptions, analyze) + $scope.queryText})
+                runSQL({text: sql.formatExplain($scope.explainOptions, analyze) + $scope.queryText,
+                        values: getQueryParams()})
                     .then(function(results)
                     {
                         console.log("$scope.explainQuery got results:", results);
