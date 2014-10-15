@@ -2,8 +2,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$http', '$timeout', '$', 'graph', 'logger', 'queueDigest', 'sql',
-        function($scope, $http, $timeout, $, graph, logger, queueDigest, sql)
+        '$scope', '$http', '$timeout', '$location', '$', 'graph', 'logger', 'queueDigest', 'sql',
+        function($scope, $http, $timeout, $location, $, graph, logger, queueDigest, sql)
         {
             $scope.aceLoaded = function(_editor)
             {
@@ -66,6 +66,9 @@ angular.module('webPGQ')
             };
 
             // Queries //
+            $scope.queryParams = [];
+            $scope.currentFileName = "untitled.sql";
+
             //$scope.queryText = "SELECT * FROM clu.release LIMIT 10;";
             /*
             $scope.queryText = "SELECT\n\
@@ -118,15 +121,11 @@ GROUP BY\n\
 LIMIT 2;";
             //*/
 
-            $scope.currentFileName = "untitled.sql";
-
             $scope.fileLoaded = function(file, content)
             {
                 $scope.queryText = content;
                 logger.info("Loaded file " + file.name + ".");
             }; // end $scope.fileLoaded
-
-            $scope.queryParams = [];
 
             $scope.addQueryParam = function()
             {
@@ -351,6 +350,25 @@ LIMIT 2;";
 
             // Logger (also provides banner messages) //
             $scope.logger = logger;
+
+            // URL parameter support //
+            var initialURLParams = $location.search();
+
+            // Query text, parameters, etc.
+            $scope.queryText = initialURLParams.query || $scope.queryText;
+            $scope.queryParams = initialURLParams.queryParams || $scope.queryParams;
+            $scope.currentFileName = initialURLParams.fileName || $scope.currentFileName;
+
+            // Connection name
+            if(initialURLParams.connectionName)
+            {
+                var connName = initialURLParams.connectionName;
+
+                sql.on('ready', function()
+                {
+                    $scope.connect(connName);
+                });
+            } // end if
 
             // Semantic UI setup //
             $(function()
