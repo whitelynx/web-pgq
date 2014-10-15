@@ -58,7 +58,6 @@ angular.module('webPGQ.services')
 
                         // Calculate an edge size of between 1 and 40 pixels, based on percentage of the maximum total cost.
                         var edgeSize = (childInfo['Total Cost'] / maxTotalCost * 39) + 1;
-                        console.log('Edge size for child ' + childInfo.id + ': ' + edgeSize + 'px');
 
                         graph.addEdge(null, childInfo.id, thisNodeID, {
                             label: childInfo['Startup Cost'] + '..' + childInfo['Total Cost'],
