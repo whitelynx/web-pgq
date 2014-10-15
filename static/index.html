@@ -311,7 +311,9 @@
 						</a>
 						<svg digraph graph="graph" class="fill-parent">
 							<defs>
-								<g ng-repeat="node in graphNodes" id="{{ node.useDef }}" ng-include="'/icons/wrapper.svg'"></g>
+								<g ng-repeat="node in graphNodes" id="{{ node.useDef }}">
+									<image xlink:href="{{ node.iconURL }}" x="-32" y="-32" width="64px" height="64px"></image>
+								</g>
 							</defs>
 						</svg>
 					</div>
