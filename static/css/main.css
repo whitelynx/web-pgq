@@ -495,6 +495,11 @@ svg .edgePath {
 	border-radius: 4px 0 0 0;
 }
 
+/* FIX: Set the font family of input elements to use a font that actually supports antialiasing in Linux. */
+.ui.input input {
+	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
+}
+
 /* FIX: Remove right margin and transparency from any icon that is the only child of a label. */
 .ui.label > .icon:first-child:last-child {
 	margin-right: 0;
