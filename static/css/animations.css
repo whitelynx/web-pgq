@@ -1,0 +1,33 @@
+.fade-animation.ng-enter {
+	-webkit-transition: 0.5s linear;
+	transition: 0.5s linear;
+	-webkit-transition-property: opacity, height;
+	transition-property: opacity, height;
+	opacity: 0;
+	height: 0;
+}
+
+.fade-animation.ng-leave {
+	-webkit-transition: 0.5s linear;
+	transition: 0.5s linear;
+	-webkit-transition-property: opacity, height;
+	transition-property: opacity, height;
+	opacity: 1;
+}
+
+.fade-animation.ng-enter.ng-enter-active {
+	opacity: 1;
+}
+
+.fade-animation.ng-leave.ng-leave-active {
+	opacity: 0;
+	height: 0;
+}
+
+
+.slide-animation.ng-move {
+	-webkit-transition: 0.5s linear;
+	transition: 0.5s linear;
+	-webkit-transition-property: x, y;
+	transition-property: x, y;
+}
