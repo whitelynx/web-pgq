@@ -1,9 +1,10 @@
 /* global angular: true */
 
 angular.module('webPGQ.services')
-    .service('socket', ['$window', 'promise', function($window)//, promise)
+    .service('socket', ['$window', 'unisocket', function($window, unisocket)
     {
-        var socket = $window.unisocket.connect($window.location.href);
+        var loc = $window.location;
+        var socket = unisocket.connect(loc.origin + loc.pathname);
 
         socket.on('connected', function()
         {
