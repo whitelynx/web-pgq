@@ -5,17 +5,31 @@ angular.module('webPGQ')
         '$scope', '$http', '$timeout', '$location', '$', 'graph', 'logger', 'queueDigest', 'sql',
         function($scope, $http, $timeout, $location, $, graph, logger, queueDigest, sql)
         {
-            $scope.aceLoaded = function(_editor)
-            {
-                // Options
-                _editor.setReadOnly(false);
+            var mainEditor;
+            $scope.mainEditorConfig = {
+                theme: 'monokai',
+                mode: 'pgsql',
+                useWrapMode: true,
+                onLoad: function(_editor)
+                {
+                    console.log("ACE editor loaded:", _editor);
+                    mainEditor = _editor;
 
-                var session = _editor.getSession();
-                session.setUseWrapMode(true);
-                session.setTabSize(2);
-                session.setUseSoftTabs(true);
+                    // Options
+                    _editor.setReadOnly(false);
+
+                    var session = _editor.getSession();
+                    session.setTabSize(2);
+                    session.setUseSoftTabs(true);
+                },
+                //onChanged: function()//e) { },
+                require: ['ace/ext/language_tools'],
+                advanced: {
+                    enableSnippets: true,
+                    enableBasicAutocompletion: true,
+                    enableLiveAutocompletion: true
+                }
             };
-            //$scope.aceChanged = function()//e) { };
 
             // Connections //
             //$scope.connections = {};
@@ -294,16 +308,30 @@ LIMIT 2;";
                 return queryPromise.then(onEnd, onError);
             } // end runSQL
 
+            function getActiveQueryText()
+            {
+                var selectionRange = mainEditor.getSelectionRange();
+                if(!selectionRange.isEmpty())
+                {
+                    return mainEditor.getSession().getTextRange(selectionRange);
+                }
+                else
+                {
+                    return $scope.queryText;
+                } // end if
+            } // end getActiveQueryText
+
             $scope.runQuery = function()
             {
                 console.log("$scope.runQuery()", new Error("called from:").stack);
-                runSQL({text: $scope.queryText, values: getQueryParams()})
+
+                runSQL({text: getActiveQueryText(), values: getQueryParams()})
                     .then($scope.showResults);
             }; // end $scope.runQuery
 
             $scope.explainQuery = function(analyze)
             {
-                runSQL({text: sql.formatExplain($scope.explainOptions, analyze) + $scope.queryText,
+                runSQL({text: sql.formatExplain($scope.explainOptions, analyze) + getActiveQueryText(),
                         values: getQueryParams()})
                     .then(function(results)
                     {
