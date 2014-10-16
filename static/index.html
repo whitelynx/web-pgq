@@ -357,16 +357,16 @@
 				</div>
 
 				<div id="resultsContainer">
-					<table ng-if="rows.length > 0" filter-query-model="filterQuery" class="compact sortable celled ui table">
+					<table ng-if="rows.length > 0" class="fade-animation compact sortable celled ui table">
 						<thead>
 							<tr>
-								<th ng-repeat="column in resultColumns">{{ column }}</th>
+								<th ng-repeat="field in resultFields track by $index">{{ field.name }}</th>
 							</tr>
 						</thead>
 
 						<tbody>
-							<tr ng-repeat="row in rows">
-								<td ng-repeat="column in resultColumns"><pre><code>{{ row[column] }}</code></pre></td>
+							<tr ng-repeat="row in rows track by $index" class="fade-animation">
+								<td ng-repeat="value in row track by $index"><pre><code>{{ value }}</code></pre></td>
 							</tr>
 						</tbody>
 					</table>
