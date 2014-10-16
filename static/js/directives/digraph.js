@@ -85,8 +85,7 @@ angular.module('webPGQ.directives')
             {
                 defaultPostRender(g, svg);
 
-                var defs = svg.select("defs");
-                defs.select("marker")
+                svg.select("g.edgePaths defs marker")
                     .attr("refX", 5)
                     .attr("markerWidth", 2)
                     .attr("markerHeight", 2);
@@ -178,7 +177,10 @@ angular.module('webPGQ.directives')
                         }
                         else
                         {
-                            console.log("No graph; not rendering.");
+                            console.log("No graph; clearing.");
+
+                            gElem.selectAll("g.edgePaths, g.edgeLabels, g.nodes")
+                                .text("");
                         } // end if
                     });
                 }
