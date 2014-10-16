@@ -355,9 +355,43 @@ LIMIT 2;";
             var initialURLParams = $location.search();
 
             // Query text, parameters, etc.
-            $scope.queryText = initialURLParams.query || $scope.queryText;
-            $scope.queryParams = initialURLParams.queryParams || $scope.queryParams;
-            $scope.currentFileName = initialURLParams.fileName || $scope.currentFileName;
+            if(initialURLParams.query) { $scope.queryText = initialURLParams.query; }
+            if(initialURLParams.queryParams)
+            {
+                try
+                {
+                    $scope.queryParams = JSON.parse(initialURLParams.queryParams);
+                }
+                catch(exc)
+                {
+                    logger.error("Couldn't load query parameters from URL!", exc.stack || exc.toString());
+                    $scope.queryParams = [];
+                } // end try
+            }
+            if(initialURLParams.fileName) { $scope.currentFileName = initialURLParams.fileName; }
+
+            function getPermalink()
+            {
+                $location.search({
+                    query: $scope.queryText,
+                    queryParams: JSON.stringify($scope.queryParams),
+                    fileName: $scope.currentFileName,
+                    connectionName: $scope.currentConnection
+                });
+                return $location.absUrl();
+            } // end getPermalink
+
+            $('#permalink')
+                .popup({
+                    on: 'click',
+                    position: 'bottom left',
+                    transition: 'slide down',
+                    html: '<input onclick="this.setSelectionRange(0, this.value.length)">',
+                    onCreate: function()
+                    {
+                        $('input', this).val(getPermalink());
+                    }
+                });
 
             // Connection name
             if(initialURLParams.connectionName)

@@ -126,6 +126,10 @@
 				ng-model="queryText"></div>
 
 			<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
+				<a id="permalink" class="black corner ui label">
+					<i class="url icon"></i>
+				</a>
+
 				<div class="compact tiny compact ui buttons">
 					<save-file ng-model="queryText" file-name="currentFileName"></save-file>
 
@@ -309,6 +313,7 @@
 						<!--a class="blue left corner ui label" data-content="Re-render" ng-click="reRender()">
 							<i class="refresh icon"></i>
 						</a-->
+
 						<a class="green corner ui label" data-content="Zoom to fit" ng-click="zoomFit()">
 							<i class="fullscreen icon"></i>
 						</a>
