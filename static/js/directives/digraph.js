@@ -85,7 +85,7 @@ angular.module('webPGQ.directives')
             {
                 defaultPostRender(g, svg);
 
-                svg.select("g.edgePaths defs marker")
+                svg.selectAll("defs marker")
                     .attr("refX", 5)
                     .attr("markerWidth", 2)
                     .attr("markerHeight", 2);
