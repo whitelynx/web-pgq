@@ -6,8 +6,6 @@ angular.module('webPGQ.directives')
         function link(scope, element)//, attrs)
         {
             var gElem = d3.select(element.get(0));
-            //var gElem = d3.select(element.get(0)).append("g").attr('transform', 'translate(20,20)');
-            //var gElem = d3.select(element.get(0)).append("g").attr('width', '100%').attr('height', '100%');
 
             var layout = dagreD3.layout()
                 .nodeSep(40)
@@ -28,24 +26,24 @@ angular.module('webPGQ.directives')
                 });
 
             // Override drawNodes to set up the hover.
-            var oldDrawNodes = renderer.drawNodes();
+            var defaultDrawNodes = renderer.drawNodes();
 
+            var bboxes = {};
             renderer.drawNodes(function(g, svg)
             {
-                var svgNodes = oldDrawNodes(g, svg);
+                var nodeElems = defaultDrawNodes(g, svg);
 
-                svgNodes
-                    .each(function(d)
+                nodeElems
+                    .attr("class", function() { return d3.select(this).attr("class") + " clickable"; })
+                    .each(function(u)
                     {
-                        console.log("Visiting SVG child node:", this);
-                        console.log("g.node(d):", g.node(d));
-                        var $this = $(this);
-                        var node = g.node(d);
+                        bboxes[u] = this.getBBox();
+
+                        var node = g.node(u);
                         var metadata = node.metadata;
 
                         var popupSettings = {
                             on: 'click',
-                            //delay: 500,
                             title: node.label,
                             //preserve: true,
                             position: 'top left',
@@ -72,11 +70,94 @@ angular.module('webPGQ.directives')
                             },
                         };
 
-                        console.log("popupSettings:", popupSettings);
-                        $this.popup(popupSettings);
+                        $(this).popup(popupSettings);
                     });
 
-                return svgNodes;
+                addLabels(svg, g, 'Alias', function(u) { d3.select(this).attr("dy", bboxes[u].height); });
+
+                addLabels(svg, g, 'Subplan Name', function(u) { d3.select(this).attr("dy", -bboxes[u].height); });
+
+                function addLabels(root, graph, key, pos)
+                {
+                    var classname = "label-" + key.replace(/ /g, '-');
+
+                    function getValue(u)
+                    {
+                        return graph.node(u).metadata[key];
+                    } // end getValue
+
+                    var nodes = graph.nodes().filter(function(u)
+                    {
+                        return !(graph.hasOwnProperty("children") && graph.children(u).length && Boolean(getValue(u)));
+                    });
+
+                    var labelElems = root
+                        .selectAll("g." + classname)
+                        .classed("enter", false)
+                        .data(
+                            nodes.filter(function(u) { return Boolean(getValue(u)); }),
+                            function(u) { return u; }
+                        );
+
+                    console.log("labelElems:", labelElems);
+
+                    var marginX = 2, marginY = 2;
+
+                    labelElems
+                        .enter()
+                            .append("g")
+                                .style("opacity", 0)
+                                .attr("class", classname + " enter")
+                                .attr("transform", transform);
+
+                    labelElems.each(function(u)
+                    {
+                        var label = d3.select(this);
+                        var background = label.append("rect");
+
+                        var textGroup = label.append("g");
+                        textGroup.append("text")
+                            .append("tspan")
+                                .attr("dy", "1em")
+                                .attr("x", "1")
+                                .text(getValue(u));
+
+                        var labelBBox = textGroup.node().getBBox();
+                        textGroup.attr("transform",
+                            "translate(" + (-labelBBox.width / 2) + "," + (-labelBBox.height / 2) + ")");
+
+                        var bbox = label.node().getBBox();
+
+                        background
+                            //.attr("rx", node.rx ? node.rx : 5)
+                            //.attr("ry", node.ry ? node.ry : 5)
+                            .attr("x", - (bbox.width / 2 + marginX))
+                            .attr("y", - (bbox.height / 2 + marginY))
+                            .attr("width", bbox.width + 2 * marginX)
+                            .attr("height", bbox.height + 2 * marginY)
+                            .attr("opacity", 0.5)
+                            .attr("fill", "#fff");
+
+                        label.each(pos);
+                    });
+
+                    function transform(u)
+                    {
+                        var value = graph.node(u);
+                        return "translate(" + value.x + "," + value.y + ")";
+                    } // end transform
+
+                    //transition(labelElems.filter(".enter"))
+                    labelElems.filter(".enter")
+                        .style("opacity", 1);
+
+                    //transition(labelElems.exit())
+                    labelElems.exit()
+                        .style("opacity", 0)
+                        .remove();
+                } // end addLabels
+
+                return nodeElems;
             });
 
             var defaultPostRender = renderer.postRender();
@@ -125,12 +206,8 @@ angular.module('webPGQ.directives')
                     var width = element.innerWidth();
                     var height = element.innerHeight();
 
-                    console.log("Graph size, viewport size:", [graphWidth, graphHeight], [width, height]);
-
                     var zoomScale = Math.min(width / (graphWidth + 80), height / (graphHeight + 40));
                     var translate = [(width - (graphWidth * zoomScale)) / 2, (height - (graphHeight * zoomScale)) / 2];
-
-                    console.log("Zooming to fit graph; translate, zoomScale:", translate, zoomScale);
 
                     zoom.translate(translate);
                     zoom.scale(zoomScale);
