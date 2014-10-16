@@ -452,9 +452,45 @@ svg .edgePath {
 	left: 1em; right: 1em;
 }
 
+#messagesContainer {
+	box-sizing: border-box;
+	clear: both;
+	overflow: auto;
+	position: absolute;
+	top: 0;
+	left: 0; right: 0;
+	max-height: 100%;
+	padding: 0.25em 1em;
+	z-index: 2000;
+}
+
+#messagesContainer > .content {
+	background-color: rgba(0, 0, 0, 0.5);
+	padding: 0.5em;
+}
+
+#messagesContainer > .content:not(:first-child) { padding-top: 0.25em; }
+#messagesContainer > .content:not(:last-child) { padding-bottom: 0.25em; }
+
+#messagesContainer > .content:first-child {
+	border-top-left-radius: 0.7em;
+	border-top-right-radius: 0.7em;
+}
+
+#messagesContainer > .content:last-child {
+	border-bottom-left-radius: 0.7em;
+	border-bottom-right-radius: 0.7em;
+}
+
 #settings-button {
 	border-top-right-radius: 0.25em;
 	border-bottom-right-radius: 0.25em;
+}
+
+#noRowsLabel {
+	position: absolute;
+	top: 1rem;
+	left: -1rem;
 }
 
 .squarish.ui.label {

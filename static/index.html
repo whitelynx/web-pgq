@@ -310,10 +310,6 @@
 
 				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer">
 					<div class="content">
-						<!--a class="blue left corner ui label" data-content="Re-render" ng-click="reRender()">
-							<i class="refresh icon"></i>
-						</a-->
-
 						<a class="green corner ui label" data-content="Zoom to fit" ng-click="zoomFit()">
 							<i class="fullscreen icon"></i>
 						</a>
@@ -328,36 +324,19 @@
 				</div>
 
 				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Messages')}" id="messages-dimmer">
-					<div class="left aligned content ui segment">
+					<div class="left aligned content attached ui segment">
 						<pre class="vertical ui segment" ng-repeat="msg in sqlMessages" ng-class="msg.segmentClass"
 							><code>{{ msg.text }}</code></pre>
 					</div>
 				</div>
 
-				<div class="small fade-animation slide-animation floating icon ui message"
-						ng-repeat="(idx, banner) in logger.bannerMessages" ng-class="banner.severity">
-					<i class="icon" ng-class="banner.icon"></i>
-					<i class="close icon" ng-click="logger.removeBannerAt(idx)"></i>
-					<div class="header">
-						{{ banner.header }}
-					</div>
-					<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
-					<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
-						<li ng-repeat="(key, val) in banner.detail">
-							<strong>{{ key }}:</strong>
-							<pre ng-if="!val.indexOf"><code>{{ val|json }}</code></pre>
-							<pre ng-if="val.indexOf && val.indexOf('\n') != -1"><code>{{ val }}</code></pre>
-							<code ng-if="val.indexOf && val.indexOf('\n') == -1">{{ val }}</code>
-						</li>
-					</ul>
-				</div>
-
-				<div ng-if="!queryRunning && rows.length == 0 && resultsTab == 'Results'" class="red ribbon ui label">
+				<div id="noRowsLabel" ng-if="!queryRunning && rows.length == 0 && resultsTab == 'Results'"
+						class="fast fade animation red ribbon ui label">
 					No rows returned.
 				</div>
 
 				<div id="resultsContainer">
-					<table ng-if="rows.length > 0" class="fade-animation compact sortable celled ui table">
+					<table ng-if="rows.length > 0" class="fade animation compact sortable celled ui table">
 						<thead>
 							<tr>
 								<th ng-repeat="field in resultFields track by $index">{{ field.name }}</th>
@@ -365,11 +344,32 @@
 						</thead>
 
 						<tbody>
-							<tr ng-repeat="row in rows track by $index" class="fade-animation">
+							<tr ng-repeat="row in rows track by $index" class="fade animation">
 								<td ng-repeat="value in row track by $index"><pre><code>{{ value }}</code></pre></td>
 							</tr>
 						</tbody>
 					</table>
+				</div>
+
+				<div id="messagesContainer">
+					<div class="content fade slide animation" ng-repeat="(idx, banner) in logger.bannerMessages">
+						<div class="small floating icon ui message" ng-class="banner.severity">
+							<i class="icon" ng-class="banner.icon"></i>
+							<i class="close icon" ng-click="logger.removeBannerAt(idx)"></i>
+							<div class="header">
+								{{ banner.header }}
+							</div>
+							<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
+							<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
+								<li ng-repeat="(key, val) in banner.detail">
+									<strong>{{ key }}:</strong>
+									<pre ng-if="!val.indexOf"><code>{{ val|json }}</code></pre>
+									<pre ng-if="val.indexOf && val.indexOf('\n') != -1"><code>{{ val }}</code></pre>
+									<code ng-if="val.indexOf && val.indexOf('\n') == -1">{{ val }}</code>
+								</li>
+							</ul>
+						</div>
+					</div>
 				</div>
 
 				<div class="bottom right attached ui labels">
