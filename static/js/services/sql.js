@@ -96,12 +96,16 @@ angular.module('webPGQ.services')
 
                 return promise(function(resolve)
                 {
+                    var onFields = this.emit.bind(this, 'fields');
                     var onRow = this.emit.bind(this, 'row');
+
+                    channel.on('fields', onFields);
                     channel.on('row', onRow);
 
                     resolve(channel.request('query', queryDef)
                         .finally(function()
                         {
+                            channel.removeListener('fields', onFields);
                             channel.removeListener('row', onRow);
                         })
                         .then(function(response)
