@@ -215,12 +215,11 @@ LIMIT 2;";
                         noticeMessages: pendingNoticeMessages,
                     };
                     $scope.rows = rows.slice();
-                    $scope.resultColumns = orderedResultColumns.slice();
+                    $scope.resultFields = resultFields;
                 } // end updatePending
 
                 var rows = [];
-                var resultColumns = {};
-                var orderedResultColumns = [];
+                var resultFields;
 
                 function onError(error)
                 {
@@ -239,7 +238,7 @@ LIMIT 2;";
                     {
                         $scope.results = {
                             rows: rows,
-                            columns: orderedResultColumns,
+                            fields: resultFields,
                         };
 
                         $scope.queryRunning = false;
@@ -255,20 +254,18 @@ LIMIT 2;";
                     queueUpdate();
                 } // end onNotice
 
+                function onFields(fields)
+                {
+                    resultFields = fields;
+
+                    queueUpdate();
+                } // end onFields
+
                 function onRow(row)
                 {
                     console.log("runSQL call #" + runSQLCall + ": Got row:", row);
 
                     rows.push(row);
-
-                    for(var key in row)
-                    {
-                        if(!resultColumns[key])
-                        {
-                            orderedResultColumns.push(key);
-                            resultColumns[key] = true;
-                        } // end if
-                    } // end for
 
                     queueUpdate();
                 } // end onRow
@@ -279,10 +276,10 @@ LIMIT 2;";
                     console.log("runSQL call #" + runSQLCall + ": Done:", args);
 
                     sql.removeListener('notice', onNotice);
+                    queryPromise.removeListener('fields', onFields);
                     queryPromise.removeListener('row', onRow);
 
                     response.rows = rows;
-                    response.columns = orderedResultColumns;
                     response.noticeMessages = pendingNoticeMessages;
 
                     console.log("runSQL call #" + runSQLCall + ": Complete response:", response);
@@ -290,6 +287,7 @@ LIMIT 2;";
                     queueDigest(function()
                     {
                         $scope.results = response;
+                        $scope.resultFields = response.fields;
 
                         delete $scope.pending;
 
@@ -303,6 +301,7 @@ LIMIT 2;";
 
                 var queryPromise = sql.run(queryDef);
 
+                queryPromise.on('fields', onFields);
                 queryPromise.on('row', onRow);
 
                 return queryPromise.then(onEnd, onError);
@@ -337,7 +336,7 @@ LIMIT 2;";
                     {
                         console.log("$scope.explainQuery got results:", results);
 
-                        $scope.graph = results ? graph.fromPlan(results.rows[0]["QUERY PLAN"][0].Plan) : null;
+                        $scope.graph = results ? graph.fromPlan(results.rows[0][0][0].Plan) : null;
 
                         $scope.graphNodes = [];
                         if($scope.graph)
