@@ -226,7 +226,7 @@ body {
 	white-space: nowrap;
 }
 
-.query-plan.ui.popup table td > pre:first-child:last-child {
+table td > pre:only-child {
 	margin: 0;
 }
 
