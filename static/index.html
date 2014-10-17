@@ -339,7 +339,8 @@
 					<table ng-if="rows.length > 0" class="fade animation compact sortable celled ui table">
 						<thead>
 							<tr>
-								<th ng-repeat="field in resultFields track by $index">{{ field.name }}</th>
+								<th ng-repeat="field in resultFields track by $index"
+									title="Data Type: {{ field.dataType }}">{{ field.name }}</th>
 							</tr>
 						</thead>
 
