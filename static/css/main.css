@@ -535,6 +535,11 @@ svg .edgePath {
 	border-radius: 4px 0 0 0;
 }
 
+/* FIX: Correct border radii on tables with only one column. */
+.ui.table thead th:only-child {
+	border-radius: 5px 5px 0px 0px;
+}
+
 /* FIX: Set the font family of input elements to use a font that actually supports antialiasing in Linux. */
 .ui.input input {
 	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
