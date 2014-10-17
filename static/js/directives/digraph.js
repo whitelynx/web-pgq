@@ -8,8 +8,8 @@ angular.module('webPGQ.directives')
             var gElem = d3.select(element.get(0));
 
             var layout = dagreD3.layout()
-                .nodeSep(40)
-                .rankSep(40)
+                .nodeSep(50)
+                .rankSep(50)
                 .rankDir("RL");
 
             var zoom = d3.behavior.zoom();
@@ -25,12 +25,15 @@ angular.module('webPGQ.directives')
                     });
                 });
 
-            // Override drawNodes to set up the hover.
-            var defaultDrawNodes = renderer.drawNodes();
-
             var bboxes = {};
+
+            // Override drawNodes to set up popups and node labels.
+            var defaultDrawNodes = renderer.drawNodes();
             renderer.drawNodes(function(g, svg)
             {
+                renderer._labelElems = renderer._labelElems || {};
+                renderer._labelTransforms = renderer._labelTransforms || {};
+
                 var nodeElems = defaultDrawNodes(g, svg);
 
                 nodeElems
@@ -51,7 +54,7 @@ angular.module('webPGQ.directives')
                                 Object.keys(metadata)
                                     .filter(function(key)
                                     {
-                                        return key != 'Output';
+                                        return key != 'Output' && key != 'References';
                                     })
                                     .map(function(key)
                                     {
@@ -73,13 +76,50 @@ angular.module('webPGQ.directives')
                         $(this).popup(popupSettings);
                     });
 
-                addLabels(svg, g, 'Alias', function(u) { d3.select(this).attr("dy", bboxes[u].height); });
+                addLabels(svg, g, 'Alias', {
+                    transform: function(g, u)
+                    {
+                        var value = g.node(u);
+                        var bbox = this.getBBox();
+                        return 'translate(' + value.x + ',' + (value.y + (bboxes[u].height / 2) + (bbox.height / 2) - 2) + ')';
+                    },
+                    text: function(alias) { return JSON.stringify(alias); }
+                });
 
-                addLabels(svg, g, 'Subplan Name', function(u) { d3.select(this).attr("dy", -bboxes[u].height); });
+                addLabels(svg, g, 'Subplan Name', {
+                    transform: function(g, u)
+                    {
+                        var value = g.node(u);
+                        var bbox = this.getBBox();
+                        return 'translate(' + value.x + ',' + (value.y - (bboxes[u].height / 2) - (bbox.height / 2) + 2) + ')';
+                    }
+                });
 
-                function addLabels(root, graph, key, pos)
+                addLabels(svg, g, 'References', {
+                    transform: function(g, u)
+                    {
+                        var value = g.node(u);
+                        var bbox = this.getBBox();
+                        return 'translate(' + (value.x + (bboxes[u].width / 2) + (bbox.width / 2) - 2) + ',' + value.y + ')';
+                    },
+                    link: function(ref) { return ref.id; },
+                    text: function(ref) { return '\u2192' + ref.name; }
+                });
+
+                function addLabels(root, graph, key, options)
                 {
-                    var classname = "label-" + key.replace(/ /g, '-');
+                    options = options || {};
+                    renderer._labelTransforms[key] = options.transform;
+                    var classname = 'label-' + key.replace(/ /g, '-');
+                    var groupClassname = 'labels-' + key.replace(/ /g, '-');
+
+                    svg.selectAll('g.' + groupClassname)
+                        .data([groupClassname])
+                        .enter()
+                            .append('g')
+                            .attr('class', function(d) { return d; });
+
+                    var labelGroup = svg.select('g.' + groupClassname);
 
                     function getValue(u)
                     {
@@ -88,80 +128,109 @@ angular.module('webPGQ.directives')
 
                     var nodes = graph.nodes().filter(function(u)
                     {
-                        return !(graph.hasOwnProperty("children") && graph.children(u).length && Boolean(getValue(u)));
+                        return !(graph.hasOwnProperty('children') && graph.children(u).length) && Boolean(getValue(u));
                     });
 
-                    var labelElems = root
-                        .selectAll("g." + classname)
-                        .classed("enter", false)
-                        .data(
-                            nodes.filter(function(u) { return Boolean(getValue(u)); }),
-                            function(u) { return u; }
-                        );
+                    var labelElems = labelGroup
+                        .selectAll('g.' + classname)
+                        .classed('enter', false)
+                        .data(nodes, function(u) { return u; });
 
-                    console.log("labelElems:", labelElems);
+                    renderer._labelElems[key] = labelElems;
 
                     var marginX = 2, marginY = 2;
 
-                    labelElems
+                    var entering = labelElems
                         .enter()
-                            .append("g")
-                                .style("opacity", 0)
-                                .attr("class", classname + " enter")
-                                .attr("transform", transform);
+                            .append('g')
+                                .style('opacity', 0)
+                                .attr('id', function(u) { return classname + u; })
+                                .attr('class', classname + ' enter');
 
-                    labelElems.each(function(u)
+                    entering.each(function(u)
                     {
                         var label = d3.select(this);
-                        var background = label.append("rect");
+                        var background = label.append('rect');
 
-                        var textGroup = label.append("g");
-                        textGroup.append("text")
-                            .append("tspan")
-                                .attr("dy", "1em")
-                                .attr("x", "1")
-                                .text(getValue(u));
+                        var textGroup = label.append('g');
+                        var text = textGroup.append('text')
+                            .attr('font-size', '14px');
 
-                        var labelBBox = textGroup.node().getBBox();
-                        textGroup.attr("transform",
-                            "translate(" + (-labelBBox.width / 2) + "," + (-labelBBox.height / 2) + ")");
+                        var lines = getValue(u);
+                        if(typeof lines == 'string')
+                        {
+                            lines = [lines];
+                        } // end if
+
+                        lines.forEach(function(line)
+                        {
+                            var appendTspanTo = text;
+                            var linkTo;
+                            if(options.link)
+                            {
+                                linkTo = options.link(line);
+                            } // end if
+
+                            if(options.text)
+                            {
+                                line = options.text(line);
+                            } // end if
+
+                            appendTspanTo.append('tspan')
+                                .attr('dy', '1em')
+                                .attr('x', '0')
+                                .text(line);
+                        }); // end lines.forEach iterator
 
                         var bbox = label.node().getBBox();
 
                         background
-                            //.attr("rx", node.rx ? node.rx : 5)
-                            //.attr("ry", node.ry ? node.ry : 5)
-                            .attr("x", - (bbox.width / 2 + marginX))
-                            .attr("y", - (bbox.height / 2 + marginY))
-                            .attr("width", bbox.width + 2 * marginX)
-                            .attr("height", bbox.height + 2 * marginY)
-                            .attr("opacity", 0.5)
-                            .attr("fill", "#fff");
+                            .attr('rx', 5)
+                            .attr('ry', 5)
+                            .attr('x', - (bbox.width / 2 + marginX))
+                            .attr('y', - (bbox.height / 2 + marginY))
+                            .attr('width', bbox.width + 2 * marginX)
+                            .attr('height', bbox.height + 2 * marginY)
+                            .attr('opacity', 0.5)
+                            .attr('fill', '#eee');
 
-                        label.each(pos);
+                        var labelBBox = textGroup.node().getBBox();
+                        textGroup.attr('transform',
+                            'translate(' + (-labelBBox.width / 2) + ',' + (-labelBBox.height / 2) + ')');
                     });
 
-                    function transform(u)
-                    {
-                        var value = graph.node(u);
-                        return "translate(" + value.x + "," + value.y + ")";
-                    } // end transform
-
-                    //transition(labelElems.filter(".enter"))
-                    labelElems.filter(".enter")
-                        .style("opacity", 1);
-
-                    //transition(labelElems.exit())
                     labelElems.exit()
-                        .style("opacity", 0)
+                        .style('opacity', 0)
                         .remove();
                 } // end addLabels
 
                 return nodeElems;
             });
 
-            var defaultPostRender = renderer.postRender();
+            var defaultPositionNodes = renderer.positionNodes();
+            renderer.positionNodes(function(graph, svgNodes)
+            {
+                defaultPositionNodes(graph, svgNodes);
 
+                function transform(func)
+                {
+                    return function(u)
+                    {
+                        return func.call(this, graph, u);
+                    };
+                } // end transform
+
+                for(var key in renderer._labelElems)
+                {
+                    var labelElems = renderer._labelElems[key];
+
+                    labelElems
+                        .style('opacity', 1)
+                        .attr('transform', transform(renderer._labelTransforms[key]));
+                } // end for
+            });
+
+            var defaultPostRender = renderer.postRender();
             renderer.postRender(function(g, svg)
             {
                 defaultPostRender(g, svg);
