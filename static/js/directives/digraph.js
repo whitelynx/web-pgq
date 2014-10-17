@@ -34,7 +34,7 @@ angular.module('webPGQ.directives')
                 var nodeElems = defaultDrawNodes(g, svg);
 
                 nodeElems
-                    .attr("class", function() { return d3.select(this).attr("class") + " clickable"; })
+                    .classed('clickable', true)
                     .each(function(u)
                     {
                         bboxes[u] = this.getBBox();
