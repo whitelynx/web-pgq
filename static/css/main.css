@@ -493,6 +493,10 @@ svg .edgePath {
 	left: -1rem;
 }
 
+.clickable {
+	cursor: pointer;
+}
+
 .squarish.ui.label {
 	padding-left: 0.5em;
 	padding-right: 0.5em;
