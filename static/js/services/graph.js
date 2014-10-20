@@ -46,10 +46,18 @@ angular.module('webPGQ.services')
                         var match;
                         if(key == 'Subplan Name')
                         {
-                            while((match = nodeRefRE.exec(val)) !== null)
+                            if((match = nodeRefRE.exec(val)) !== null)
                             {
                                 thisNodeRef = match[0];
-                            } // end while
+                            }
+                            else if(val.slice(0, 4) == 'CTE ')
+                            {
+                                thisNodeRef = val.slice(4);
+                            } // end if
+                        }
+                        else if(key == 'CTE Name')
+                        {
+                            references.push({name: val, field: key});
                         }
                         else
                         {
