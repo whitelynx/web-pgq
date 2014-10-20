@@ -2,8 +2,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$http', '$timeout', '$location', '$', 'graph', 'logger', 'queueDigest', 'sql',
-        function($scope, $http, $timeout, $location, $, graph, logger, queueDigest, sql)
+        '$scope', '$http', '$timeout', '$location', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
+        function($scope, $http, $timeout, $location, $, graph, keybinding, logger, queueDigest, sql)
         {
             var mainEditor;
             $scope.mainEditorConfig = {
@@ -431,9 +431,33 @@ LIMIT 2;";
                 });
             } // end if
 
-            // Semantic UI setup //
             $(function()
             {
+                // Key bindings //
+                function execRun(event)
+                {
+                    if(!event.shiftKey && !event.metaKey)
+                    {
+                        $scope.runQuery();
+                    } // end if
+                } // end execRun
+
+                function execAnalyze(event)
+                {
+                    if(!event.ctrlKey && !event.metaKey)
+                    {
+                        $scope.explainQuery(event.shiftKey);
+                    } // end if
+                } // end execAnalyze
+
+                keybinding.bindKey('F5', {preventDefault: true}, execRun);
+                keybinding.bindKey('F7', {preventDefault: true}, execAnalyze);
+                keybinding.bindKey('Shift+F7', {preventDefault: true}, execAnalyze);
+
+                // Alternate for "Run" (useful for when the inspector is shown)
+                keybinding.bindKey('Alt+R', {preventDefault: true}, execRun);
+
+                // Semantic UI setup //
                 $('#settings-button')
                     .popup({
                         inline: true,
