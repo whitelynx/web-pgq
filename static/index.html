@@ -263,19 +263,19 @@
 
 				<div class="horizontally fitted borderless item right compact ui buttons">
 					<a class="orange labeled icon ui button" ng-click="explainQuery().then(showPlan)"
-							ng-class="{disabled: !connected || queryRunning}">
+							ng-class="{disabled: !connected || queryRunning}" data-html="Shortcut: <b>F7</b>">
 						<i class="question icon"></i>
 						Explain
 					</a>
 					<a class="orange ui button" ng-click="explainQuery(true).then(showPlan)"
-							ng-class="{disabled: !connected || queryRunning}">
+							ng-class="{disabled: !connected || queryRunning}" data-html="Shortcut: <b>Shift+F7</b>">
 						Analyze
 					</a>
 				</div>
 
 				<div class="borderless item right compact ui buttons">
 					<a class="teal labeled icon ui button" ng-click="runQuery()"
-							ng-class="{disabled: !connected || queryRunning}">
+							ng-class="{disabled: !connected || queryRunning}" data-html="Shortcut: <b>F5</b>">
 						<i class="play icon"></i>
 						Run
 					</a>
