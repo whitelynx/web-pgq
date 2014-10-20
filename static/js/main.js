@@ -242,6 +242,14 @@ LIMIT 2;";
                         };
 
                         $scope.queryRunning = false;
+
+                        $scope.resultsTab = 'Results';
+
+                        if(error.position)
+                        {
+                            var pos = mainEditor.getSession().getDocument().indexToPosition(error.position);
+                            mainEditor.moveCursorToPosition(pos);
+                        } // end if
                     });
 
                     return false;
