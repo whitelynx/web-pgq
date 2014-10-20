@@ -213,8 +213,11 @@ body {
 }
 
 .query-plan.ui.popup {
-	max-width: 100%;
+	max-width: 90%;
+	max-height: 65%;
 	padding: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 .query-plan.ui.popup > .header, .query-plan.ui.popup > .content {
@@ -229,6 +232,10 @@ body {
 
 .query-plan.ui.popup table th {
 	white-space: nowrap;
+}
+
+.query-plan.ui.popup table tr td:last-child, .query-plan.ui.popup table tr th:last-child {
+	padding-right: 16px;
 }
 
 .hoverable {
