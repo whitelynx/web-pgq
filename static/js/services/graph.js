@@ -8,6 +8,7 @@ angular.module('webPGQ.services')
         var nodeTypeIcons = [
             'Aggregate',
             'Append',
+            'Function Scan',
             'Hash Anti Join',
             'Hash Join',
             'Hash Setop Except',
@@ -19,6 +20,7 @@ angular.module('webPGQ.services')
             'Limit',
             'Materialize',
             'Nested Loop',
+            'Result',
             'Seq Scan',
             'Sort',
             'Window Agg'
