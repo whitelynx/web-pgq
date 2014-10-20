@@ -54,17 +54,36 @@ angular.module('webPGQ.directives')
                                 Object.keys(metadata)
                                     .filter(function(key)
                                     {
-                                        return key != 'Output' && key != 'References';
+                                        return key != 'References';
                                     })
                                     .map(function(key)
                                     {
                                         var val = metadata[key];
-                                        if(typeof val == 'string')
+
+                                        if(Array.isArray(val))
                                         {
-                                            val = val.replace(/,/g, ',\n');
+                                            val = '[ ' + val.join(',\n  ') + ' ]';
+                                        }
+                                        else if(typeof val == 'object')
+                                        {
+                                            val = JSON.stringify(val, null, '  ');
+                                        }
+                                        else if(typeof val == 'string')
+                                        {
+                                            // Split on strings first, and don't replace commas inside strings.
+                                            val = val.split(/('[^']*')/g)
+                                                .map(function(part, idx)
+                                                {
+                                                    if(idx % 2 === 0)
+                                                    {
+                                                        return part.replace(/,/g, ',\n ');
+                                                    } // end if
+                                                    return part;
+                                                })
+                                                .join('');
                                         } // end if
 
-                                        return '<tr><th>' + key + '</th><td><code>' + val + '</code></td></tr>';
+                                        return '<tr><th>' + key + '</th><td><pre><code>' + val + '</code></pre></td></tr>';
                                     })
                                     .join('') +
                                 '</table>',
