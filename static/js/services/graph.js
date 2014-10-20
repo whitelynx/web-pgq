@@ -26,7 +26,35 @@ angular.module('webPGQ.services')
             'Window Agg'
         ];
 
-        var nodeRefRE = /\$\d+\b/g;
+        var initPlanRefRE = /\$\d+\b/g;
+        var nodeRefRE = /\$\d+\b|\((CTE [^)]+|SubPlan \d+)\)/g;
+
+        function findReferences(key, val)
+        {
+            var match;
+            if(key == 'Subplan Name')
+            {
+                if((match = initPlanRefRE.exec(val)) !== null)
+                {
+                    this.refName = match[0];
+                }
+                else
+                {
+                    this.refName = val;
+                } // end if
+            }
+            else if(key == 'CTE Name')
+            {
+                this.references.push({name: 'CTE ' + val, field: key});
+            }
+            else
+            {
+                while((match = nodeRefRE.exec(val)) !== null)
+                {
+                    this.references.push({name: match[1] || match[0], field: key});
+                } // end while
+            } // end if
+        } // end findReferences
 
         var nodeIDsByRef = {};
 
@@ -36,8 +64,7 @@ angular.module('webPGQ.services')
                 maxTotalCost = Math.max(maxTotalCost, plan['Total Cost']);
 
                 var metadata = {};
-                var thisNodeRef;
-                var references = [];
+                var thisNode = {references: []};
                 for(var key in plan)
                 {
                     if(key != 'Plans')
@@ -45,33 +72,18 @@ angular.module('webPGQ.services')
                         var val = plan[key];
                         metadata[key] = val;
 
-                        var match;
-                        if(key == 'Subplan Name')
+                        if(Array.isArray(val))
                         {
-                            if((match = nodeRefRE.exec(val)) !== null)
-                            {
-                                thisNodeRef = match[0];
-                            }
-                            else if(val.slice(0, 4) == 'CTE ')
-                            {
-                                thisNodeRef = val.slice(4);
-                            } // end if
-                        }
-                        else if(key == 'CTE Name')
-                        {
-                            references.push({name: val, field: key});
+                            val.forEach(findReferences.bind(thisNode, key));
                         }
                         else
                         {
-                            while((match = nodeRefRE.exec(val)) !== null)
-                            {
-                                references.push({name: match[0], field: key});
-                            } // end while
+                            findReferences.call(thisNode, key, val);
                         } // end if
                     } // end if
                 } // end for
 
-                if(references.length > 0)
+                if(thisNode.references.length > 0)
                 {
                     // Defer calculating `References` until later, after we've fully populated nodeIDsByRef.
                     var fullRefs;
@@ -81,7 +93,7 @@ angular.module('webPGQ.services')
                         {
                             if(!fullRefs)
                             {
-                                fullRefs = references.map(function(ref)
+                                fullRefs = thisNode.references.map(function(ref)
                                 {
                                     ref.id = nodeIDsByRef[ref.name];
                                     return ref;
@@ -106,9 +118,9 @@ angular.module('webPGQ.services')
                     iconURL: 'icons/' + plan['Node Type'] + '.svg'
                 });
 
-                if(thisNodeRef)
+                if(thisNode.refName)
                 {
-                    nodeIDsByRef[thisNodeRef] = thisNodeID;
+                    nodeIDsByRef[thisNode.refName] = thisNodeID;
                 } // end if
 
                 (plan.Plans || [])
