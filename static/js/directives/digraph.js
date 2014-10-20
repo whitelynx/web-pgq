@@ -145,6 +145,8 @@ angular.module('webPGQ.directives')
                         return !(graph.hasOwnProperty('children') && graph.children(u).length) && Boolean(getValue(u));
                     });
 
+                    var marginX = 2, marginY = 2;
+
                     var labelElems = labelGroup
                         .selectAll('g.' + classname)
                         .classed('enter', false)
@@ -152,23 +154,37 @@ angular.module('webPGQ.directives')
 
                     renderer._labelElems[key] = labelElems;
 
-                    var marginX = 2, marginY = 2;
-
-                    var entering = labelElems
+                    labelElems
                         .enter()
                             .append('g')
                                 .style('opacity', 0)
                                 .attr('id', function(u) { return classname + u; })
                                 .attr('class', classname + ' enter');
 
-                    entering.each(function(u)
+                    labelElems.each(function(u)
                     {
                         var label = d3.select(this);
-                        var background = label.append('rect');
 
-                        var textGroup = label.append('g');
-                        var text = textGroup.append('text')
-                            .attr('font-size', '14px');
+                        var background = label.selectAll('rect')
+                            .data([0]);
+                        background.enter()
+                            .append('rect')
+                                .attr('rx', 5)
+                                .attr('ry', 5)
+                                .attr('opacity', 0.5)
+                                .attr('fill', '#eee');
+
+                        var textGroup = label.selectAll('g.text')
+                            .data([0]);
+                        textGroup.enter()
+                            .append('g')
+                                .classed('text', true);
+
+                        var text = textGroup.selectAll('text')
+                            .data([0]);
+                        text.enter()
+                            .append('text')
+                                .attr('font-size', '14px');
 
                         var lines = getValue(u);
                         if(typeof lines == 'string')
@@ -176,44 +192,39 @@ angular.module('webPGQ.directives')
                             lines = [lines];
                         } // end if
 
-                        lines.forEach(function(line, idx)
+                        var tspans = text.selectAll('tspan')
+                            .data(lines);
+
+                        tspans.enter()
+                            .append('tspan')
+                                .attr('dy', function(line, idx)
+                                {
+                                    return idx === 0 ? '1em' : '1.5em';
+                                })
+                                .attr('x', '0');
+
+                        tspans
+                            .text(function(line)
+                            {
+                                if(options.text)
+                                {
+                                    line = options.text(line);
+                                } // end if
+                                return line;
+                            });
+
+                        if(options.eachLine)
                         {
-                            var appendTspanTo = text;
-                            var linkTo;
-                            if(options.link)
-                            {
-                                linkTo = options.link(line);
-                            } // end if
+                            tspans.each(options.eachLine);
+                        } // end if
 
-                            var lineText = line;
-                            if(options.text)
-                            {
-                                lineText = options.text(line);
-                            } // end if
-
-                            var tspan = appendTspanTo.append('tspan');
-
-                            tspan.attr('dy', idx === 0 ? '1em' : '1.5em')
-                                .attr('x', '0')
-                                .text(lineText);
-
-                            if(options.eachLine)
-                            {
-                                options.eachLine.call(tspan.node(), line);
-                            } // end if
-                        }); // end lines.forEach iterator
-
-                        var bbox = label.node().getBBox();
+                        var bbox = textGroup.node().getBBox();
 
                         background
-                            .attr('rx', 5)
-                            .attr('ry', 5)
                             .attr('x', - (bbox.width / 2 + marginX))
                             .attr('y', - (bbox.height / 2 + marginY))
                             .attr('width', bbox.width + 2 * marginX)
-                            .attr('height', bbox.height + 2 * marginY)
-                            .attr('opacity', 0.5)
-                            .attr('fill', '#eee');
+                            .attr('height', bbox.height + 2 * marginY);
 
                         var labelBBox = textGroup.node().getBBox();
                         textGroup.attr('transform',
