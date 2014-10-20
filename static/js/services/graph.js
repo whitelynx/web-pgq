@@ -54,7 +54,7 @@ angular.module('webPGQ.services')
                         {
                             while((match = nodeRefRE.exec(val)) !== null)
                             {
-                                references.push(match[0]);
+                                references.push({name: match[0], field: key});
                             } // end while
                         } // end if
                     } // end if
@@ -62,14 +62,21 @@ angular.module('webPGQ.services')
 
                 if(references.length > 0)
                 {
+                    // Defer calculating `References` until later, after we've fully populated nodeIDsByRef.
+                    var fullRefs;
                     Object.defineProperty(metadata, 'References', {
                         enumerable: true,
                         get: function()
                         {
-                            return references.map(function(ref)
+                            if(!fullRefs)
                             {
-                                return {name: ref, id: nodeIDsByRef[ref]};
-                            });
+                                fullRefs = references.map(function(ref)
+                                {
+                                    ref.id = nodeIDsByRef[ref.name];
+                                    return ref;
+                                });
+                            } // end if
+                            return fullRefs;
                         }
                     });
                 } // end if

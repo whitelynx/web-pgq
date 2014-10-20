@@ -103,7 +103,21 @@ angular.module('webPGQ.directives')
                         return 'translate(' + (value.x + (bboxes[u].width / 2) + (bbox.width / 2) - 2) + ',' + value.y + ')';
                     },
                     link: function(ref) { return ref.id; },
-                    text: function(ref) { return '\u2192' + ref.name; }
+                    text: function(ref) { return '\u2192' + ref.name; },
+                    eachLine: function(line)
+                    {
+                        d3.select(this).classed('hoverable', true);
+
+                        var popupSettings = {
+                            on: 'hover',
+                            html: '<div class="content"><b>Referenced by:</b> ' + line.field + '</div>',
+                            position: 'top left',
+                            variation: 'inverted',
+                            className: { popup: 'query-plan ui popup' },
+                        };
+
+                        $(this).popup(popupSettings);
+                    }
                 });
 
                 function addLabels(root, graph, key, options)
@@ -162,7 +176,7 @@ angular.module('webPGQ.directives')
                             lines = [lines];
                         } // end if
 
-                        lines.forEach(function(line)
+                        lines.forEach(function(line, idx)
                         {
                             var appendTspanTo = text;
                             var linkTo;
@@ -171,15 +185,22 @@ angular.module('webPGQ.directives')
                                 linkTo = options.link(line);
                             } // end if
 
+                            var lineText = line;
                             if(options.text)
                             {
-                                line = options.text(line);
+                                lineText = options.text(line);
                             } // end if
 
-                            appendTspanTo.append('tspan')
-                                .attr('dy', '1em')
+                            var tspan = appendTspanTo.append('tspan');
+
+                            tspan.attr('dy', idx === 0 ? '1em' : '1.5em')
                                 .attr('x', '0')
-                                .text(line);
+                                .text(lineText);
+
+                            if(options.eachLine)
+                            {
+                                options.eachLine.call(tspan.node(), line);
+                            } // end if
                         }); // end lines.forEach iterator
 
                         var bbox = label.node().getBBox();

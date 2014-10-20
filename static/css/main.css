@@ -216,6 +216,11 @@ body {
 	max-width: 100%;
 	padding: 0;
 }
+
+.query-plan.ui.popup > .header, .query-plan.ui.popup > .content {
+	padding: 0.5em;
+}
+
 .query-plan.ui.popup table {
 	max-width: 100%;
 	position: relative;
@@ -224,6 +229,13 @@ body {
 
 .query-plan.ui.popup table th {
 	white-space: nowrap;
+}
+
+.hoverable {
+	cursor: help;
+}
+.hoverable:hover {
+	fill: #00827c;
 }
 
 table td > pre:only-child {
