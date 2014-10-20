@@ -15,6 +15,7 @@ angular.module('webPGQ.services')
             'Hash Setop Unknown',
             'Hash',
             'Index Scan',
+            'Index Only Scan',
             'Limit',
             'Materialize',
             'Nested Loop',
