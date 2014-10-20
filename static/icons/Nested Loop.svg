@@ -11,8 +11,8 @@
 </rdf:RDF>
 </metadata>
 <rect ry="8" height="64" width="64" y="0" x="0" fill="#808080"/>
-<path stroke-linejoin="miter" style="marker-end:none;" d="m34,10,8,0c6,0,12,6,12,12v20c0,6-6,12-12,12h-20c-6,0-12-6-12-12v-20c0-6,6-12,12-12h4" stroke="#FFF" stroke-linecap="butt" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="4" fill="none"/>
-<path stroke-linejoin="miter" style="marker-end:none;" d="m36,18,2,0c4,0,8,4,8,8v12c0,4-4,8-8,8h-12c-4,0-8-4-8-8v-12c0-4,4-8,8-8h2" stroke="#FFF" stroke-linecap="butt" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="4" fill="none"/>
-<path id="path7845" fill="#FFF" d="m24,6,6,4-6,4z"/>
-<use xlink:href="#path7845" transform="translate(2,8)" height="64" width="64" y="0" x="0"/>
+<path stroke-linejoin="miter" style="marker-end:none;" d="m10,28,0-6c0-6,6-12,12-12h20c6,0,12,6,12,12v20c0,6-6,12-12,12h-20c-6,0-12-6-12-12v-6" stroke="#FFF" stroke-linecap="butt" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="4" fill="none"/>
+<path stroke-linejoin="miter" style="marker-end:none;" d="m46,36,0,2c0,4-4,8-8,8h-12c-4,0-8-4-8-8v-12c0-4,4-8,8-8h12c4,0,8,4,8,8v2" stroke="#FFF" stroke-linecap="butt" stroke-miterlimit="4" stroke-dasharray="none" stroke-width="4" fill="none"/>
+<path id="path7845" fill="#FFF" d="m6,38,4-6,4,6z"/>
+<use xlink:href="#path7845" transform="matrix(-1,0,0,-1,56,64)" height="64" width="64" y="0" x="0"/>
 </svg>
