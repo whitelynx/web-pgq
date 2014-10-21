@@ -5,6 +5,36 @@ angular.module('webPGQ.directives')
     {
         var firstLineRE = /^([^\n]*)\n/;
 
+        var openGroupRE = /[({\[]/g;
+        var closeGroupRE = /[)}\]]/g;
+
+        function count(needle, haystack)
+        {
+            var matches = haystack.match(needle);
+            return matches ? matches.length : 0;
+        } // end count
+
+        function nesting(preceeding)
+        {
+            console.log("nesting(" + JSON.stringify(preceeding) + ") ->",
+                count(openGroupRE, preceeding) - count(closeGroupRE, preceeding));
+            console.log("count(openGroupRE, preceeding):", count(openGroupRE, preceeding));
+            console.log("count(closeGroupRE, preceeding):", count(closeGroupRE, preceeding));
+            return count(openGroupRE, preceeding) - count(closeGroupRE, preceeding);
+        } // end nesting
+
+        function indent(levels)
+        {
+            var chunks = [];
+
+            for(var i = 0; i < levels; i++)
+            {
+                chunks.push('  ');
+            } // end for
+
+            return chunks.join('');
+        } // end indent
+
         function link(scope, element)//, attrs)
         {
             var gElem = d3.select(element.get(0));
@@ -90,13 +120,23 @@ angular.module('webPGQ.directives')
                                         else if(typeof val == 'string')
                                         {
                                             // Split on strings first, and don't replace commas inside strings.
+                                            var curIndent = 0;
                                             val = val.split(/('[^']*')/g)
                                                 .map(function(part, idx)
                                                 {
                                                     if(idx % 2 === 0)
                                                     {
-                                                        return part.replace(/,/g, ',\n ');
+                                                        return part.replace(/(?:(,)\s*|\s*(\bAND))/g,
+                                                            function(matched, comma, oper, offset)
+                                                            {
+                                                                var preceeding = part.slice(0, offset);
+
+                                                                return (comma || '') + '\n' +
+                                                                    indent(curIndent + nesting(preceeding)) +
+                                                                    (oper || '');
+                                                            });
                                                     } // end if
+                                                    curIndent += nesting(part);
                                                     return part;
                                                 })
                                                 .join('');
