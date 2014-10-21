@@ -216,8 +216,6 @@ body {
 	max-width: 90%;
 	max-height: 65%;
 	padding: 0;
-	overflow-x: hidden;
-	overflow-y: auto;
 }
 
 .query-plan.ui.popup > .header, .query-plan.ui.popup > .content {
@@ -245,8 +243,41 @@ body {
 	fill: #00827c;
 }
 
-table td > pre:only-child {
+table td.hoverable.ui.dropdown {
+	cursor: default;
+	box-shadow: 2px 0px 0px rgba(0, 181, 173, 0.9) inset;
+}
+
+table td.ui.dropdown {
+	line-height: normal;
+	display: table-cell;
+}
+table td.hoverable.ui.dropdown > .menu {
+	box-sizing: border-box;
+	padding: 0.3em 0.4em 0.3em 0.2em;
+	border-radius: 0;
+	border-left: 2px solid rgba(50, 50, 50, 0.9);
+}
+table td.ui.dropdown > i.icon {
+	position: absolute;
+	right: 0;
+	vertical-align: middle;
+	top: 4px;
+}
+
+.ui.dropdown > .overlapping.menu {
+	top: 0;
+}
+
+table td > pre:only-child, table td.ui.dropdown, table td.ui.dropdown > .text {
 	margin: 0;
+}
+table td > pre:only-child, table td.ui.dropdown > pre.text, table td.ui.dropdown > pre.menu {
+	font-size: 10px;
+}
+
+.ui.dropdown > pre.menu {
+	white-space: pre;
 }
 
 .smallest.ui.table {
