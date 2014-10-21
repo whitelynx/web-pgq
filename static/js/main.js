@@ -202,6 +202,51 @@ LIMIT 2;";
                 });
             } // end getQueryParams
 
+            var queryParamRE = /\$(\d+)/g;
+            var commentOrStringRE = /\/\*.*?(?:\n.*?)*?\*\/|--.*$|\$([a-zA-Z_]\w*)?\$.*?\$\1\$|(['"]).*?\2/g;
+            function getActiveQuery()
+            {
+                var activeText = getActiveQueryText();
+                var queryParams = getQueryParams();
+
+                var referencedParams = [];
+
+                function processParamsIn(substr)
+                {
+                    return substr.replace(queryParamRE, function(match, paramIdx)
+                    {
+                        paramIdx = parseInt(paramIdx, 10);
+
+                        var resultingIdx = referencedParams.indexOf(paramIdx) + 1;
+                        if(resultingIdx === 0)
+                        {
+                            resultingIdx = referencedParams.push(paramIdx);
+                        } // end if
+
+                        return '$' + resultingIdx;
+                    });
+                } // end processParamsIn
+
+                var activeTextParts = [], lastMatchEnd = 0, match;
+                while((match = commentOrStringRE.exec(activeText)) !== null)
+                {
+                    activeTextParts.push(processParamsIn(activeText.slice(lastMatchEnd, match.index)));
+                    activeTextParts.push(match[0]);
+                    lastMatchEnd = commentOrStringRE.lastIndex;
+                } // end while
+                activeTextParts.push(processParamsIn(activeText.slice(lastMatchEnd)));
+
+                activeText = activeTextParts.join('');
+
+                return {
+                    text: activeText,
+                    values: referencedParams.map(function(paramIdx)
+                    {
+                        return queryParams[paramIdx - 1];
+                    })
+                };
+            } // end getActiveQuery
+
             // SQL messages //
             $scope.sqlMessages = sql.messages;
 
@@ -354,14 +399,15 @@ LIMIT 2;";
             {
                 console.log("$scope.runQuery()", new Error("called from:").stack);
 
-                runSQL({text: getActiveQueryText(), values: getQueryParams()})
+                runSQL(getActiveQuery())
                     .then($scope.showResults);
             }; // end $scope.runQuery
 
             $scope.explainQuery = function(analyze)
             {
-                runSQL({text: sql.formatExplain($scope.explainOptions, analyze) + getActiveQueryText(),
-                        values: getQueryParams()})
+                var query = getActiveQuery();
+                query.text = sql.formatExplain($scope.explainOptions, analyze) + query.text;
+                runSQL(query)
                     .then(function(results)
                     {
                         console.log("$scope.explainQuery got results:", results);
