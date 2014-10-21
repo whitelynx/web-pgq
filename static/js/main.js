@@ -21,6 +21,28 @@ angular.module('webPGQ')
                     var session = _editor.getSession();
                     session.setTabSize(2);
                     session.setUseSoftTabs(true);
+
+                    var scrollbars = $('#editor .ace_scrollbar');
+
+                    scrollbars.css('overflow', 'hidden');
+
+                    scrollbars.filter('.ace_scrollbar-v')
+                        .perfectScrollbar({
+                            includePadding: true,
+                            minScrollbarLength: 12,
+                            suppressScrollX: true
+                        });
+                    scrollbars.filter('.ace_scrollbar-h')
+                        .perfectScrollbar({
+                            includePadding: true,
+                            minScrollbarLength: 12,
+                            suppressScrollY: true
+                        });
+
+                    $('#editor').hover(
+                        function() { scrollbars.addClass('hover'); },
+                        function() { scrollbars.removeClass('hover'); }
+                    );
                 },
                 //onChanged: function()//e) { },
                 require: ['ace/ext/language_tools'],
@@ -441,6 +463,11 @@ LIMIT 2;";
 
             $(function()
             {
+                $timeout(function()
+                {
+                    $('#editor .ace_scrollbar').perfectScrollbar('update');
+                }, 1000);
+
                 // Key bindings //
                 function execRun(event)
                 {
