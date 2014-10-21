@@ -160,7 +160,8 @@ angular.module('webPGQ.directives')
                     {
                         var value = g.node(u);
                         var bbox = this.getBBox();
-                        return 'translate(' + value.x + ',' + (value.y + (bboxes[u].height / 2) + (bbox.height / 2) - 2) + ')';
+                        return 'translate(' + value.x + ',' +
+                            (value.y + (bboxes[u].height + bbox.height) / 2 - 1) + ')';
                     },
                     text: function(alias) { return JSON.stringify(alias); }
                 });
@@ -170,7 +171,8 @@ angular.module('webPGQ.directives')
                     {
                         var value = g.node(u);
                         var bbox = this.getBBox();
-                        return 'translate(' + value.x + ',' + (value.y - (bboxes[u].height / 2) - (bbox.height / 2) + 2) + ')';
+                        return 'translate(' + value.x + ',' +
+                            (value.y - (bboxes[u].height + bbox.height) / 2 + 1) + ')';
                     }
                 });
 
@@ -179,7 +181,8 @@ angular.module('webPGQ.directives')
                     {
                         var value = g.node(u);
                         var bbox = this.getBBox();
-                        return 'translate(' + (value.x + (bboxes[u].width / 2) + (bbox.width / 2) - 2) + ',' + value.y + ')';
+                        return 'translate(' + (value.x + (bboxes[u].width + bbox.width) / 2 - 1) + ',' +
+                            (value.y + (bboxes[u].height - bbox.height) / 2) + ')';
                     },
                     link: function(ref) { return ref.id; },
                     text: function(ref) { return '\u2192' + ref.name; },
@@ -190,7 +193,7 @@ angular.module('webPGQ.directives')
                         var popupSettings = {
                             on: 'hover',
                             html: '<div class="content"><b>Referenced by:</b> ' + line.field + '</div>',
-                            position: 'top left',
+                            position: 'top center',
                             variation: 'inverted',
                             className: { popup: 'query-plan ui popup' },
                         };
@@ -250,8 +253,8 @@ angular.module('webPGQ.directives')
                             .append('rect')
                                 .attr('rx', 5)
                                 .attr('ry', 5)
-                                .attr('opacity', 0.5)
-                                .attr('fill', '#eee');
+                                .attr('opacity', 0.7)
+                                .attr('fill', '#ddd');
 
                         var textGroup = label.selectAll('g.text')
                             .data([0]);
