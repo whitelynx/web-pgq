@@ -265,11 +265,35 @@ table td.hoverable.ui.dropdown > .menu {
 table td.hoverable.ui.dropdown > .ui.menu::after {
 	content: none;
 }
+
 table td.ui.dropdown > i.icon {
 	position: absolute;
 	right: 0;
 	vertical-align: middle;
 	top: 4px;
+}
+
+.ps-container > .ps-scrollbar-x-rail,
+.ps-container > .ps-scrollbar-y-rail {
+	visibility: hidden;
+}
+
+.ps-container.ps-active-x > .ps-scrollbar-x-rail,
+.ps-container.ps-active-y > .ps-scrollbar-y-rail {
+	visibility: visible;
+}
+
+.ui.dropdown > .menu > .ps-scrollbar-x-rail,
+.ui.dropdown > .menu > .ps-scrollbar-x-rail > .ps-scrollbar-x {
+	height: 6px;
+	bottom: 1px;
+	border-radius: 3px;
+}
+.ui.dropdown > .menu > .ps-scrollbar-y-rail,
+.ui.dropdown > .menu > .ps-scrollbar-y-rail > .ps-scrollbar-y {
+	width: 6px;
+	right: 1px;
+	border-radius: 3px;
 }
 
 .ui.dropdown > .overlapping.menu {
