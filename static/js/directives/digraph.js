@@ -226,6 +226,8 @@ angular.module('webPGQ.directives')
                     },
                     link: function(ref) { return ref.id; },
                     text: function(ref) { return '\u2192' + ref.name; },
+                    fontSize: '12px',
+                    marginX: 2, marginY: 1,
                     eachLine: function(line)
                     {
                         d3.select(this).classed('hoverable', true);
@@ -267,7 +269,7 @@ angular.module('webPGQ.directives')
                         return !(graph.hasOwnProperty('children') && graph.children(u).length) && Boolean(getValue(u));
                     });
 
-                    var marginX = 2, marginY = 2;
+                    var marginX = options.marginX || 4, marginY = options.marginY || 2;
 
                     var labelElems = labelGroup
                         .selectAll('g.' + classname)
@@ -306,7 +308,7 @@ angular.module('webPGQ.directives')
                             .data([0]);
                         text.enter()
                             .append('text')
-                                .attr('font-size', '14px');
+                                .attr('font-size', options.fontSize || '14px');
 
                         var lines = getValue(u);
                         if(typeof lines == 'string')
