@@ -189,6 +189,9 @@ angular.module('webPGQ.directives')
                             onCreate: function()
                             {
                                 $('.ui.dropdown', this).dropdown(nestedDropdownSettings);
+                                $('.ui.dropdown > pre.menu', this)
+                                    .resize(function() { $(this).perfectScrollbar('update'); })
+                                    .perfectScrollbar({includePadding: true});
                             }
                         };
 
