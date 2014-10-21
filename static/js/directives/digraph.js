@@ -88,7 +88,7 @@ angular.module('webPGQ.directives')
                                     .join('') +
                                 '</table>',
                             className: {
-                                popup: 'query-plan ui popup',
+                                popup: 'query-plan info ui popup',
                             },
                         };
 

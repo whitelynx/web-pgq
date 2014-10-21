@@ -212,7 +212,7 @@ body {
 	.fill.right.two.thirds { left: 33%; }
 }
 
-.query-plan.ui.popup {
+.query-plan.info.ui.popup {
 	max-width: 90%;
 	max-height: 65%;
 	padding: 0;
