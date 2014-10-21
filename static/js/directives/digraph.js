@@ -3,6 +3,8 @@
 angular.module('webPGQ.directives')
     .directive('digraph', ['$timeout', '$window', '$', 'd3', 'dagreD3', function($timeout, $window, $, d3, dagreD3)
     {
+        var firstLineRE = /^([^\n]*)\n/;
+
         function link(scope, element)//, attrs)
         {
             var gElem = d3.select(element.get(0));
@@ -45,6 +47,11 @@ angular.module('webPGQ.directives')
                         var node = g.node(u);
                         var metadata = node.metadata;
 
+                        var nestedDropdownSettings = {
+                            on: 'hover',
+                            delay: { show: 10 },
+                        };
+
                         var popupSettings = {
                             on: 'click',
                             title: node.label,
@@ -59,14 +66,26 @@ angular.module('webPGQ.directives')
                                     .map(function(key)
                                     {
                                         var val = metadata[key];
+                                        var firstLine, full;
 
                                         if(Array.isArray(val))
                                         {
-                                            val = '[ ' + val.join(',\n  ') + ' ]';
+                                            switch(val.length)
+                                            {
+                                                case 0:
+                                                    firstLine = '[]';
+                                                    break;
+                                                case 1:
+                                                    firstLine = '[ ' + val[0] + ' ]';
+                                                    break;
+                                                default:
+                                                    firstLine = '[ ' + val[0] + ',';
+                                                    full = '[ ' + val.join(',\n  ') + ' ]';
+                                            } // end switch
                                         }
                                         else if(typeof val == 'object')
                                         {
-                                            val = JSON.stringify(val, null, '  ');
+                                            firstLine = JSON.stringify(val, null, '  ');
                                         }
                                         else if(typeof val == 'string')
                                         {
@@ -81,15 +100,56 @@ angular.module('webPGQ.directives')
                                                     return part;
                                                 })
                                                 .join('');
+
+                                            var match = firstLineRE.exec(val);
+                                            if(match)
+                                            {
+                                                firstLine = match[0];
+                                                full = val;
+                                            }
+                                            else
+                                            {
+                                                firstLine = val;
+                                            } // end if
+                                        }
+                                        else
+                                        {
+                                            firstLine = val;
                                         } // end if
 
-                                        return '<tr><th>' + key + '</th><td><pre><code>' + val + '</code></pre></td></tr>';
+                                        if(firstLine.length > 50)
+                                        {
+                                            if(!full)
+                                            {
+                                                full = firstLine;
+                                            } // end if
+                                            firstLine = firstLine.slice(0, 50) + '\u2026';
+                                        } // end if
+
+                                        var row = '<tr><th>' + key + '</th>';
+                                        if(full)
+                                        {
+                                            row += '<td class="hoverable ui dropdown"><pre class="text"><code>' +
+                                                firstLine + '</code></pre><i class="vertical ellipsis icon"></i>' +
+                                                '<pre class="overlapping menu"><code>' + full + '</code></pre></td>';
+                                        }
+                                        else
+                                        {
+                                            row += '<td><pre><code>' + firstLine + '</code></pre></td>';
+                                        } // end if
+                                        row += '</tr>';
+
+                                        return row;
                                     })
                                     .join('') +
                                 '</table>',
                             className: {
                                 popup: 'query-plan info ui popup',
                             },
+                            onCreate: function()
+                            {
+                                $('.ui.dropdown', this).dropdown(nestedDropdownSettings);
+                            }
                         };
 
                         $(this).popup(popupSettings);
