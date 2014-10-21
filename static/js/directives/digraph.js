@@ -80,6 +80,14 @@ angular.module('webPGQ.directives')
                         var nestedDropdownSettings = {
                             on: 'hover',
                             delay: { show: 10 },
+                            onShow: function()
+                            {
+                                var $elem = $('.menu', this);
+                                $timeout(function()
+                                {
+                                    $elem.perfectScrollbar('update');
+                                }, 300);
+                            }
                         };
 
                         var popupSettings = {
@@ -189,9 +197,13 @@ angular.module('webPGQ.directives')
                             onCreate: function()
                             {
                                 $('.ui.dropdown', this).dropdown(nestedDropdownSettings);
-                                $('.ui.dropdown > pre.menu', this)
+
+                                $('.ui.dropdown > .menu', this)
                                     .resize(function() { $(this).perfectScrollbar('update'); })
-                                    .perfectScrollbar({includePadding: true});
+                                    .perfectScrollbar({
+                                        includePadding: true,
+                                        minScrollbarLength: 12
+                                    });
                             }
                         };
 
