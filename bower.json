@@ -32,7 +32,8 @@
     "angular-table": "git://github.com/garaboncias/angular-table#master",
     "angular-tiny-eventemitter": "~0.1.0",
     "angular-animate": "~1.3.0",
-    "unisocket": "git://github.com/Morgul/unisocket"
+    "unisocket": "git://github.com/Morgul/unisocket",
+    "perfect-scrollbar": "~0.5.3"
   },
   "resolutions": {
     "angular": "~1.x"

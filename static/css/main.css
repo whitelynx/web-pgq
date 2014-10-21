@@ -5,6 +5,7 @@ html, body {
 body {
 	background-color: #eee;
 	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
+	overflow: hidden;
 }
 
 .container,
@@ -254,9 +255,15 @@ table td.ui.dropdown {
 }
 table td.hoverable.ui.dropdown > .menu {
 	box-sizing: border-box;
-	padding: 0.3em 0.4em 0.3em 0.2em;
+	padding: 0.3em 1em 1em 0.2em;
 	border-radius: 0;
 	border-left: 2px solid rgba(50, 50, 50, 0.9);
+	max-width: 100%;
+	max-height: 1000%;
+	overflow: hidden;
+}
+table td.hoverable.ui.dropdown > .ui.menu::after {
+	content: none;
 }
 table td.ui.dropdown > i.icon {
 	position: absolute;
