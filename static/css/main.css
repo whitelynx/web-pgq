@@ -283,6 +283,19 @@ table td.ui.dropdown > i.icon {
 	visibility: visible;
 }
 
+#editor .ps-container > .ps-scrollbar-x-rail,
+#editor .ps-container > .ps-scrollbar-y-rail {
+	visibility: visible;
+}
+#editor .ps-container > .ps-scrollbar-x-rail:hover,
+#editor .ps-container > .ps-scrollbar-y-rail:hover,
+#editor .ps-container > .ps-scrollbar-x-rail.hover,
+#editor .ps-container > .ps-scrollbar-y-rail.hover,
+#editor .ps-container > .ps-scrollbar-x-rail.in-scrolling,
+#editor .ps-container > .ps-scrollbar-y-rail.in-scrolling {
+	background-color: #555;
+}
+
 .ui.dropdown > .menu > .ps-scrollbar-x-rail,
 .ui.dropdown > .menu > .ps-scrollbar-x-rail > .ps-scrollbar-x {
 	height: 6px;
