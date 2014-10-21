@@ -9,14 +9,6 @@ angular.module('webPGQ.services')
         socket.on('connected', function()
         {
             console.log('socket service connected.');
-
-            socket.send('foo');
-
-            socket.request('bar')
-            .then(function()
-            {
-                console.log('got bar response');
-            });
         });
 
         return socket;
