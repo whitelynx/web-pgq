@@ -7,7 +7,7 @@ angular.module('webPGQ')
         {
             var mainEditor;
             $scope.mainEditorConfig = {
-                theme: 'monokai',
+                theme: 'idle_fingers',
                 mode: 'pgsql',
                 useWrapMode: true,
                 onLoad: function(_editor)
