@@ -558,20 +558,20 @@ svg .edgePath {
 	z-index: 2000;
 }
 
-#messagesContainer > .content {
+#messagesContainer > section.content {
 	background-color: rgba(0, 0, 0, 0.5);
 	padding: 0.5em;
 }
 
-#messagesContainer > .content:not(:first-child) { padding-top: 0.25em; }
-#messagesContainer > .content:not(:last-child) { padding-bottom: 0.25em; }
+#messagesContainer > section.content:not(:first-of-type) { padding-top: 0.25em; }
+#messagesContainer > section.content:not(:last-of-type) { padding-bottom: 0.25em; }
 
-#messagesContainer > .content:first-child {
+#messagesContainer > section.content:first-of-type {
 	border-top-left-radius: 0.7em;
 	border-top-right-radius: 0.7em;
 }
 
-#messagesContainer > .content:last-child {
+#messagesContainer > section.content:last-of-type {
 	border-bottom-left-radius: 0.7em;
 	border-bottom-right-radius: 0.7em;
 }
