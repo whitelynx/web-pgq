@@ -329,7 +329,7 @@
 				</a>
 			</div>
 
-			<div id="resultsTabs" class="dimmable bottom attached ui segment">
+			<div id="resultsTabs" class="dimmable attached ui segment">
 
 				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer">
 					<div class="content">
@@ -347,7 +347,25 @@
 				</div>
 
 				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Messages')}" id="messages-dimmer">
-					<div class="left aligned content attached ui segment">
+					<div class="left aligned content">
+						<section>
+							<div class="fade slide animation small icon ui message" ng-class="banner.severity"
+									ng-repeat="(idx, banner) in logger.bannerMessages">
+								<i class="icon" ng-class="banner.icon"></i>
+								<div class="header">
+									{{ banner.header }}
+								</div>
+								<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
+								<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
+									<li ng-repeat="(key, val) in banner.detail">
+										<strong>{{ key }}:</strong>
+										<pre ng-if="!val.indexOf"><code>{{ val|json }}</code></pre>
+										<pre ng-if="val.indexOf && val.indexOf('\n') != -1"><code>{{ val }}</code></pre>
+										<code ng-if="val.indexOf && val.indexOf('\n') == -1">{{ val }}</code>
+									</li>
+								</ul>
+							</div>
+						</section>
 						<pre class="vertical ui segment" ng-repeat="msg in sqlMessages" ng-class="msg.segmentClass"
 							><code>{{ msg.text }}</code></pre>
 					</div>
@@ -373,28 +391,6 @@
 							</tr>
 						</tbody>
 					</table>
-				</div>
-
-				<div id="messagesContainer">
-					<section class="content fade slide animation" ng-repeat="(idx, banner) in logger.bannerMessages">
-						<div class="clickable small floating icon ui message" ng-class="banner.severity"
-								ng-click="logger.removeBannerAt(idx)">
-							<i class="icon" ng-class="banner.icon"></i>
-							<i class="close icon"></i>
-							<div class="header">
-								{{ banner.header }}
-							</div>
-							<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
-							<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
-								<li ng-repeat="(key, val) in banner.detail">
-									<strong>{{ key }}:</strong>
-									<pre ng-if="!val.indexOf"><code>{{ val|json }}</code></pre>
-									<pre ng-if="val.indexOf && val.indexOf('\n') != -1"><code>{{ val }}</code></pre>
-									<code ng-if="val.indexOf && val.indexOf('\n') == -1">{{ val }}</code>
-								</li>
-							</ul>
-						</div>
-					</section>
 				</div>
 
 				<div class="bottom right attached ui labels">
