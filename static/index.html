@@ -364,9 +364,10 @@
 
 				<div id="messagesContainer">
 					<div class="content fade slide animation" ng-repeat="(idx, banner) in logger.bannerMessages">
-						<div class="small floating icon ui message" ng-class="banner.severity">
+						<div class="clickable small floating icon ui message" ng-class="banner.severity"
+								ng-click="logger.removeBannerAt(idx)">
 							<i class="icon" ng-class="banner.icon"></i>
-							<i class="close icon" ng-click="logger.removeBannerAt(idx)"></i>
+							<i class="close icon"></i>
 							<div class="header">
 								{{ banner.header }}
 							</div>
