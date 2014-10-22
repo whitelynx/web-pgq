@@ -120,6 +120,7 @@ code, pre, .ace_editor {
 	width: 100%;
 	height: auto;
 	margin: 0;
+	overflow: hidden;
 	border-radius: 5px 0 0 5px;
 	z-index: 900;
 	-webkit-transition: left 0.5s, right 0.5s;
