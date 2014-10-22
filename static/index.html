@@ -388,9 +388,13 @@
 						Rows
 						<div class="detail">{{ rows.length }}</div>
 					</div>
-					<div class="small compact ui label" ng-if="queryResponse && queryResponse.affected">
+					<div class="small compact ui label" ng-if="results && results.affected">
 						Affected
-						<div class="detail">{{ queryResponse.affected }}</div>
+						<div class="detail">{{ results.affected }}</div>
+					</div>
+					<div class="small compact ui label" ng-if="results && results.totalTimeMS">
+						<div class="detail">{{ results.totalTimeMS }}</div>
+						ms
 					</div>
 				</div>
 			</div>
