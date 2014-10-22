@@ -525,11 +525,11 @@ LIMIT 2;";
                 });
             } // end if
 
+            var scrollContainers;
             function updateScrollbars()
             {
                 mainEditorScrollbars.perfectScrollbar('update');
-                $('#resultsContainer').perfectScrollbar('update');
-                $('#messagesContainer').perfectScrollbar('update');
+                scrollContainers.perfectScrollbar('update');
             } // end updateScrollbars
 
             // Update scrollbars on resize.
@@ -537,8 +537,13 @@ LIMIT 2;";
 
             $(function()
             {
-                $('#resultsContainer').perfectScrollbar();
-                $('#messagesContainer').perfectScrollbar({suppressScrollX: true, includePadding: true});
+                scrollContainers = $('#querySidebar,#messagesContainer');
+                scrollContainers.perfectScrollbar({suppressScrollX: true, includePadding: true});
+
+                var resultsScrollContainer = $('#resultsContainer');
+                resultsScrollContainer.perfectScrollbar();
+
+                scrollContainers.add(resultsScrollContainer);
 
                 // Update scrollbars 1 second after page load.
                 $window.setTimeout(updateScrollbars, 500);
