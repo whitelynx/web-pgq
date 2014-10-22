@@ -12,8 +12,8 @@ var queryID = 0;
 
 
 angular.module('webPGQ.services')
-    .service('sql', ['$exceptionHandler', 'eventEmitter', 'socket', 'promise',
-    function($exceptionHandler, eventEmitter, socket, promise)
+    .service('sql', ['$exceptionHandler', 'eventEmitter', 'socket', 'logger', 'promise',
+    function($exceptionHandler, eventEmitter, socket, logger, promise)
     {
         var channel;
 
@@ -26,12 +26,7 @@ angular.module('webPGQ.services')
 
                     channel.on('notice', function(notice)
                     {
-                        console.log("Got notice:", notice);
-                        messages.push({
-                            type: 'server',
-                            text: notice,
-                            segmentClass: 'primary'
-                        });
+                        logger.info('Notice:', notice, 'sql');
 
                         sqlService.emit.apply(sqlService, ['notice'].concat(Array.slice.call(arguments)));
                     });
@@ -63,36 +58,33 @@ angular.module('webPGQ.services')
             }
         };
 
-        var messages = [];
-
         var sqlService = {
             explainOptions: explainOptions,
-            messages: messages,
 
             connect: function(connectionInfo)
             {
-                console.log("Connecting to:", connectionInfo);
+                logger.debug('Connecting to:', connectionInfo, 'sql');
 
                 return promise(function(resolve)
                 {
-                    console.log("Emitting: 'connect',", connectionInfo);
                     resolve(channel.request('connect', connectionInfo));
                 })
                 .then(function()
                 {
-                    messages.push({
-                        type: 'client',
-                        text: "Connected to " + JSON.stringify(connectionInfo, null, '    '),
-                        segmentClass: 'tertiary'
-                    });
+                    logger.success('Connected to:', connectionInfo, 'sql');
                     return true;
+                })
+                .catch(function(error)
+                {
+                    logger.error('Error connecting to ' + angular.toJson(connectionInfo) + ':', error, 'sql');
+                    throw error;
                 });
             }, // end connect
 
             run: function(queryDef)
             {
                 queryDef.queryID = queryID;
-                console.log("Running query:", queryDef);
+                logger.debug('Running query:', queryDef, 'sql');
 
                 return promise(function(resolve)
                 {
@@ -110,17 +102,12 @@ angular.module('webPGQ.services')
                         })
                         .then(function(response)
                         {
-                            console.log("Success!", response);
+                            logger.success('Query finished:', response, 'sql');
                             return response;
                         })
                         .catch(function(error)
                         {
-                            console.error("Error:", error);
-                            messages.push({
-                                type: 'server',
-                                text: JSON.stringify(error, null, '    '),
-                                segmentClass: 'primary inverted red'
-                            });
+                            logger.error('Error running query:', error, 'sql');
                             throw error;
                         })
                     );

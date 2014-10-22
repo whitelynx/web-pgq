@@ -280,9 +280,6 @@ LIMIT 2;";
                 };
             } // end getActiveQuery
 
-            // SQL messages //
-            $scope.sqlMessages = sql.messages;
-
             // Options for EXPLAIN and EXPLAIN ANALYZE //
             $scope.explainOptions = sql.explainOptions;
             $scope.explainOptionDescriptions = sql.explainOptionDescriptions;
