@@ -5,7 +5,7 @@ angular.module('webPGQ')
         '$scope', '$http', '$timeout', '$location', '$window', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
         function($scope, $http, $timeout, $location, $window, $, graph, keybinding, logger, queueDigest, sql)
         {
-            var mainEditor;
+            var mainEditor, mainEditorScrollbars;
             $scope.mainEditorConfig = {
                 theme: 'idle_fingers',
                 mode: 'pgsql',
@@ -22,26 +22,28 @@ angular.module('webPGQ')
                     session.setTabSize(2);
                     session.setUseSoftTabs(true);
 
-                    var scrollbars = $('#editor .ace_scrollbar');
+                    mainEditorScrollbars = $('#editor .ace_scrollbar');
 
-                    scrollbars.css('overflow', 'hidden');
+                    mainEditorScrollbars.css('overflow', 'hidden');
 
-                    scrollbars.filter('.ace_scrollbar-v')
+                    mainEditorScrollbars.filter('.ace_scrollbar-v')
                         .perfectScrollbar({
                             includePadding: true,
                             minScrollbarLength: 12,
                             suppressScrollX: true
                         });
-                    scrollbars.filter('.ace_scrollbar-h')
+                    mainEditorScrollbars.filter('.ace_scrollbar-h')
                         .perfectScrollbar({
                             includePadding: true,
                             minScrollbarLength: 12,
                             suppressScrollY: true
                         });
 
+                    session.on('change', function() { mainEditorScrollbars.perfectScrollbar('update'); });
+
                     $('#editor').hover(
-                        function() { scrollbars.addClass('hover'); },
-                        function() { scrollbars.removeClass('hover'); }
+                        function() { mainEditorScrollbars.addClass('hover'); },
+                        function() { mainEditorScrollbars.removeClass('hover'); }
                     );
                 },
                 //onChanged: function()//e) { },
@@ -494,7 +496,7 @@ LIMIT 2;";
 
             function updateScrollbars()
             {
-                $('#editor .ace_scrollbar').perfectScrollbar('update');
+                mainEditorScrollbars.perfectScrollbar('update');
                 $('#resultsContainer').perfectScrollbar('update');
                 $('#messagesContainer').perfectScrollbar('update');
             } // end updateScrollbars
@@ -508,7 +510,7 @@ LIMIT 2;";
                 $('#messagesContainer').perfectScrollbar({suppressScrollX: true, includePadding: true});
 
                 // Update scrollbars 1 second after page load.
-                $timeout(updateScrollbars, 1000);
+                $window.setTimeout(updateScrollbars, 500);
 
                 // Key bindings //
                 function execRun(event)
