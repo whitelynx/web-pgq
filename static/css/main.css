@@ -473,6 +473,23 @@ svg .edgePath {
 	display: block;
 }
 
+#messages-dimmer.ui.dimmer > .content {
+	position: relative;
+	overflow: hidden;
+	text-align: left;
+}
+
+#messages-dimmer.ui.dimmer > .content > section {
+	margin: 0.5em;
+}
+
+#messages-dimmer.ui.dimmer > .content > section > .ui.message:not(:first-child) {
+	margin-top: 0.5rem;
+}
+#messages-dimmer.ui.dimmer > .content > section > .ui.message:not(:last-child) {
+	margin-bottom: 0.5rem;
+}
+
 .square.ui.button {
 	border-radius: 0;
 }
@@ -541,7 +558,6 @@ svg .edgePath {
 #resultsTabs {
 	height: 50%;
 	z-index: 0;
-	border-radius: 0;
 	border-bottom: none;
 }
 
@@ -555,36 +571,6 @@ svg .edgePath {
 	position: absolute;
 	top: 1em; bottom: 1em;
 	left: 1em; right: 1em;
-}
-
-#messagesContainer {
-	box-sizing: border-box;
-	clear: both;
-	overflow: hidden;
-	position: absolute;
-	top: 0;
-	left: 0; right: 0;
-	max-height: 100%;
-	padding: 0.25em 1em;
-	z-index: 1001;
-}
-
-#messagesContainer > section.content {
-	background-color: rgba(0, 0, 0, 0.5);
-	padding: 0.5em;
-}
-
-#messagesContainer > section.content:not(:first-of-type) { padding-top: 0.25em; }
-#messagesContainer > section.content:not(:last-of-type) { padding-bottom: 0.25em; }
-
-#messagesContainer > section.content:first-of-type {
-	border-top-left-radius: 0.7em;
-	border-top-right-radius: 0.7em;
-}
-
-#messagesContainer > section.content:last-of-type {
-	border-bottom-left-radius: 0.7em;
-	border-bottom-right-radius: 0.7em;
 }
 
 #settings-button {
