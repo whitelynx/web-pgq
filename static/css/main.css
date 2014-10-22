@@ -9,6 +9,10 @@ body {
 	overflow: hidden;
 }
 
+code, .ace_editor {
+	font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
+}
+
 .container,
 .container.fill-parent,
 .container.segment {
