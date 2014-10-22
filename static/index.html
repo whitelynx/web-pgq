@@ -340,22 +340,22 @@
 					</div>
 				</div>
 
-				<div id="noRowsLabel" ng-if="!queryRunning && rows.length == 0 && resultsTab == 'Results'"
+				<div id="noRowsLabel" ng-if="!queryRunning && results.rows.length == 0 && resultsTab == 'Results'"
 						class="fast fade animation red ribbon ui label">
 					No rows returned.
 				</div>
 
 				<div id="resultsContainer">
-					<table ng-if="rows.length > 0" class="fade animation compact sortable celled ui table">
+					<table ng-if="results.rows.length > 0" class="fade animation compact sortable celled ui table">
 						<thead>
 							<tr>
-								<th ng-repeat="field in resultFields track by $index"
+								<th ng-repeat="field in results.fields track by $index"
 									title="Data Type: {{ field.dataType }}">{{ field.name }}</th>
 							</tr>
 						</thead>
 
 						<tbody>
-							<tr ng-repeat="row in rows track by $index" class="fade animation">
+							<tr ng-repeat="row in results.rows track by $index" class="fade animation">
 								<td ng-repeat="value in row track by $index"><pre><code>{{ value }}</code></pre></td>
 							</tr>
 						</tbody>
@@ -387,11 +387,11 @@
 				<div class="bottom right attached ui labels">
 					<div class="small compact ui label">
 						Rows
-						<div class="detail">{{ rows.length }}</div>
+						<div class="detail">{{ results.rowCount || 0 }}</div>
 					</div>
-					<div class="small compact ui label" ng-if="results && results.affected">
+					<div class="small compact ui label" ng-if="results && results.affectedRowCount">
 						Affected
-						<div class="detail">{{ results.affected }}</div>
+						<div class="detail">{{ results.affectedRowCount }}</div>
 					</div>
 					<div class="small compact ui label" ng-if="results && results.totalTimeMS">
 						<div class="detail">{{ results.totalTimeMS }}</div>
