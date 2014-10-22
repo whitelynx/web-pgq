@@ -255,20 +255,15 @@ LIMIT 2;";
             $scope.explainOptionDescriptions = sql.explainOptionDescriptions;
 
             // Running queries //
-            var maxUpdateDelay = 100;
+            var maxUpdateDelay = 200;
 
             var runSQLCallCount = 0;
             function runSQL(queryDef)
             {
                 var runSQLCall = ++runSQLCallCount;
                 console.log("Starting runSQL call #" + runSQLCall);
-                $scope.queryRunning = true;
 
-                $scope.pendingQuery = {
-                    rowCount: 0,
-                    noticeMessages: [],
-                };
-                var pendingNoticeMessages = [];
+                var results = {rows: [], noticeMessages: []};
 
                 function queueUpdate(func)
                 {
@@ -277,16 +272,8 @@ LIMIT 2;";
 
                 function updatePending()
                 {
-                    $scope.pendingQuery = {
-                        rowCount: rows.length,
-                        noticeMessages: pendingNoticeMessages,
-                    };
-                    $scope.rows = rows.slice();
-                    $scope.resultFields = resultFields;
+                    $scope.results = results;
                 } // end updatePending
-
-                var rows = [];
-                var resultFields;
 
                 function onError(error)
                 {
@@ -301,76 +288,76 @@ LIMIT 2;";
                         logger.error(error.message, error);
                     } // end if
 
-                    queueUpdate(function()
+                    queueDigest(function()
                     {
-                        $scope.results = {
-                            rows: rows,
-                            fields: resultFields,
-                        };
-
                         $scope.queryRunning = false;
+                        $scope.results = results;
 
-                        $scope.resultsTab = 'Results';
+                        $scope.resultsTab = 'Messages';
 
                         if(error.position)
                         {
                             var pos = mainEditor.getSession().getDocument().indexToPosition(error.position);
                             mainEditor.moveCursorToPosition(pos);
                         } // end if
-                    });
+                    }, 0);
 
-                    return false;
+                    throw error;
                 } // end onError
 
                 function onNotice(noticeMessage)
                 {
-                    pendingNoticeMessages.push(noticeMessage);
+                    results.noticeMessages.push(noticeMessage);
 
                     queueUpdate();
                 } // end onNotice
 
                 function onFields(fields)
                 {
-                    resultFields = fields;
+                    results.fields = fields;
 
                     queueUpdate();
                 } // end onFields
 
                 function onRow(row)
                 {
-                    console.log("runSQL call #" + runSQLCall + ": Got row:", row);
-
-                    rows.push(row);
+                    results.rows.push(row);
 
                     queueUpdate();
                 } // end onRow
 
                 function onEnd(args)
                 {
-                    var response = args[0];
                     console.log("runSQL call #" + runSQLCall + ": Done:", args);
 
                     sql.removeListener('notice', onNotice);
                     queryPromise.removeListener('fields', onFields);
                     queryPromise.removeListener('row', onRow);
 
-                    response.rows = rows;
-                    response.noticeMessages = pendingNoticeMessages;
+                    for(var key in args[0])
+                    {
+                        if(key != 'rows')
+                        {
+                            results[key] = args[0][key];
+                        } // end if
+                    } // end for
 
-                    console.log("runSQL call #" + runSQLCall + ": Complete response:", response);
+                    console.log("runSQL call #" + runSQLCall + ": Complete response:", results);
 
                     queueDigest(function()
                     {
-                        $scope.results = response;
-                        $scope.resultFields = response.fields;
-
-                        delete $scope.pending;
-
                         $scope.queryRunning = false;
-                    }, maxUpdateDelay);
+                        $scope.results = results;
+                    }, 0);
 
-                    return response;
+                    return results;
                 } // end onEnd
+
+                queueDigest(function()
+                {
+                    $scope.queryRunning = true;
+                    $scope.results = results;
+                }, 0);
 
                 sql.on('notice', onNotice);
 
@@ -428,8 +415,7 @@ LIMIT 2;";
             }; // end $scope.explainQuery
 
             // Query results //
-            $scope.rows = [];
-            //$scope.rows = [{ Name: "John", Status: "Approved", Notes: "None" }];
+            $scope.results = {rows: []};
 
             // Switching results views //
             $scope.resultsTab = 'Results';
