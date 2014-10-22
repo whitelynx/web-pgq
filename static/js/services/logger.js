@@ -6,19 +6,19 @@ angular.module('webPGQ.services')
         var showBannersFor = {
             error: true,
             warning: true,
+            success: true,
             info: true,
+            debug: true,
         };
 
         var icons = {
-            error: 'exclamation',
-            warning: 'warning',
-            info: 'info letter',
+            sql: 'hdd',
         };
 
         // Log messages
         var messages = [];
 
-        function log(severity, header, detail)
+        function log(severity, header, detail, category)
         {
             var message;
             if(arguments.length == 1 && typeof header == 'object')
@@ -32,7 +32,8 @@ angular.module('webPGQ.services')
             } // end if
 
             message.severity = severity;
-            message.icon = icons[severity];
+            message.category = category;
+            message.icon = icons[category];
 
             var errlog = (
                     severity == 'error' ? console.error :
@@ -62,7 +63,8 @@ angular.module('webPGQ.services')
 
         function removeBannerAt(index)
         {
-            messages.splice(index, 1);
+            //messages.splice(index, 1);
+            messages[index].hidden = true;
         } // end removeBannerAt
 
         var logger = {
@@ -74,6 +76,7 @@ angular.module('webPGQ.services')
 
             debug: log.bind(this, 'debug'),
             info: log.bind(this, 'info'),
+            success: log.bind(this, 'success'),
             warn: log.bind(this, 'warn'),
             error: log.bind(this, 'error')
         };
@@ -84,7 +87,7 @@ angular.module('webPGQ.services')
             {
                 return messages.filter(function(message)
                 {
-                    return showBannersFor[message.severity];
+                    return !message.hidden && showBannersFor[message.severity];
                 });
             }
         });
