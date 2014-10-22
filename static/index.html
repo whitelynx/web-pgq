@@ -359,9 +359,8 @@
 								<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
 									<li ng-repeat="(key, val) in banner.detail">
 										<strong>{{ key }}:</strong>
-										<pre ng-if="!val.indexOf"><code>{{ val|json }}</code></pre>
-										<pre ng-if="val.indexOf && val.indexOf('\n') != -1"><code>{{ val }}</code></pre>
-										<code ng-if="val.indexOf && val.indexOf('\n') == -1">{{ val }}</code>
+										<pre ng-if="!isString(val)"><code>{{ val|json }}</code></pre>
+										<pre ng-if="isString(val)"><code>{{ val }}</code></pre>
 									</li>
 								</ul>
 							</div>
