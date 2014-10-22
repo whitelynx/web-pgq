@@ -257,6 +257,7 @@ LIMIT 2;";
             // Running queries //
             var maxUpdateDelay = 200;
 
+            var lastRowCount = 0;
             var runSQLCallCount = 0;
             function runSQL(queryDef)
             {
@@ -265,13 +266,20 @@ LIMIT 2;";
 
                 var results = {rows: [], noticeMessages: []};
 
-                function queueUpdate(func)
+                function queueUpdate(delay)
                 {
-                    queueDigest(func ? function() { updatePending(); func(); } : updatePending, maxUpdateDelay);
+                    queueDigest(updatePending, delay === undefined ? maxUpdateDelay : delay);
                 } // end queueUpdate
 
                 function updatePending()
                 {
+                    if(results.rows.length != lastRowCount)
+                    {
+                        $window.setTimeout(updateScrollbars, 0);
+
+                        lastRowCount = results.rows.length;
+                    } // end if
+
                     $scope.results = results;
                 } // end updatePending
 
@@ -288,19 +296,16 @@ LIMIT 2;";
                         logger.error(error.message, error);
                     } // end if
 
-                    queueDigest(function()
+                    $scope.showMessages();
+
+                    $scope.queryRunning = false;
+                    queueUpdate(0);
+
+                    if(error.position)
                     {
-                        $scope.queryRunning = false;
-                        $scope.results = results;
-
-                        $scope.showMessages();
-
-                        if(error.position)
-                        {
-                            var pos = mainEditor.getSession().getDocument().indexToPosition(error.position);
-                            mainEditor.moveCursorToPosition(pos);
-                        } // end if
-                    }, 0);
+                        var pos = mainEditor.getSession().getDocument().indexToPosition(error.position);
+                        mainEditor.moveCursorToPosition(pos);
+                    } // end if
 
                     throw error;
                 } // end onError
@@ -344,20 +349,14 @@ LIMIT 2;";
 
                     console.log("runSQL call #" + runSQLCall + ": Complete response:", results);
 
-                    queueDigest(function()
-                    {
-                        $scope.queryRunning = false;
-                        $scope.results = results;
-                    }, 0);
+                    $scope.queryRunning = false;
+                    queueUpdate(0);
 
                     return results;
                 } // end onEnd
 
-                queueDigest(function()
-                {
-                    $scope.queryRunning = true;
-                    $scope.results = results;
-                }, 0);
+                $scope.queryRunning = true;
+                queueUpdate(0);
 
                 sql.on('notice', onNotice);
 
