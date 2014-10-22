@@ -224,6 +224,19 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="bottom right attached black ui labels">
+				<div class="small compact ui label" ng-if="editor.overwrite">
+					<div class="detail">OVR</div>
+				</div>
+				<div class="small compact ui label">
+					<span>row</span> <div class="detail">{{ editor.pos.row }}</div>
+					/ <div class="detail">{{ editor.rows }}</div>
+				</div>
+				<div class="small compact ui label">
+					<span>column</span> <div class="detail">{{ editor.pos.column }}</div>
+				</div>
+			</div>
 		</div>
 
 		<div id="mainMenu" class="transparent small inverted attached compact main ui menu">
@@ -386,16 +399,13 @@
 
 				<div class="bottom right attached ui labels">
 					<div class="small compact ui label">
-						Rows
-						<div class="detail">{{ results.rowCount || 0 }}</div>
+						<span>Rows</span> <div class="detail">{{ results.rowCount || 0 }}</div>
 					</div>
 					<div class="small compact ui label" ng-if="results && results.affectedRowCount">
-						Affected
-						<div class="detail">{{ results.affectedRowCount }}</div>
+						<span>Affected</span> <div class="detail">{{ results.affectedRowCount }}</div>
 					</div>
 					<div class="small compact ui label" ng-if="results && results.totalTimeMS">
-						<div class="detail">{{ results.totalTimeMS }}</div>
-						ms
+						<div class="detail">{{ results.totalTimeMS }}</div> <span>ms</span>
 					</div>
 				</div>
 			</div>
