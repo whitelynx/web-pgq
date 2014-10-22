@@ -543,7 +543,7 @@ LIMIT 2;";
                 var resultsScrollContainer = $('#resultsContainer');
                 resultsScrollContainer.perfectScrollbar();
 
-                scrollContainers.add(resultsScrollContainer);
+                scrollContainers = scrollContainers.add(resultsScrollContainer);
 
                 // Update scrollbars 500 milliseconds after page load.
                 $window.setTimeout(updateScrollbars, 500);
