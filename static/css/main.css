@@ -514,6 +514,11 @@ svg .edgePath {
 	padding: 0.25rem 0;
 }
 
+#paramsGrid .ui.grid > .row:first-child {
+	background: #444;
+	border-radius: 5px 5px 0 0;
+}
+
 /*
 #paramsGrid .column > .ui.input input {
 	padding: 0.125em 0.25em;
