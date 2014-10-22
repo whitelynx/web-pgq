@@ -189,7 +189,7 @@
 							<div class="two wide column">#</div>
 							<div class="twelve wide column">Value / Type</div>
 						</div>
-						<div class="row" ng-cloak ng-repeat="param in queryParams">
+						<div class="row" ng-cloak ng-repeat="param in queryParams track by $index">
 							<div class="two wide column"><code>${{ $index + 1 }}</code></div>
 							<div class="twelve wide column">
 								<div class="fluid mini action ui input">
