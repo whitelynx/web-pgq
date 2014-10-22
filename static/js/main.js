@@ -2,8 +2,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$http', '$timeout', '$location', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
-        function($scope, $http, $timeout, $location, $, graph, keybinding, logger, queueDigest, sql)
+        '$scope', '$http', '$timeout', '$location', '$window', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
+        function($scope, $http, $timeout, $location, $window, $, graph, keybinding, logger, queueDigest, sql)
         {
             var mainEditor;
             $scope.mainEditorConfig = {
@@ -507,12 +507,23 @@ LIMIT 2;";
                 });
             } // end if
 
+            function updateScrollbars()
+            {
+                $('#editor .ace_scrollbar').perfectScrollbar('update');
+                $('#resultsContainer').perfectScrollbar('update');
+                $('#messagesContainer').perfectScrollbar('update');
+            } // end updateScrollbars
+
+            // Update scrollbars on resize.
+            $($window).resize(updateScrollbars);
+
             $(function()
             {
-                $timeout(function()
-                {
-                    $('#editor .ace_scrollbar').perfectScrollbar('update');
-                }, 1000);
+                $('#resultsContainer').perfectScrollbar();
+                $('#messagesContainer').perfectScrollbar({suppressScrollX: true, includePadding: true});
+
+                // Update scrollbars 1 second after page load.
+                $timeout(updateScrollbars, 1000);
 
                 // Key bindings //
                 function execRun(event)
