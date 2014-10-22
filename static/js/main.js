@@ -545,7 +545,7 @@ LIMIT 2;";
 
                 scrollContainers.add(resultsScrollContainer);
 
-                // Update scrollbars 1 second after page load.
+                // Update scrollbars 500 milliseconds after page load.
                 $window.setTimeout(updateScrollbars, 500);
 
                 // Key bindings //
