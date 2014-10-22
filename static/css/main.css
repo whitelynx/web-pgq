@@ -490,6 +490,12 @@ svg .edgePath {
 	margin-bottom: 0.5rem;
 }
 
+.ui.message ul > li > pre {
+	display: inline-block;
+	margin: 0 1em;
+	vertical-align: top;
+}
+
 .square.ui.button {
 	border-radius: 0;
 }
