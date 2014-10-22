@@ -5,7 +5,7 @@ angular.module('webPGQ')
         '$scope', '$http', '$timeout', '$location', '$window', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
         function($scope, $http, $timeout, $location, $window, $, graph, keybinding, logger, queueDigest, sql)
         {
-            var mainEditor, mainEditorScrollbars;
+            var mainEditor, mainEditorInfo, mainEditorSession, mainEditorScrollbars;
             $scope.mainEditorConfig = {
                 theme: 'idle_fingers',
                 mode: 'pgsql',
@@ -18,9 +18,9 @@ angular.module('webPGQ')
                     // Options
                     _editor.setReadOnly(false);
 
-                    var session = _editor.getSession();
-                    session.setTabSize(2);
-                    session.setUseSoftTabs(true);
+                    mainEditorSession = _editor.getSession();
+                    mainEditorSession.setTabSize(2);
+                    mainEditorSession.setUseSoftTabs(true);
 
                     mainEditorScrollbars = $('#editor .ace_scrollbar');
 
@@ -39,14 +39,35 @@ angular.module('webPGQ')
                             suppressScrollY: true
                         });
 
-                    session.on('change', function() { mainEditorScrollbars.perfectScrollbar('update'); });
+                    mainEditorInfo = {
+                        rows: mainEditorSession.getDocument().getLength(),
+                        pos: mainEditor.getCursorPosition(),
+                        overwrite: false
+                    };
+
+                    mainEditorSession.on('change', function() { mainEditorScrollbars.perfectScrollbar('update'); });
+
+                    mainEditorSession.on('changeOverwrite', function()
+                    {
+                        mainEditorInfo.overwrite = mainEditorSession.getOverwrite();
+                        queueUpdateEditorInfo();
+                    });
+                    mainEditorSession.selection.on('changeCursor', function()
+                    {
+                        mainEditorInfo.pos = mainEditor.getCursorPosition();
+                        queueUpdateEditorInfo();
+                    });
 
                     $('#editor').hover(
                         function() { mainEditorScrollbars.addClass('hover'); },
                         function() { mainEditorScrollbars.removeClass('hover'); }
                     );
                 },
-                //onChanged: function()//e) { },
+                onChanged: function()
+                {
+                    mainEditorInfo.rows = mainEditorSession.getDocument().getLength();
+                    queueUpdateEditorInfo();
+                },
                 require: ['ace/ext/language_tools'],
                 advanced: {
                     enableSnippets: true,
@@ -54,6 +75,16 @@ angular.module('webPGQ')
                     enableLiveAutocompletion: true
                 }
             };
+
+            function queueUpdateEditorInfo()
+            {
+                queueDigest(updateEditorInfo, 0);
+            } // end queueUpdateEditorInfo
+
+            function updateEditorInfo()
+            {
+                $scope.editor = mainEditorInfo;
+            } // end updateEditorInfo
 
             // Connections //
             //$scope.connections = {};
