@@ -523,6 +523,29 @@ LIMIT 2;";
                 });
             } // end if
 
+            var messagesContainer, messagesAtBottom = true;
+
+            logger.on('bannerMessage', function()
+            {
+                if($scope.$root.$$phase === null)
+                {
+                    $scope.$apply();
+                } // end if
+
+                $window.setTimeout(function()
+                {
+                    if(messagesContainer && messagesAtBottom)
+                    {
+                        messagesContainer.scrollTop(messagesContainer.prop('scrollHeight') -
+                            messagesContainer.height());
+                    }
+                    else
+                    {
+                        updateScrollbars();
+                    } // end if
+                }, 0);
+            });
+
             var scrollContainers;
             function updateScrollbars()
             {
@@ -535,13 +558,25 @@ LIMIT 2;";
 
             $(function()
             {
-                scrollContainers = $('#querySidebar,#messagesContainer');
+                scrollContainers = $('#querySidebar');
                 scrollContainers.perfectScrollbar({suppressScrollX: true, includePadding: true});
 
-                var resultsScrollContainer = $('#resultsContainer');
-                resultsScrollContainer.perfectScrollbar();
+                messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
+                messagesContainer.perfectScrollbar({suppressScrollX: true, includePadding: true});
+                messagesContainer.scroll(function()
+                {
+                    messagesAtBottom = false;
+                    if(messagesContainer.scrollTop() ===
+                        messagesContainer.prop('scrollHeight') - messagesContainer.height())
+                    {
+                        messagesAtBottom = true;
+                    } // end if
+                });
 
-                scrollContainers = scrollContainers.add(resultsScrollContainer);
+                var resultsContainer = $('#resultsContainer');
+                resultsContainer.perfectScrollbar();
+
+                scrollContainers = scrollContainers.add(messagesContainer).add(resultsContainer);
 
                 // Update scrollbars 500 milliseconds after page load.
                 $window.setTimeout(updateScrollbars, 500);
