@@ -652,6 +652,11 @@ svg .edgePath {
 	border-radius: 4px 0 0 0;
 }
 
+/* FIX: Remove border radii on dimmers inside attached segments. */
+.ui.segment.attached > .ui.dimmer { border-radius: 0; }
+.ui.segment.bottom.attached > .ui.dimmer { border-radius: 0px 0px 5px 5px; }
+.ui.segment.top.attached > .ui.dimmer { border-radius: 5px 5px 0px 0px; }
+
 /* FIX: Correct border radii on tables with only one column. */
 .ui.table thead th:only-child {
 	border-radius: 5px 5px 0px 0px;
