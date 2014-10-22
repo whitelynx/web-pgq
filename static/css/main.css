@@ -635,7 +635,7 @@ svg .edgePath {
 
 .ui.bottom.right.attached.labels > .label {
 	border-radius: 4px 4px 0 0;
-	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 #editorArea > .ui.bottom.right.attached.labels > .label:last-child,
