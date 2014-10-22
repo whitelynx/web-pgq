@@ -490,6 +490,10 @@ svg .edgePath {
 	margin-bottom: 0.5rem;
 }
 
+#messages-dimmer.ui.dimmer > .content > section > .ui.icon.message > .icon:not(.close) {
+	vertical-align: top;
+}
+
 .ui.message ul > li > pre {
 	display: inline-block;
 	margin: 0 0.5em;
