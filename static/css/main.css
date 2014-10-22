@@ -492,7 +492,7 @@ svg .edgePath {
 
 .ui.message ul > li > pre {
 	display: inline-block;
-	margin: 0 1em;
+	margin: 0 0.5em;
 	vertical-align: top;
 }
 

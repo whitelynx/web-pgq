@@ -451,6 +451,8 @@ LIMIT 2;";
             $scope.zoomFit = function() { $scope.$broadcast('ZoomFit'); };
             $scope.reRender = function() { $scope.$broadcast('Render'); };
 
+            $scope.isString = function(val) { return typeof val == 'string'; };
+
             $scope.$watch('resultsTab', function(value)
             {
                 // Update the query plan view if necessary whenever it becomes visible.
