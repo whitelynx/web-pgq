@@ -293,7 +293,7 @@ LIMIT 2;";
                         $scope.queryRunning = false;
                         $scope.results = results;
 
-                        $scope.resultsTab = 'Messages';
+                        $scope.showMessages();
 
                         if(error.position)
                         {
