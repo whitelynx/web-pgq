@@ -624,13 +624,19 @@ svg .edgePath {
 	left: auto;
 	right: 0;
 	width: auto;
+	z-index: 1000
 }
 
-.ui.bottom.right.attached.labels .label {
+.ui.bottom.right.attached.labels > .label {
 	border-radius: 4px 4px 0 0;
 }
 
-.ui.bottom.right.attached.labels .label:last-child {
+#editorArea > .ui.bottom.right.attached.labels > .label:last-child,
+.ui.segment .ui.bottom.right.attached.labels > .label:last-child {
+	border-radius: 4px 0 5px 0;
+}
+
+#resultsTabs > .ui.bottom.right.attached.labels > .label:last-child {
 	border-radius: 4px 0 0 0;
 }
 
@@ -642,6 +648,16 @@ svg .edgePath {
 /* FIX: Set the font family of input elements to use a font that actually supports antialiasing in Linux. */
 .ui.input input {
 	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
+}
+
+/* FIX: Remove left margin from any detail that is the first child of a label. */
+.ui.label > .detail:first-child {
+	margin-left: 0;
+}
+
+/* FIX: Add right margin from any detail that is not the last child of a label. */
+.ui.label > .detail:not(:last-child) {
+	margin-right: 0.5em;
 }
 
 /* FIX: Remove right margin and transparency from any icon that is the only child of a label. */
