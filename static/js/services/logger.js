@@ -1,7 +1,7 @@
 /* global angular: true */
 
 angular.module('webPGQ.services')
-    .service('logger', function()
+    .service('logger', ['eventEmitter', function(eventEmitter)
     {
         var showBannersFor = {
             error: true,
@@ -15,24 +15,24 @@ angular.module('webPGQ.services')
             info: 'info letter',
         };
 
-        // Banner messages (errors, warnings, etc.) //
-        var bannerMessages = [];
+        // Log messages
+        var messages = [];
 
         function log(severity, header, detail)
         {
-            var bannerMessage;
+            var message;
             if(arguments.length == 1 && typeof header == 'object')
             {
-                bannerMessage = header;
-                severity = severity || bannerMessage.severity;
+                message = header;
+                severity = severity || message.severity;
             }
             else
             {
-                bannerMessage = {header: header, detail: detail};
+                message = {header: header, detail: detail};
             } // end if
 
-            bannerMessage.severity = severity;
-            bannerMessage.icon = icons[severity];
+            message.severity = severity;
+            message.icon = icons[severity];
 
             var errlog = (
                     severity == 'error' ? console.error :
@@ -40,32 +40,35 @@ angular.module('webPGQ.services')
                     )
                     .bind(console);
 
-            if(bannerMessage.detail)
+            if(message.detail)
             {
-                bannerMessage.detailType = typeof bannerMessage.detail;
+                message.detailType = typeof message.detail;
 
-                errlog(severity + ": " + bannerMessage.header + ":", bannerMessage.detail);
+                errlog(severity + ": " + message.header + ":", message.detail);
             }
             else
             {
-                errlog(severity + ": " + bannerMessage.header);
+                errlog(severity + ": " + message.header);
             } // end if
 
+            messages.push(message);
+
+            logger.emit('message', message);
             if(showBannersFor[severity])
             {
-                bannerMessages.push(bannerMessage);
+                logger.emit('bannerMessage', message);
             } // end if
         } // end log
 
         function removeBannerAt(index)
         {
-            bannerMessages.splice(index, 1);
+            messages.splice(index, 1);
         } // end removeBannerAt
 
-        return {
+        var logger = {
             showBannersFor: showBannersFor,
             icons: icons,
-            bannerMessages: bannerMessages,
+            messages: messages,
             log: log,
             removeBannerAt: removeBannerAt,
 
@@ -74,4 +77,17 @@ angular.module('webPGQ.services')
             warn: log.bind(this, 'warn'),
             error: log.bind(this, 'error')
         };
-    });
+        eventEmitter.inject({prototype: logger});
+
+        Object.defineProperty(logger, 'bannerMessages', {
+            get: function()
+            {
+                return messages.filter(function(message)
+                {
+                    return showBannersFor[message.severity];
+                });
+            }
+        });
+
+        return logger;
+    }]);
