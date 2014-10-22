@@ -363,7 +363,7 @@
 				</div>
 
 				<div id="messagesContainer">
-					<div class="content fade slide animation" ng-repeat="(idx, banner) in logger.bannerMessages">
+					<section class="content fade slide animation" ng-repeat="(idx, banner) in logger.bannerMessages">
 						<div class="clickable small floating icon ui message" ng-class="banner.severity"
 								ng-click="logger.removeBannerAt(idx)">
 							<i class="icon" ng-class="banner.icon"></i>
@@ -381,7 +381,7 @@
 								</li>
 							</ul>
 						</div>
-					</div>
+					</section>
 				</div>
 
 				<div class="bottom right attached ui labels">
