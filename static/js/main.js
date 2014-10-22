@@ -120,19 +120,17 @@ angular.module('webPGQ')
                 return sql.connect(connInfo)
                 .then(function()
                 {
-                    logger.info("Connected to database " + connectionName + ".");
                     $scope.connecting = false;
                     $scope.connected = true;
                     return true;
                 })
-                .catch(function(error)
+                .catch(function()
                 {
-                    logger.error("Error connecting to database: " + error.message, error);
                     $scope.connecting = false;
                     $scope.currentConnection = null;
                     return false;
                 });
-            };
+            }; // end $scope.connect
 
             // Queries //
             $scope.queryParams = [];
@@ -326,8 +324,6 @@ LIMIT 2;";
                         logger.error(error.message, error);
                     } // end if
 
-                    $scope.showMessages();
-
                     $scope.queryRunning = false;
                     queueUpdate(0);
 
@@ -361,19 +357,19 @@ LIMIT 2;";
                     queueUpdate();
                 } // end onRow
 
-                function onEnd(args)
+                function onEnd(response)
                 {
-                    console.log("runSQL call #" + runSQLCall + ": Done:", args);
+                    console.log("runSQL call #" + runSQLCall + ": Done:", response);
 
                     sql.removeListener('notice', onNotice);
                     queryPromise.removeListener('fields', onFields);
                     queryPromise.removeListener('row', onRow);
 
-                    for(var key in args[0])
+                    for(var key in response)
                     {
                         if(key != 'rows')
                         {
-                            results[key] = args[0][key];
+                            results[key] = response[key];
                         } // end if
                     } // end for
 
@@ -522,8 +518,13 @@ LIMIT 2;";
 
             var messagesContainer, messagesAtBottom = true;
 
-            logger.on('bannerMessage', function()
+            logger.on('bannerMessage', function(message)
             {
+                if(message.severity == 'error')
+                {
+                    $scope.showMessages();
+                } // end if
+
                 if($scope.$root.$$phase === null)
                 {
                     $scope.$apply();
