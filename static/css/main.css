@@ -618,6 +618,10 @@ svg .edgePath {
 	margin: 0em 0.5em 0em 0em;
 }
 
+.ui.label#permalink {
+	z-index: 1000;
+}
+
 .ui.bottom.right.attached.labels {
 	position: absolute;
 	top: auto;
@@ -626,7 +630,7 @@ svg .edgePath {
 	right: 0;
 	width: auto;
 	opacity: 0.9;
-	z-index: 1000
+	z-index: 1000;
 }
 
 .ui.bottom.right.attached.labels > .label {

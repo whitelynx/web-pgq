@@ -135,11 +135,11 @@
 			<div id="editor" class="inverted ui segment" ui-ace="mainEditorConfig"
 				ng-model="queryText"></div>
 
-			<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
-				<a id="permalink" class="black corner ui label">
-					<i class="url icon"></i>
-				</a>
+			<a id="permalink" class="black corner ui label">
+				<i class="url icon"></i>
+			</a>
 
+			<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
 				<div class="compact tiny compact ui buttons">
 					<save-file ng-model="queryText" file-name="currentFileName"></save-file>
 
