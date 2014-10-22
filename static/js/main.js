@@ -416,8 +416,6 @@ LIMIT 2;";
 
             $scope.runQuery = function()
             {
-                console.log("$scope.runQuery()", new Error("called from:").stack);
-
                 runSQL(getActiveQuery())
                     .then($scope.showResults);
             }; // end $scope.runQuery
