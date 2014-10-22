@@ -63,7 +63,7 @@ angular.module('webPGQ.services')
 
             connect: function(connectionInfo)
             {
-                logger.debug('Connecting to:', connectionInfo, 'sql');
+                logger.debug('Connecting...', connectionInfo, 'sql');
 
                 return promise(function(resolve)
                 {
@@ -71,7 +71,7 @@ angular.module('webPGQ.services')
                 })
                 .then(function()
                 {
-                    logger.success('Connected to:', connectionInfo, 'sql');
+                    logger.success('Connected to database.', connectionInfo, 'sql');
                     return true;
                 })
                 .catch(function(error)
@@ -100,7 +100,7 @@ angular.module('webPGQ.services')
                             channel.removeListener('fields', onFields);
                             channel.removeListener('row', onRow);
                         })
-                        .then(function(response)
+                        .spread(function(response)
                         {
                             logger.success('Query finished:', response, 'sql');
                             return response;
