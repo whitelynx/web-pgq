@@ -284,12 +284,12 @@
 				</div>
 
 				<div class="horizontally fitted borderless item right compact ui buttons">
-					<a class="orange labeled icon ui button" ng-click="explainQuery().then(showPlan)"
+					<a class="orange labeled icon ui button" ng-click="explainQuery()"
 							ng-class="{disabled: !connected || queryRunning}" data-html="Shortcut: <b>F7</b>">
 						<i class="question icon"></i>
 						Explain
 					</a>
-					<a class="orange ui button" ng-click="explainQuery(true).then(showPlan)"
+					<a class="orange ui button" ng-click="explainQuery(true)"
 							ng-class="{disabled: !connected || queryRunning}" data-html="Shortcut: <b>Shift+F7</b>">
 						Analyze
 					</a>
