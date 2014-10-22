@@ -9,7 +9,7 @@ body {
 	overflow: hidden;
 }
 
-code, .ace_editor {
+code, pre, .ace_editor {
 	font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
 }
 
