@@ -540,7 +540,7 @@ svg .edgePath {
 
 #resultsContainer {
 	clear: both;
-	overflow: auto;
+	overflow: hidden;
 	position: absolute;
 	top: 1em; bottom: 1em;
 	left: 1em; right: 1em;
@@ -549,7 +549,7 @@ svg .edgePath {
 #messagesContainer {
 	box-sizing: border-box;
 	clear: both;
-	overflow: auto;
+	overflow: hidden;
 	position: absolute;
 	top: 0;
 	left: 0; right: 0;
