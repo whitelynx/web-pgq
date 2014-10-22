@@ -315,15 +315,6 @@ LIMIT 2;";
                 {
                     console.error("runSQL call #" + runSQLCall + ": Query failed with error:", error);
 
-                    if(typeof error == 'string')
-                    {
-                        logger.error(error);
-                    }
-                    else
-                    {
-                        logger.error(error.message, error);
-                    } // end if
-
                     $scope.queryRunning = false;
                     queueUpdate(0);
 

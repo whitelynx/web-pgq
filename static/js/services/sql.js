@@ -83,13 +83,21 @@ angular.module('webPGQ.services')
 
             run: function(queryDef)
             {
-                queryDef.queryID = queryID;
-                logger.debug('Running query:', queryDef, 'sql');
+                queryDef.queryID = ++queryID;
+                logger.debug('Running query #' + queryDef.queryID + ':', queryDef, 'sql');
 
                 return promise(function(resolve)
                 {
                     var onFields = this.emit.bind(this, 'fields');
-                    var onRow = this.emit.bind(this, 'row');
+
+                    var self = this;
+                    function onRow(qID, row)
+                    {
+                        if(qID == queryDef.queryID)
+                        {
+                            self.emit('row', row);
+                        } // end if
+                    } // end onRow
 
                     channel.on('fields', onFields);
                     channel.on('row', onRow);
@@ -102,12 +110,21 @@ angular.module('webPGQ.services')
                         })
                         .spread(function(response)
                         {
-                            logger.success('Query finished:', response, 'sql');
+                            logger.success('Query #' + queryDef.queryID + ' finished.', response, 'sql');
                             return response;
                         })
                         .catch(function(error)
                         {
-                            logger.error('Error running query:', error, 'sql');
+                            var msg = 'Error running query #' + queryDef.queryID + ': ';
+                            if(typeof error == 'string')
+                            {
+                                logger.error(msg + error, {}, 'sql');
+                            }
+                            else
+                            {
+                                logger.error(msg + error.message, error, 'sql');
+                            } // end if
+
                             throw error;
                         })
                     );
