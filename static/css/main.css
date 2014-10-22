@@ -566,7 +566,7 @@ svg .edgePath {
 	left: 0; right: 0;
 	max-height: 100%;
 	padding: 0.25em 1em;
-	z-index: 850;
+	z-index: 1001;
 }
 
 #messagesContainer > section.content {
