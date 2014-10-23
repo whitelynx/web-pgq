@@ -1,0 +1,9 @@
+<pre ng-if="firstLine"><code>{{ firstLine }}</code></pre>
+<em ng-if="placeholder">{{ placeholder }}</em>
+
+<i ng-if="firstLine || placeholder" class="vertical ellipsis icon"></i>
+
+<div ng-if="firstLine || placeholder" class="overlapping menu" ui-ace="editorConfig" readonly="true" ng-init="initMenu()"></div>
+
+
+<pre ng-if="!firstLine && !placeholder"><code>{{ resultValue }}</code></pre>
