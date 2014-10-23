@@ -5,68 +5,88 @@ angular.module('webPGQ')
         '$scope', '$http', '$timeout', '$location', '$window', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
         function($scope, $http, $timeout, $location, $window, $, graph, keybinding, logger, queueDigest, sql)
         {
-            var mainEditor, mainEditorInfo, mainEditorSession, mainEditorScrollbars;
-            $scope.mainEditorConfig = {
+            $scope.commonEditorConfig = {
                 theme: 'idle_fingers',
-                mode: 'pgsql',
                 useWrapMode: true,
-                onLoad: function(_editor)
+                onLoad: function(editor)
                 {
-                    console.log("ACE editor loaded:", _editor);
-                    mainEditor = _editor;
+                    console.log("ACE editor loaded:", editor);
 
                     // Options
-                    _editor.setReadOnly(false);
+                    var session = editor.getSession();
+                    session.setTabSize(2);
+                    session.setUseSoftTabs(true);
 
-                    mainEditorSession = _editor.getSession();
-                    mainEditorSession.setTabSize(2);
-                    mainEditorSession.setUseSoftTabs(true);
+                    var editorElem = $(editor.renderer.getContainerElement());
+                    var scrollbars = $('.ace_scrollbar', editorElem)
+                        .css('overflow', 'hidden');
 
-                    mainEditorScrollbars = $('#editor .ace_scrollbar');
+                    scrollbars.filter('.ace_scrollbar-v')
+                        .perfectScrollbar({ includePadding: true, minScrollbarLength: 12, suppressScrollX: true });
+                    scrollbars.filter('.ace_scrollbar-h')
+                        .perfectScrollbar({ includePadding: true, minScrollbarLength: 12, suppressScrollY: true });
 
-                    mainEditorScrollbars.css('overflow', 'hidden');
+                    session.on('change', function()
+                    {
+                        scrollbars.perfectScrollbar('update');
+                    });
 
-                    mainEditorScrollbars.filter('.ace_scrollbar-v')
-                        .perfectScrollbar({
-                            includePadding: true,
-                            minScrollbarLength: 12,
-                            suppressScrollX: true
-                        });
-                    mainEditorScrollbars.filter('.ace_scrollbar-h')
-                        .perfectScrollbar({
-                            includePadding: true,
-                            minScrollbarLength: 12,
-                            suppressScrollY: true
-                        });
+                    editorElem.hover(
+                        function() { scrollbars.addClass('hover'); },
+                        function() { scrollbars.removeClass('hover'); }
+                    );
+
+                    queueDigest(function()
+                    {
+                        var value = editorElem.attr('value');
+                        console.log("editor:", editor);
+                        console.log("editorElem:", editorElem);
+                        console.log("editorElem.attr('value'):", value);
+                        if(value)
+                        {
+                            editor.setValue(value);
+                        } // end value
+                    }, 0);
+
+                    return { editor: editorElem, scrollbars: scrollbars };
+                }
+            }; // end $scope.commonEditorConfig
+
+            var mainEditor, mainEditorInfo, mainEditorScrollbars;
+            $scope.mainEditorConfig = angular.extend({}, $scope.commonEditorConfig, {
+                mode: 'pgsql',
+                onLoad: function(editor)
+                {
+                    mainEditor = editor;
+                    var elements = $scope.commonEditorConfig.onLoad(editor);
+
+                    // Options
+                    var session = editor.getSession();
+
+                    mainEditorScrollbars = elements.scrollbars;
 
                     mainEditorInfo = {
-                        rows: mainEditorSession.getDocument().getLength(),
-                        pos: mainEditor.getCursorPosition(),
+                        rows: session.getDocument().getLength(),
+                        pos: editor.getCursorPosition(),
                         overwrite: false
                     };
 
-                    mainEditorSession.on('change', function() { mainEditorScrollbars.perfectScrollbar('update'); });
-
-                    mainEditorSession.on('changeOverwrite', function()
+                    session.on('change', function()
                     {
-                        mainEditorInfo.overwrite = mainEditorSession.getOverwrite();
-                        queueUpdateEditorInfo();
-                    });
-                    mainEditorSession.selection.on('changeCursor', function()
-                    {
-                        mainEditorInfo.pos = mainEditor.getCursorPosition();
+                        mainEditorInfo.rows = session.getDocument().getLength();
                         queueUpdateEditorInfo();
                     });
 
-                    $('#editor').hover(
-                        function() { mainEditorScrollbars.addClass('hover'); },
-                        function() { mainEditorScrollbars.removeClass('hover'); }
-                    );
-                },
-                onChanged: function()
-                {
-                    mainEditorInfo.rows = mainEditorSession.getDocument().getLength();
-                    queueUpdateEditorInfo();
+                    session.on('changeOverwrite', function()
+                    {
+                        mainEditorInfo.overwrite = session.getOverwrite();
+                        queueUpdateEditorInfo();
+                    });
+                    session.selection.on('changeCursor', function()
+                    {
+                        mainEditorInfo.pos = editor.getCursorPosition();
+                        queueUpdateEditorInfo();
+                    });
                 },
                 require: ['ace/ext/language_tools'],
                 advanced: {
@@ -74,7 +94,7 @@ angular.module('webPGQ')
                     enableBasicAutocompletion: true,
                     enableLiveAutocompletion: true
                 }
-            };
+            }); // end $scope.mainEditorConfig
 
             function queueUpdateEditorInfo()
             {

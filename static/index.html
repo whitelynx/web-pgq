@@ -107,6 +107,7 @@
 		<script src="js/modules.js"></script>
 
 		<script src="js/directives/digraph.js"></script>
+		<script src="js/directives/result-value.js"></script>
 		<script src="js/directives/open-file.js"></script>
 		<script src="js/directives/save-file.js"></script>
 
@@ -132,8 +133,7 @@
 		</div>
 
 		<div id="editorArea" class="container">
-			<div id="editor" class="inverted ui segment" ui-ace="mainEditorConfig"
-				ng-model="queryText"></div>
+			<div id="editor" class="inverted ui segment" ui-ace="mainEditorConfig" ng-model="queryText"></div>
 
 			<a id="permalink" class="black corner ui label">
 				<i class="url icon"></i>
@@ -384,7 +384,10 @@
 
 						<tbody>
 							<tr ng-repeat="row in results.rows track by $index" class="fade animation">
-								<td ng-repeat="value in row track by $index"><pre><code>{{ value }}</code></pre></td>
+								<td ng-repeat="value in row track by $index"
+									result-value="value" result-field-type="results.fields[$index].dataType"
+									ace-config="commonEditorConfig">
+								</td>
 							</tr>
 						</tbody>
 					</table>
