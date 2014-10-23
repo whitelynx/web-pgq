@@ -83,18 +83,16 @@ angular.module('webPGQ.directives')
                 console.log("result-value~updateFirstLine: value =", value);
                 console.log("result-value~updateFirstLine: scope.resultFieldType =", scope.resultFieldType);
 
-                var displayValue = value;
+                var displayValue = value, firstLine = value;
 
                 switch(scope.resultFieldType)
                 {
                     case 'json':
                         element.addClass("hoverable ui dropdown");
-                        scope.firstLine = JSON.stringify(value);
+                        firstLine = JSON.stringify(value);
                         displayValue = $filter('json')(value);
                         /* falls through */
                     case 'string':
-                        var firstLine = value;
-
                         var match = firstLineRE.exec(firstLine);
                         if(match)
                         {
