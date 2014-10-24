@@ -31,8 +31,6 @@ angular.module('webPGQ')
                 useWrapMode: true,
                 onLoad: function(editor)
                 {
-                    console.log("ACE editor loaded:", editor);
-
                     // Options
                     var session = editor.getSession();
                     session.setTabSize($scope.tabSize);
