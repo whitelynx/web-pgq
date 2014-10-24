@@ -249,7 +249,7 @@ code, pre, .ace_editor {
 table td.hoverable.ui.dropdown {
 	cursor: default;
 	box-shadow: 2px 0px 0px rgba(0, 181, 173, 0.9) inset;
-	padding-right: 16px;
+	padding-right: 1.5em;
 }
 
 table td.ui.dropdown {
