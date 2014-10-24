@@ -326,6 +326,9 @@ table td > pre:only-child, table td.ui.dropdown > pre.text, table td.ui.dropdown
 .ui.dropdown > pre.menu {
 	white-space: pre;
 }
+.ui.dropdown > .menu.ace_editor.ace_dark {
+	background: #222222;
+}
 
 .smallest.ui.table {
 	font-size: 0.7em;
