@@ -5,6 +5,27 @@ angular.module('webPGQ')
         '$scope', '$http', '$timeout', '$location', '$window', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
         function($scope, $http, $timeout, $location, $window, $, graph, keybinding, logger, queueDigest, sql)
         {
+            $scope.tabSize = 4;
+            $scope.softTabs = true;
+
+            var allEditors = [];
+
+            $scope.$watch('tabSize', function(value)
+            {
+                allEditors.forEach(function(editor)
+                {
+                    editor.getSession().setTabSize(value);
+                });
+            });
+            $scope.$watch('softTabs', function(value)
+            {
+                allEditors.forEach(function(editor)
+                {
+                    editor.getSession().setUseSoftTabs(value);
+                });
+            });
+
+
             $scope.commonEditorConfig = {
                 theme: 'idle_fingers',
                 useWrapMode: true,
@@ -14,8 +35,8 @@ angular.module('webPGQ')
 
                     // Options
                     var session = editor.getSession();
-                    session.setTabSize(2);
-                    session.setUseSoftTabs(true);
+                    session.setTabSize($scope.tabSize);
+                    session.setUseSoftTabs($scope.softTabs);
 
                     var editorElem = $(editor.renderer.getContainerElement());
                     var scrollbars = $('.ace_scrollbar', editorElem)
@@ -36,17 +57,12 @@ angular.module('webPGQ')
                         function() { scrollbars.removeClass('hover'); }
                     );
 
-                    queueDigest(function()
+                    allEditors.push(editor);
+                    editorElem.on('$destroy', function()
                     {
-                        var value = editorElem.attr('value');
-                        console.log("editor:", editor);
-                        console.log("editorElem:", editorElem);
-                        console.log("editorElem.attr('value'):", value);
-                        if(value)
-                        {
-                            editor.setValue(value);
-                        } // end value
-                    }, 0);
+                        var editorIdx = allEditors.indexOf(editor);
+                        allEditors.splice(editorIdx, 1);
+                    }); // end '$destroy' handler
 
                     return { editor: editorElem, scrollbars: scrollbars };
                 }
