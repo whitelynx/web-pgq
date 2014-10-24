@@ -269,6 +269,15 @@ table td.hoverable.ui.dropdown > .ui.menu::after {
 	content: none;
 }
 
+table td.hoverable.ui.dropdown > .ui.menu > .ace_editor {
+	position: absolute;
+	top: 0; bottom: 0;
+	left: 0; right: 0;
+}
+table td.hoverable.ui.dropdown > .ui.menu > .pretty.print {
+	font-size: 8px;
+}
+
 table td.ui.dropdown > i.icon {
 	position: absolute;
 	right: 0;
