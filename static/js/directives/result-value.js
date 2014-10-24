@@ -14,7 +14,14 @@ angular.module('webPGQ.directives')
 
         function link(scope, element)//, attrs)
         {
-            scope.editorConfig = angular.extend({}, scope.aceConfig || {}, { onLoad: onAceLoad });
+            scope.editorConfig = angular.extend({}, scope.aceConfig || {}, { onLoad: onAceLoad, showGutter: false });
+            scope.prettyPrint = true;
+            scope.prettyPrintable = false;
+
+            scope.togglePrettyPrint = function()
+            {
+                scope.prettyPrint = !scope.prettyPrint;
+            }; // end scope.togglePrettyPrint
 
             var editor, needsResize = true;
 
@@ -34,15 +41,9 @@ angular.module('webPGQ.directives')
                 } // end onShow
             }; // end dropdownSettings
 
-            scope.$watch('resultValue', function(value)
-            {
-                updateFirstLine(value);
-            }); // end scope.$watch callback
-
-            scope.$watch('resultFieldType', function()
-            {
-                updateFirstLine(scope.resultValue);
-            }); // end scope.$watch callback
+            scope.$watch('resultValue', updateFirstLine);
+            scope.$watch('resultFieldType', updateFirstLine);
+            scope.$watch('prettyPrint', updateFirstLine);
 
             scope.$watch('firstLine', function()
             {
@@ -57,22 +58,23 @@ angular.module('webPGQ.directives')
                 editor = _editor;
                 scope.aceConfig.onLoad(editor);
 
-                queueDigest(function()
-                {
-                    updateFirstLine(scope.resultValue);
-                }, 0);
+                editor.setHighlightActiveLine(false);
+                editor.setShowPrintMargin(false);
+
+                queueDigest(updateFirstLine, 0);
             } // end onAceLoad
 
-            function updateFirstLine(value)
+            function updateFirstLine()
             {
+                var value = scope.resultValue;
                 var fieldType = scope.resultFieldType, fieldName = scope.resultFieldName;
-                var displayValue = value, firstLine = value, editorMode;
+                var displayValue = value, firstLine = value, editorMode, prettyPrintable;
 
                 switch(fieldType)
                 {
                     case 'json':
                         firstLine = JSON.stringify(value);
-                        displayValue = JSON.stringify(value, null, '\t');
+                        displayValue = JSON.stringify(value, null, scope.prettyPrint ? '\t' : null);
                         editorMode = 'json';
                         /* falls through */
                     case 'text':
@@ -98,6 +100,11 @@ angular.module('webPGQ.directives')
                     if(maybeJSONRE.test(value))
                     {
                         editorMode = 'json';
+                        prettyPrintable = true;
+                        if(scope.prettyPrint)
+                        {
+                            displayValue = JSON.stringify(JSON.parse(value), null, '\t');
+                        } // end if
                     }
                     else if(maybeEWKTRE.test(value))
                     {
@@ -122,6 +129,8 @@ angular.module('webPGQ.directives')
                         // It may be HEX[E]WKB, SVG path, GeoHash, lat/lon text, etc.
                     } // end if
                 } // end if
+
+                scope.prettyPrintable = prettyPrintable;
 
                 if(firstLine != value)
                 {
