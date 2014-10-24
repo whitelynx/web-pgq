@@ -323,6 +323,12 @@ LIMIT 2;";
             var runSQLCallCount = 0;
             function runSQL(queryDef)
             {
+                if($scope.queryRunning)
+                {
+                    // Ignore calls to runSQL() while another query is running.
+                    return;
+                } // end if
+
                 var runSQLCall = ++runSQLCallCount;
                 console.log("Starting runSQL call #" + runSQLCall);
 
