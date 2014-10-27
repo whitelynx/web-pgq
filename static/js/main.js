@@ -472,7 +472,7 @@ LIMIT 2;";
             $scope.results = {rows: []};
 
             // Switching results views //
-            $scope.resultsTab = 'Results';
+            $scope.resultsTab = 'Messages';
 
             $scope.showResults = function() { $scope.resultsTab = 'Results'; };
             $scope.showPlan = function() { $scope.resultsTab = 'Query Plan'; };
