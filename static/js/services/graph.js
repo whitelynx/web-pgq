@@ -146,14 +146,17 @@ angular.module('webPGQ.services')
                 };
             }, // end nodesFromPlan
 
-            fromPlan: function(plan)
+            fromPlan: function(plans)
             {
                 // Create a new directed graph
                 var graph = new dagreD3.Digraph();
 
                 maxTotalCost = 0;
 
-                graphService.nodesFromPlan(graph, plan);
+                plans.forEach(function(plan)
+                {
+                    graphService.nodesFromPlan(graph, plan.Plan);
+                });
 
                 return graph;
             } // end graphFromPlan

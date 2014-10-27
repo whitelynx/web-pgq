@@ -453,7 +453,7 @@ LIMIT 2;";
                     {
                         console.log("$scope.explainQuery got results:", results);
 
-                        $scope.graph = results ? graph.fromPlan(results.rows[0][0][0].Plan) : null;
+                        $scope.graph = results ? graph.fromPlan(results.rows[0][0]) : null;
 
                         $scope.graphNodes = [];
                         if($scope.graph)
