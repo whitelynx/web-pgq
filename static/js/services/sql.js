@@ -155,7 +155,7 @@ angular.module('webPGQ.services')
                             "FORMAT JSON"
                         )
                     .join(', ') +
-                    ") ";
+                    ")\n";
             }, // end formatExplain
 
             explain: function(queryDef, explainOptions, analyze)
