@@ -584,6 +584,12 @@ svg .edgePath {
 	border-bottom-right-radius: 0;
 }
 
+/* Fixes 1px gap at bottom of screen. */
+#resultsTabs.attached.ui.segment {
+	top: 0;
+	margin-top: -1;
+}
+
 #resultsContainer {
 	clear: both;
 	overflow: hidden;
