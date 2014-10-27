@@ -271,7 +271,8 @@ LIMIT 2;";
             var commentOrStringRE = /\/\*.*?(?:\n.*?)*?\*\/|--.*$|\$([a-zA-Z_]\w*)?\$.*?\$\1\$|(['"]).*?\2/g;
             function getActiveQuery()
             {
-                var activeText = getActiveQueryText();
+                var activeTextAndStartPos = getActiveQueryText();
+                var activeText = activeTextAndStartPos.text, startIndex = activeTextAndStartPos.startIndex;
                 var queryParams = getQueryParams();
 
                 var referencedParams = [];
@@ -308,7 +309,8 @@ LIMIT 2;";
                     values: referencedParams.map(function(paramIdx)
                     {
                         return queryParams[paramIdx - 1];
-                    })
+                    }),
+                    startIndex: startIndex
                 };
             } // end getActiveQuery
 
@@ -360,7 +362,9 @@ LIMIT 2;";
 
                     if(error.position)
                     {
-                        var pos = mainEditor.getSession().getDocument().indexToPosition(error.position);
+                        var pos = mainEditor.getSession().getDocument().indexToPosition(
+                            error.position + queryDef.startIndex);
+
                         mainEditor.moveCursorToPosition(pos);
                     } // end if
 
@@ -430,11 +434,18 @@ LIMIT 2;";
                 var selectionRange = mainEditor.getSelectionRange();
                 if(!selectionRange.isEmpty())
                 {
-                    return mainEditor.getSession().getTextRange(selectionRange);
+                    var session = mainEditor.getSession();
+                    return {
+                        text: session.getTextRange(selectionRange),
+                        startIndex: session.getDocument().positionToIndex(selectionRange.start)
+                    };
                 }
                 else
                 {
-                    return $scope.queryText;
+                    return {
+                        text: $scope.queryText,
+                        startIndex: 0
+                    };
                 } // end if
             } // end getActiveQueryText
 
@@ -447,7 +458,10 @@ LIMIT 2;";
             $scope.explainQuery = function(analyze)
             {
                 var query = getActiveQuery();
-                query.text = sql.formatExplain($scope.explainOptions, analyze) + query.text;
+                var explainLine = sql.formatExplain($scope.explainOptions, analyze);
+                query.text = explainLine + query.text;
+                query.startIndex -= explainLine.length;
+
                 runSQL(query)
                     .then(function(results)
                     {
