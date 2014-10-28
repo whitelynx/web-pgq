@@ -63,7 +63,13 @@ angular.module('webPGQ.services')
 
             connect: function(connectionInfo)
             {
-                logger.debug('Connecting...', connectionInfo, 'sql');
+                var connInfoDisplay = angular.extend({}, connectionInfo);
+                if(connInfoDisplay.password)
+                {
+                    connInfoDisplay.password = connInfoDisplay.password.replace(/./g, '*');
+                } // end if
+
+                logger.debug('Connecting...', connInfoDisplay, 'sql');
 
                 return promise(function(resolve)
                 {
@@ -71,12 +77,12 @@ angular.module('webPGQ.services')
                 })
                 .then(function()
                 {
-                    logger.success('Connected to database.', connectionInfo, 'sql');
+                    logger.success('Connected to database.', connInfoDisplay, 'sql');
                     return true;
                 })
                 .catch(function(error)
                 {
-                    logger.error('Error connecting to ' + angular.toJson(connectionInfo) + ':', error, 'sql');
+                    logger.error('Error connecting to ' + angular.toJson(connInfoDisplay) + ':', error, 'sql');
                     throw error;
                 });
             }, // end connect
