@@ -579,7 +579,7 @@ LIMIT 2;";
 
                 $window.setTimeout(function()
                 {
-                    if(messagesContainer && messagesAtBottom)
+                    if(messagesContainer && ($scope.resultsTab != 'Messages' || messagesAtBottom))
                     {
                         messagesContainer.scrollTop(messagesContainer.prop('scrollHeight') -
                             messagesContainer.height());
@@ -612,7 +612,7 @@ LIMIT 2;";
                 {
                     messagesAtBottom = false;
                     if(messagesContainer.scrollTop() ===
-                        messagesContainer.prop('scrollHeight') - messagesContainer.height())
+                        (messagesContainer.prop('scrollHeight') - messagesContainer.height()))
                     {
                         messagesAtBottom = true;
                     } // end if
