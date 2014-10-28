@@ -2,9 +2,18 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$http', '$timeout', '$location', '$window', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
-        function($scope, $http, $timeout, $location, $window, $, graph, keybinding, logger, queueDigest, sql)
+        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
+        function($scope, $cookies, $timeout, $location, $window, $, graph, keybinding, logger, queueDigest, sql)
         {
+            function applyIfNecessary()
+            {
+                if($scope.$root.$$phase === null)
+                {
+                    $scope.$apply();
+                } // end if
+            } // end applyIfNecessary
+
+
             $scope.tabSize = 4;
             $scope.softTabs = true;
 
@@ -121,22 +130,91 @@ angular.module('webPGQ')
             } // end updateEditorInfo
 
             // Connections //
-            //$scope.connections = {};
-            $scope.connections = {
-                "local": { database: 'shakespeare', host: 'localhost' },
-                "pgmapdev1-svr": { database: 'armgis', host: 'pgmapdev1-svr' }
-            };
+            $scope.connections = JSON.parse($cookies.connections || '{}');
+            $scope.$watch('connections', function(value)
+            {
+                $cookies.connections = JSON.stringify(value);
+            });
+
             $scope.currentConnection = null;
-            /*
-            $scope.connection = {
-                user: 'brianc',
-                password: 'boom!',
-                database: 'test',
-                host: 'example.com',
-                port: 5313
-                //ssl: true
-            };
-            */
+
+            $scope.editingConnectionIsNew = false;
+            $scope.editingConnectionIsValid = true;
+            $scope.editingConnectionName = '';
+            $scope.editingConnectionNewName = '';
+            $scope.editingConnection = {};
+
+            var editConnectionDimmer;
+            function showEditConnection()
+            {
+                if(editConnectionDimmer)
+                {
+                    editConnectionDimmer.dimmer('show');
+                } // end if
+            } // end showEditConnection
+
+            $scope.addConnection = function()
+            {
+                $scope.editingConnectionIsNew = true;
+                showEditConnection();
+            }; // end $scope.addConnection
+
+            $scope.editConnection = function(connectionName)
+            {
+                var connInfo = $scope.connections[connectionName];
+                if(!connInfo)
+                {
+                    logger.error("No connection named:", connectionName);
+                    return;
+                } // end if
+
+                $scope.editingConnectionIsNew = false;
+                $scope.editingConnectionIsValid = true;
+                $scope.editingConnectionName = connectionName;
+                $scope.editingConnectionNewName = connectionName;
+                $scope.editingConnection = angular.copy(connInfo);
+                showEditConnection();
+            }; // end $scope.editConnection
+
+            $scope.hideEditConnection = function()
+            {
+                if(editConnectionDimmer)
+                {
+                    editConnectionDimmer.dimmer('hide');
+                } // end if
+
+                $scope.editConnectionError = undefined;
+            }; // end $scope.hideEditConnection
+
+            $scope.saveConnection = function()
+            {
+                if(!$scope.editingConnectionIsValid)
+                {
+                    // Don't do anything.
+                }
+                else
+                {
+                    if(editConnectionDimmer)
+                    {
+                        editConnectionDimmer.dimmer('hide');
+                    } // end if
+
+                    $scope.editConnectionError = undefined;
+
+                    if($scope.editingConnectionName)
+                    {
+                        delete $scope.connections[$scope.editingConnectionName];
+                    } // end if
+                    $scope.connections[$scope.editingConnectionNewName] = $scope.editingConnection;
+
+                    //$scope.editingConnectionIsValid = false;
+                    $scope.editingConnectionNewName = '';
+                    $scope.editingConnectionName = '';
+                    $scope.editingConnection = {};
+                } // end if
+
+                applyIfNecessary();
+            }; // end $scope.saveConnection
 
             $scope.connect = function(connectionName)
             {
@@ -572,10 +650,7 @@ LIMIT 2;";
                     $scope.showMessages();
                 } // end if
 
-                if($scope.$root.$$phase === null)
-                {
-                    $scope.$apply();
-                } // end if
+                applyIfNecessary();
 
                 $window.setTimeout(function()
                 {
@@ -625,6 +700,45 @@ LIMIT 2;";
 
                 // Update scrollbars 500 milliseconds after page load.
                 $window.setTimeout(updateScrollbars, 500);
+
+                editConnectionDimmer = $('#editConnectionDimmer');
+
+                var editConnectionValidationSettings = {
+                    inline: true,
+                    on: 'blur',
+                    rules: {
+                        notExistingConnectionName: function(value)
+                        {
+                            return !$scope.connections[value] || (value == $scope.editingConnectionName);
+                        }
+                    },
+                    //FIXME: These never get called!
+                    onSuccess: function()
+                    {
+                        console.log("Success!");
+                        $scope.editingConnectionIsValid = true;
+                        applyIfNecessary();
+                        return true;
+                    },
+                    onFailure: function()
+                    {
+                        console.log("Failure!");
+                        $scope.editingConnectionIsValid = false;
+                        applyIfNecessary();
+                        return false;
+                    }
+                };
+                var editConnectionValidationRules = {
+                    connectionName: {
+                        identifier: 'connectionName',
+                        rules: [
+                            { type: 'empty', prompt: 'Please enter a name for the connection' },
+                            { type: 'notExistingConnectionName', prompt: 'This connection name is already taken' }
+                        ]
+                    }
+                };
+                $('.ui.form', editConnectionDimmer)
+                    .form(editConnectionValidationRules, editConnectionValidationSettings);
 
                 // Key bindings //
                 function execRun(event)
