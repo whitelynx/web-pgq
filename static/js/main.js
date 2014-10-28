@@ -563,10 +563,24 @@ LIMIT 2;";
             // Query results //
             $scope.results = {rows: []};
 
+            // Geometry Map //
+            $scope.geomMapLayers = {
+                main: { source: { name: "OpenStreetMap", type: "OSM" } }
+            };
+            $scope.geomMapCenter = {
+                extent: [
+                    -102.09320068359375,
+                    33.42456461884056,
+                    -101.61392211914061,
+                    33.70777628973998
+                ]
+            };
+
             // Switching results views //
             $scope.resultsTab = 'Messages';
 
             $scope.showResults = function() { $scope.resultsTab = 'Results'; };
+            $scope.showGeometry = function() { $scope.resultsTab = 'Geometry'; };
             $scope.showPlan = function() { $scope.resultsTab = 'Query Plan'; };
             $scope.showMessages = function() { $scope.resultsTab = 'Messages'; };
 
