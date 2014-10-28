@@ -574,6 +574,25 @@ svg .edgePath {
 	width: 1.75em;
 }
 
+#editConnectionDimmer {
+	font-size: 1rem;
+}
+
+#editConnectionDimmer .ui.form.segment {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+}
+
+#editConnectionDimmer .ui.form .fields > .inline.field {
+	margin-top: 1.5em;
+}
+
+#editConnectionDimmer .ui.form .fields > .inline.field > .ui.checkbox {
+	margin-top: 0.5em;
+}
+
 #resultsTabs {
 	height: 50%;
 	z-index: 0;

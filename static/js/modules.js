@@ -17,6 +17,7 @@ angular.module('dagreD3', ['d3']).factory('dagreD3', function($window) { return 
 /////////////////////////////
 //// Application Modules ////
 
-angular.module('webPGQ', ['jQuery', 'ui.ace', 'ngAnimate', 'webPGQ.directives', 'webPGQ.services']);
+angular.module('webPGQ', ['jQuery', 'ui.ace', 'ngAnimate', 'ngCookies', 'openlayers-directive',
+    'webPGQ.directives', 'webPGQ.services']);
 angular.module('webPGQ.services', ['unisocket', 'd3', 'dagreD3', 'rt.eventemitter']);
 angular.module('webPGQ.directives', ['webPGQ.services']);

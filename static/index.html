@@ -73,6 +73,7 @@
 
 		<script src="angular/angular.js"></script>
 		<script src="angular-animate/angular-animate.js"></script>
+		<script src="angular-cookies/angular-cookies.js"></script>
 
 		<script src="ace-builds/src-noconflict/ace.js"></script>
 		<script src="angular-ui-ace/ui-ace.js"></script>
@@ -88,6 +89,7 @@
 
 		<script src="angular/angular.min.js"></script>
 		<script src="angular-animate/angular-animate.min.js"></script>
+		<script src="angular-cookies/angular-cookies.min.js"></script>
 
 		<script src="ace-builds/src-min-noconflict/ace.js"></script>
 		<script src="angular-ui-ace/ui-ace.min.js"></script>
@@ -260,10 +262,85 @@
 					<div class="menu">
 						<div class="item" ng-repeat="(name, conn) in connections" ng-click="connect(name)"
 							data-content="{{ conn|json }}">{{ name }}</div>
+
+						<div class="item" ng-click="addConnection()">
+							<i class="add icon"></i>
+							Add new connection...
+						</div>
 					</div>
 				</div>
 				<div class="item" ng-if="connecting">
 					<i class="spinner loading icon" data-content="Running query"></i>
+				</div>
+
+				<div id="editConnectionDimmer" class="ui page dimmer">
+					<div class="content">
+						<div class="center">
+							<div class="inverted small ui form segment" ng-class="{error: editConnectionError}">
+								<h2 ng-if="editingConnectionIsNew">Add Connection</h2>
+								<h2 ng-if="!editingConnectionIsNew">Edit Connection {{ editingConnectionName|json }}</h2>
+
+								<div class="inline field">
+									<label>Connection Name</label>
+									<input type="text" ng-model="editingConnectionNewName" name="connectionName">
+								</div>
+
+								<div class="two fields">
+									<div class="field">
+										<label>Server</label>
+										<input placeholder="hostname" type="text" ng-model="editingConnection.host">
+									</div>
+									<div class="field">
+										<label>&nbsp;</label>
+										<input placeholder="port" type="text" autocomplete="off" ng-model="editingConnection.port">
+									</div>
+								</div>
+
+								<div class="two fields">
+									<div class="field">
+										<label>Database Name</label>
+										<input type="text" ng-model="editingConnection.database">
+									</div>
+									<div class="inline field">
+										<div class="toggle ui checkbox">
+											<input type="checkbox" id="terms">
+											<label for="terms">Use SSL</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="two fields">
+									<div class="field">
+										<label>Username</label>
+										<div class="ui left labeled icon input">
+											<input type="text" ng-model="editingConnection.user">
+											<i class="user icon"></i>
+										</div>
+									</div>
+									<div class="field">
+										<label>Password</label>
+										<input type="password" autocomplete="off" ng-model="editingConnection.password">
+									</div>
+								</div>
+
+								<div class="actions">
+									<div class="negative ui button" ng-click="hideEditConnection()">Cancel</div>
+									<div class="positive icon ui button" ng-if="editingConnectionIsNew"
+											ng-click="saveConnection()" ng-class="{disabled: !editingConnectionIsValid}">
+										Add Connection
+										<i class="add icon"></i>
+									</div>
+									<div class="positive icon ui button" ng-if="!editingConnectionIsNew"
+											ng-click="saveConnection()" ng-class="{disabled: !editingConnectionIsValid}">
+										Save Connection
+										<i class="save icon"></i>
+									</div>
+								</div>
+
+								<div class="ui error message"></div>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="borderless item right compact ui buttons">

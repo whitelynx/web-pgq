@@ -33,7 +33,8 @@
     "angular-tiny-eventemitter": "~0.1.0",
     "angular-animate": "~1.3.0",
     "unisocket": "git://github.com/Morgul/unisocket",
-    "perfect-scrollbar": "~0.5.3"
+    "perfect-scrollbar": "~0.5.3",
+    "angular-cookies": "~1.3.0"
   },
   "resolutions": {
     "angular": "~1.x"
