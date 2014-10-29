@@ -58,18 +58,44 @@ angular.module('webPGQ.services')
             }
         };
 
+
+        function ConnectionInfo(data)
+        {
+            angular.extend(this, data || {});
+        } // end ConnectionInfo
+
+        Object.defineProperty(ConnectionInfo.prototype, 'masked', {
+            enumerable: false,
+            get: function()
+            {
+                var maskedInfo = angular.extend({}, this);
+                if(maskedInfo.password)
+                {
+                    maskedInfo.password = maskedInfo.password.replace(/./g, '*');
+                } // end if
+                return maskedInfo;
+            } // end get
+        });
+
+        ConnectionInfo.prototype.toString = function(pretty)
+        {
+            return angular.toJson(this.masked, pretty);
+        }; // end ConnectionInfo#toString
+
+
         var sqlService = {
             explainOptions: explainOptions,
 
+            ConnectionInfo: ConnectionInfo,
+
             connect: function(connectionInfo)
             {
-                var connInfoDisplay = angular.extend({}, connectionInfo);
-                if(connInfoDisplay.password)
+                if(!(connectionInfo instanceof ConnectionInfo))
                 {
-                    connInfoDisplay.password = connInfoDisplay.password.replace(/./g, '*');
+                    connectionInfo = new ConnectionInfo(connectionInfo);
                 } // end if
 
-                logger.debug('Connecting...', connInfoDisplay, 'sql');
+                logger.debug('Connecting...', connectionInfo.masked, 'sql');
 
                 return promise(function(resolve)
                 {
@@ -77,12 +103,12 @@ angular.module('webPGQ.services')
                 })
                 .then(function()
                 {
-                    logger.success('Connected to database.', connInfoDisplay, 'sql');
+                    logger.success('Connected to database.', connectionInfo.masked, 'sql');
                     return true;
                 })
                 .catch(function(error)
                 {
-                    logger.error('Error connecting to ' + angular.toJson(connInfoDisplay) + ':', error, 'sql');
+                    logger.error('Error connecting to ' + connectionInfo + ':', error, 'sql');
                     throw error;
                 });
             }, // end connect
