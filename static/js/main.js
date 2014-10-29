@@ -192,6 +192,10 @@ angular.module('webPGQ')
                 {
                     // Don't do anything.
                 }
+                else if($scope.editingConnectionNewName.length === 0)
+                {
+                    $scope.editConnectionError = "You must specify a name for the new connection!";
+                }
                 else
                 {
                     if(editConnectionDimmer)
