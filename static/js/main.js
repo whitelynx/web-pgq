@@ -131,7 +131,12 @@ angular.module('webPGQ')
 
             // Connections //
             $scope.connections = JSON.parse($cookies.connections || '{}');
-            $scope.$watch('connections', function(value)
+            for(var key in $scope.connections)
+            {
+                $scope.connections[key] = new sql.ConnectionInfo($scope.connections[key]);
+            } // end for
+
+            $scope.$watchCollection('connections', function(value)
             {
                 $cookies.connections = JSON.stringify(value);
             });
@@ -142,7 +147,7 @@ angular.module('webPGQ')
             $scope.editingConnectionIsValid = true;
             $scope.editingConnectionName = '';
             $scope.editingConnectionNewName = '';
-            $scope.editingConnection = {};
+            $scope.editingConnection = new sql.ConnectionInfo();
 
             var editConnectionDimmer;
             function showEditConnection()
@@ -172,7 +177,7 @@ angular.module('webPGQ')
                 $scope.editingConnectionIsValid = true;
                 $scope.editingConnectionName = connectionName;
                 $scope.editingConnectionNewName = connectionName;
-                $scope.editingConnection = angular.copy(connInfo);
+                $scope.editingConnection = new sql.ConnectionInfo(connInfo);
                 showEditConnection();
             }; // end $scope.editConnection
 
@@ -214,7 +219,7 @@ angular.module('webPGQ')
                     //$scope.editingConnectionIsValid = false;
                     $scope.editingConnectionNewName = '';
                     $scope.editingConnectionName = '';
-                    $scope.editingConnection = {};
+                    $scope.editingConnection = new sql.ConnectionInfo();
                 } // end if
 
                 applyIfNecessary();
