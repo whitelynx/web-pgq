@@ -579,15 +579,28 @@ LIMIT 2;";
 
             // Geometry Map //
             $scope.geomMapLayers = {
-                main: { source: { name: "OpenStreetMap", type: "OSM" } }
+                openstreetmap: { opacity: 0.9, source: { type: "OSM" } },
+                mapbox_geographyclass: { opacity: 0.5, source: { type: 'TileJSON',
+                        url: 'http://api.tiles.mapbox.com/v3/mapbox.geography-class.jsonp' } }
             };
+            var geomMapExtent = [
+                -102.09320068359375,
+                33.42456461884056,
+                -101.61392211914061,
+                33.70777628973998
+            ];
+            console.log("Calculated center:", {
+                lon: (geomMapExtent[2] + geomMapExtent[0]) / 2,
+                lat: (geomMapExtent[3] + geomMapExtent[1]) / 2,
+                zoom: Math.floor(Math.max(
+                    Math.log(360 / (geomMapExtent[2] - geomMapExtent[0])) / Math.LN2,
+                    Math.log(360 / (geomMapExtent[3] - geomMapExtent[1])) / Math.LN2
+                )) + 1
+            });
             $scope.geomMapCenter = {
-                extent: [
-                    -102.09320068359375,
-                    33.42456461884056,
-                    -101.61392211914061,
-                    33.70777628973998
-                ]
+                lon: -101.85356140136719,
+                lat: 33.56617045429027,
+                zoom: 4
             };
 
             // Switching results views //
