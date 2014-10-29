@@ -164,8 +164,13 @@ angular.module('webPGQ')
                 showEditConnection();
             }; // end $scope.addConnection
 
-            $scope.editConnection = function(connectionName)
+            $scope.editConnection = function(connectionName, event)
             {
+                if(event)
+                {
+                    event.stopPropagation();
+                } // end if
+
                 var connInfo = $scope.connections[connectionName];
                 if(!connInfo)
                 {
