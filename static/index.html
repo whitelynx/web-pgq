@@ -269,7 +269,13 @@
 					<i class="dropdown icon"></i>
 					<div class="menu">
 						<div class="item" ng-repeat="(name, conn) in connections" ng-click="connect(name)"
-							data-content="{{ conn|json }}">{{ name }}</div>
+								title="{{ conn.masked|json }}">
+							<div class="right compact tiny teal vertical animated ui button" ng-click="editConnection(name)">
+								<div class="hidden content">Edit</div>
+								<div class="visible content"><i class="edit icon"></i></div>
+							</div>
+							{{ name }}
+						</div>
 
 						<div class="item" ng-click="addConnection()">
 							<i class="add icon"></i>
