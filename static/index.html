@@ -270,7 +270,7 @@
 					<div class="menu">
 						<div class="item" ng-repeat="(name, conn) in connections" ng-click="connect(name)"
 								title="{{ conn.masked|json }}">
-							<div class="right compact tiny teal vertical animated ui button" ng-click="editConnection(name)">
+							<div class="right compact tiny teal vertical animated ui button" ng-click="editConnection(name, $event)">
 								<div class="hidden content">Edit</div>
 								<div class="visible content"><i class="edit icon"></i></div>
 							</div>
