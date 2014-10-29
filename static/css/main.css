@@ -570,6 +570,10 @@ svg .edgePath {
 	padding-right: 2.3em !important;
 }
 
+.item .ui.right.button {
+	float: right;
+}
+
 #paramsGrid .column .ui.labeled.icon.button > .icon {
 	width: 1.75em;
 }
