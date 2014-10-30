@@ -113,7 +113,6 @@ angular.module('webPGQ.services')
                 var thisNodeID = graph.addNode(null, {
                     label: plan['Node Type'] + (plan.Strategy ? ' ' + plan.Strategy : ''),
                     metadata: metadata,
-                    style: 'fill: #bbb',
                     useDef: useDef,
                     iconURL: 'icons/' + plan['Node Type'] + '.svg'
                 });
