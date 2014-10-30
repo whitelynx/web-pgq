@@ -7,21 +7,9 @@ Web-based query runner/explainer for PostgreSQL.
 Getting Started
 ---------------
 
-Install server-side dependencies:
+Install dependencies and build openlayers3:
 ```bash
-npm install
-```
-
-If you wish to install `bower` globally, you may:
-```bash
-npm install -g bower
-```
-
-Install client-side dependencies:
-```bash
-bower install
-# OR, if you haven't installed bower globally:
-./node_modules/.bin/bower install
+make
 ```
 
 Run the app:
