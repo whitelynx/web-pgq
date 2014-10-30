@@ -84,7 +84,7 @@ angular.module('webPGQ.directives')
                             firstLine = match[1];
                         } // end if
 
-                        if(firstLine.length > 50)
+                        if(firstLine && firstLine.length > 50)
                         {
                             firstLine = firstLine.slice(0, 50) + '\u2026';
                         } // end if
