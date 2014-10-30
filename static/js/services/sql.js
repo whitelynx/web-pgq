@@ -101,8 +101,9 @@ angular.module('webPGQ.services')
                 {
                     resolve(channel.request('connect', connectionInfo));
                 })
-                .then(function()
+                .then(function(args)
                 {
+                    sqlService.serverSettings = args[0];
                     logger.success('Connected to database.', connectionInfo.masked, 'sql');
                     return true;
                 })
