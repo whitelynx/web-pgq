@@ -412,8 +412,10 @@ svg {
 }
 
 svg .node rect {
-    stroke: #333;
-    stroke-width: 1.5px;
+    fill: #808080;
+}
+
+svg .node text {
     fill: #fff;
 }
 
