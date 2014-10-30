@@ -24,6 +24,11 @@ angular.module('webPGQ.services')
                 {
                     channel = chan;
 
+                    //HACK: Copy/modify options to lengthen the request timeout. (really only needed for queries)
+                    channel.options = angular.copy(channel.options);
+                    //HACK: Since we can't actually disable the request timeout, we just make it ridiculously long.
+                    channel.options.timeout = 1000 * 60 * 60 * 24;
+
                     channel.on('notice', function(notice)
                     {
                         logger.info('Notice:', notice, 'sql');
