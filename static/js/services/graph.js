@@ -153,6 +153,12 @@ angular.module('webPGQ.services')
 
                 maxTotalCost = 0;
 
+                if(typeof plans == 'string')
+                {
+                    // PostgreSQL < 9.2 returns JSON plans as strings.
+                    plans = JSON.parse(plans);
+                } // end if
+
                 plans.forEach(function(plan)
                 {
                     graphService.nodesFromPlan(graph, plan.Plan);
