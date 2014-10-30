@@ -1,7 +1,7 @@
-/* global angular: true, Blob: true */
+/* global angular: true */
 
 angular.module('webPGQ.directives')
-    .directive('saveFile', ['$sce', '$window', function($sce, $window)
+    .directive('saveFile', function()
     {
         function link(scope, element)//, attrs)
         {
@@ -23,4 +23,4 @@ angular.module('webPGQ.directives')
             link: link,
             templateUrl: '/js/directives/save-file.html'
         };
-    }]);
+    });
