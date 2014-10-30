@@ -177,6 +177,12 @@ angular.module('webPGQ.services')
                                 {
                                     var value = explainOptions[key].enabled;
 
+                                    if(key == 'TIMING' && sqlService.serverSettings.server_version_num < 90200)
+                                    {
+                                        // The 'TIMING' option was first available in PostgreSQL 9.2; drop it.
+                                        return undefined;
+                                    } // end if
+
                                     if(!analyze && (key == 'BUFFERS' || key == 'TIMING'))
                                     {
                                         // BUFFERS and TIMING are not valid unless using ANALYZE.
@@ -184,7 +190,8 @@ angular.module('webPGQ.services')
                                     } // end if
 
                                     return key + ' ' + onOff(value);
-                                }),
+                                })
+                                .filter(function(param) { return param; }),
                             "FORMAT JSON"
                         )
                     .join(', ') +
