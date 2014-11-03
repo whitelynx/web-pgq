@@ -4,7 +4,6 @@ angular.module('webPGQ.directives')
     .directive('resultValue', ['$window', '$', 'queueDigest', function($window, $, queueDigest)
     {
         var firstLineRE = /^([^\n]*)\n/;
-        var newlineRE = /\n/g;
 
         var geomFieldNameRE = /geo|shape|wk[bt]|[gk]ml|svg|x3d/i;
 
@@ -14,7 +13,6 @@ angular.module('webPGQ.directives')
 
         function link(scope, element)//, attrs)
         {
-            scope.editorConfig = angular.extend({}, scope.aceConfig || {}, { onLoad: onAceLoad, showGutter: false });
             scope.prettyPrint = true;
             scope.prettyPrintable = false;
 
@@ -23,59 +21,22 @@ angular.module('webPGQ.directives')
                 scope.prettyPrint = !scope.prettyPrint;
             }; // end scope.togglePrettyPrint
 
-            var editor, needsResize = true;
-
-            var dropdownSettings = {
-                on: 'hover',
-                delay: { show: 10 },
-                transition: 'fade',
-                onShow: function()
-                {
-                    $window.setTimeout(function()
-                    {
-                        if(editor && needsResize)
-                        {
-                            editor.resize();
-                        } // end if
-                    }, 0);
-                } // end onShow
-            }; // end dropdownSettings
-
-            scope.$watch('resultValue', updateFirstLine);
-            scope.$watch('resultFieldType', updateFirstLine);
-            scope.$watch('prettyPrint', updateFirstLine);
-
-            scope.$watch('firstLine', function()
-            {
-                $window.setTimeout(function()
-                {
-                    element.dropdown(dropdownSettings);
-                }, 0);
-            });
-
-            function onAceLoad(_editor)
-            {
-                editor = _editor;
-                scope.aceConfig.onLoad(editor);
-
-                editor.setHighlightActiveLine(false);
-                editor.setShowPrintMargin(false);
-
-                queueDigest(updateFirstLine, 0);
-            } // end onAceLoad
+            scope.$watch('resultValue', queueDigest.bind(null, updateFirstLine, 0));
+            scope.$watch('resultFieldType', queueDigest.bind(null, updateFirstLine, 0));
+            scope.$watch('prettyPrint', queueDigest.bind(null, updateFirstLine, 0));
 
             function updateFirstLine()
             {
                 var value = scope.resultValue;
                 var fieldType = scope.resultFieldType, fieldName = scope.resultFieldName;
-                var displayValue = value, firstLine = value, editorMode, prettyPrintable;
+                var displayValue = value, firstLine = value, language, prettyPrintable;
 
                 switch(fieldType)
                 {
                     case 'json':
                         firstLine = JSON.stringify(value);
                         displayValue = JSON.stringify(value, null, scope.prettyPrint ? '\t' : null);
-                        editorMode = 'json';
+                        language = 'json';
                         /* falls through */
                     case 'text':
                         var match = firstLineRE.exec(firstLine);
@@ -99,7 +60,7 @@ angular.module('webPGQ.directives')
                     // Try to detect what sort of data may be in this string.
                     if(maybeJSONRE.test(value))
                     {
-                        editorMode = 'json';
+                        language = 'json';
                         prettyPrintable = true;
                         if(scope.prettyPrint)
                         {
@@ -109,13 +70,13 @@ angular.module('webPGQ.directives')
                     else if(maybeEWKTRE.test(value))
                     {
                         // Looks like [E]WKT...
-                        //editorMode = 'ewkt';
+                        //language = 'ewkt';
                         // But, until we write an EWKT mode for Ace...
-                        editorMode = 'text';
+                        language = 'text';
                     }
                     else if(maybeXMLRE.test(value))
                     {
-                        editorMode = 'xml';
+                        language = 'xml';
                         /*
                         if(looksLikeGeomField)
                         {
@@ -132,23 +93,13 @@ angular.module('webPGQ.directives')
 
                 scope.prettyPrintable = prettyPrintable;
 
-                if(firstLine != value)
+                if(firstLine != value && firstLine != scope.firstLine)
                 {
-                    element.addClass("hoverable ui dropdown");
+                    element.addClass(language || 'text');
+                    element.addClass('clickable ui dropdown');
+                    element.attr('data-content', displayValue);
+
                     scope.firstLine = firstLine;
-                } // end if
-
-                if(editor)
-                {
-                    editor.getSession().setMode('ace/mode/' + (editorMode || 'text'));
-                    editor.setValue(displayValue);
-
-                    var newlines = displayValue.match(newlineRE) || { length: 0 };
-                    var lineCount = Math.max(newlines.length + 1, 20);
-                    needsResize = (scope.lineCount != lineCount);
-                    scope.lineCount = lineCount;
-
-                    editor.clearSelection();
                 } // end if
             } // end updateFirstLine
         } // end link
