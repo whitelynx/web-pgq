@@ -677,6 +677,19 @@ svg .edgePath {
 	z-index: 1001;
 }
 
+
+.ui.hiding.attached.labels {
+	padding: 2em 0 0 2em;
+	pointer-events: none;
+}
+.ui.hiding.attached.labels .label {
+	position: relative;
+	top: 0;
+}
+.ui.hiding.attached.labels.hide .label {
+	top: 1.5em;
+}
+
 .ui.bottom.right.attached.labels > .label {
 	border-radius: 4px 4px 0 0;
 	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);

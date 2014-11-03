@@ -41,3 +41,11 @@
 	-webkit-transition-property: opacity;
 	transition-property: opacity;
 }
+
+
+.ui.hiding.attached.labels .label {
+	-webkit-transition: 0.4s linear;
+	transition: 0.3s linear;
+	-webkit-transition-property: top;
+	transition-property: top;
+}

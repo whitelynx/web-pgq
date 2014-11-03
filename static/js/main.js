@@ -781,6 +781,33 @@ LIMIT 2;";
                 $('.ui.form', editConnectionDimmer)
                     .form(editConnectionValidationRules, editConnectionValidationSettings);
 
+                $('.ui.hiding.attached.labels')
+                    .each(function()
+                    {
+                        var $this = $(this);
+                        $this.parent()
+                            .mousemove(function(event)
+                            {
+                                var bbox = $this.offset();
+                                bbox.right = bbox.left + $this.innerWidth();
+                                bbox.bottom = bbox.top + $this.innerHeight();
+
+                                if(bbox.left < event.pageX && event.pageX < bbox.right &&
+                                    bbox.top < event.pageY && event.pageY < bbox.bottom)
+                                {
+                                    $this.addClass('hide');
+                                }
+                                else
+                                {
+                                    $this.removeClass('hide');
+                                } // end if
+                            })
+                            .mouseleave(function()
+                            {
+                                $this.removeClass('hide');
+                            });
+                    });
+
                 // Key bindings //
                 function execRun(event)
                 {
