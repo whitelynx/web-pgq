@@ -9,7 +9,7 @@ body {
 	overflow: hidden;
 }
 
-code, pre, .ace_editor {
+code, pre, .ace_editor, table td.code {
 	font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
 }
 
@@ -323,6 +323,10 @@ table td.ui.dropdown > i.icon {
 
 .ui.dropdown > .overlapping.menu {
 	top: 0;
+}
+
+table td.code {
+	white-space: pre;
 }
 
 table td > pre:only-child, table td.ui.dropdown, table td.ui.dropdown > .text {

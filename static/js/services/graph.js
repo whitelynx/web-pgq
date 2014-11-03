@@ -123,7 +123,7 @@ angular.module('webPGQ.services')
                 } // end if
 
                 (plan.Plans || [])
-                    .forEach(function(childPlan)
+                    .forEach(function(childPlan, idx)
                     {
                         var childInfo = graphService.nodesFromPlan(graph, childPlan);
 
@@ -133,6 +133,7 @@ angular.module('webPGQ.services')
                         graph.addEdge(null, childInfo.id, thisNodeID, {
                             label: childInfo['Startup Cost'] + '..' + childInfo['Total Cost'],
                             style: 'stroke-width: ' + edgeSize + 'px',
+                            weight: idx === 0 ? 1 : 0
                         });
                     });
 
@@ -149,6 +150,8 @@ angular.module('webPGQ.services')
             {
                 // Create a new directed graph
                 var graph = new dagreD3.Digraph();
+                graph.marginx = 4;
+                graph.marginy = 4;
 
                 maxTotalCost = 0;
 
