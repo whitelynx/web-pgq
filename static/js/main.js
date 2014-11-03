@@ -50,9 +50,9 @@ angular.module('webPGQ')
                         .css('overflow', 'hidden');
 
                     scrollbars.filter('.ace_scrollbar-v')
-                        .perfectScrollbar({ includePadding: true, minScrollbarLength: 12, suppressScrollX: true });
+                        .perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
                     scrollbars.filter('.ace_scrollbar-h')
-                        .perfectScrollbar({ includePadding: true, minScrollbarLength: 12, suppressScrollY: true });
+                        .perfectScrollbar({ suppressScrollY: true, includePadding: true, minScrollbarLength: 12 });
 
                     session.on('change', function()
                     {
@@ -720,10 +720,10 @@ LIMIT 2;";
             $(function()
             {
                 scrollContainers = $('#querySidebar');
-                scrollContainers.perfectScrollbar({suppressScrollX: true, includePadding: true});
+                scrollContainers.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
 
                 messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
-                messagesContainer.perfectScrollbar({suppressScrollX: true, includePadding: true});
+                messagesContainer.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
                 messagesContainer.scroll(function()
                 {
                     messagesAtBottom = false;
@@ -735,7 +735,7 @@ LIMIT 2;";
                 });
 
                 var resultsContainer = $('#resultsContainer');
-                resultsContainer.perfectScrollbar();
+                resultsContainer.perfectScrollbar({ minScrollbarLength: 12 });
 
                 scrollContainers = scrollContainers.add(messagesContainer).add(resultsContainer);
 
