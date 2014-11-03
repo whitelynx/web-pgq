@@ -483,11 +483,14 @@
 						</thead>
 
 						<tbody>
-							<tr ng-repeat="row in results.rows track by $index" class="fade animation">
+							<!--tr ng-repeat="row in results.rows track by $index" class="fade animation">
 								<td ng-repeat="value in row track by $index"
 									result-value="value" result-field-type="results.fields[$index].dataType"
 									ace-config="commonEditorConfig">
 								</td>
+							</tr-->
+							<tr ng-repeat="row in results.rows track by $index">
+								<td class="code" ng-repeat="value in row track by $index">{{ value|json }}</td>
 							</tr>
 						</tbody>
 					</table>
