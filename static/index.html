@@ -84,6 +84,9 @@
 		<script src="openlayers3/build/ol.js"></script>
 		<script src="angular-openlayers-directive/dist/angular-openlayers-directive.js"></script>
 
+		<link rel="stylesheet" href="highlightjs/styles/railscasts.css">
+		<script src="highlightjs/highlight.pack.js"></script>
+
 		<!-- Minified -->
 		<!--
 		<link rel="stylesheet" href="semantic-ui/build/packaged/css/semantic.css">
@@ -490,7 +493,9 @@
 								</td>
 							</tr-->
 							<tr ng-repeat="row in results.rows track by $index">
-								<td class="code" ng-repeat="value in row track by $index">{{ value|json }}</td>
+								<td class="code" ng-repeat="value in row track by $index"
+									result-value="value" result-field-type="results.fields[$index].dataType">
+								</td>
 							</tr>
 						</tbody>
 					</table>

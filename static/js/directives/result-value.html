@@ -1,14 +1,2 @@
-<pre ng-if="firstLine" class="text"><code>{{ firstLine }}</code></pre>
-
-<i ng-if="firstLine" class="vertical ellipsis icon"></i>
-
-<div ng-if="firstLine" class="overlapping menu" ng-style="{height: lineCount + 'em'}">
-	<div ui-ace="editorConfig" readonly="true"></div>
-	<a ng-if="prettyPrintable" class="pretty print ui right corner label" title="Pretty Print"
-			ng-class="{green: prettyPrint, black: !prettyPrint}" ng-click="togglePrettyPrint()">
-		<i class="sort attributes ascending icon"></i>
-	</a>
-</div>
-
-
+<pre ng-if="firstLine" class="text"><code>{{ firstLine || resultValue }}</code><i class="vertical ellipsis icon"></i></pre>
 <pre ng-if="!firstLine"><code>{{ resultValue }}</code></pre>

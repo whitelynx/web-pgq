@@ -2,8 +2,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
-        function($scope, $cookies, $timeout, $location, $window, $, graph, keybinding, logger, queueDigest, sql)
+        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
+        function($scope, $cookies, $timeout, $location, $window, $, hljs, graph, keybinding, logger, queueDigest, sql)
         {
             function applyIfNecessary()
             {
@@ -625,6 +625,20 @@ LIMIT 2;";
                     $scope.$broadcast('Update');
                 } // end if
             }); // end 'resultsTab' watch
+
+            $scope.$watch('results.rows', function()
+            {
+                $('#resultsContainer td.code.dropdown').popup({
+                    on: 'click',
+                    position: 'bottom center',
+                    variation: 'inverted',
+                    onShow: function()
+                    {
+                        console.log("#resultsContainer td.code: Popup shown!", this);
+                        hljs.highlightBlock(this);
+                    }
+                });
+            });
 
             // Logger (also provides banner messages) //
             $scope.logger = logger;
