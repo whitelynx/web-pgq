@@ -49,3 +49,11 @@
 	-webkit-transition-property: top;
 	transition-property: top;
 }
+
+
+table tbody tr td.clickable {
+	-webkit-transition: 0.4s linear;
+	transition: 0.3s linear;
+	-webkit-transition-property: background, box-shadow;
+	transition-property: background, box-shadow;
+}
