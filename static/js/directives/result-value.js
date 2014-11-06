@@ -1,8 +1,10 @@
 /* global angular: true */
 
 angular.module('webPGQ.directives')
-    .directive('resultValue', ['$window', '$', 'queueDigest', function($window, $, queueDigest)
+    .directive('resultValue', ['$window', '$', 'hljs', 'queueDigest', function($window, $, hljs, queueDigest)
     {
+        var prettyPrint = true;
+
         var firstLineRE = /^([^\n]*)\n/;
 
         var geomFieldNameRE = /geo|shape|wk[bt]|[gk]ml|svg|x3d/i;
@@ -13,29 +15,23 @@ angular.module('webPGQ.directives')
 
         function link(scope, element)//, attrs)
         {
-            scope.prettyPrint = true;
-            scope.prettyPrintable = false;
+            scope.$watch('resultValue', queueDigest.bind(null, updateFirstLine, 10));
+            scope.$watch('resultFieldType', queueDigest.bind(null, updateFirstLine, 10));
 
-            scope.togglePrettyPrint = function()
-            {
-                scope.prettyPrint = !scope.prettyPrint;
-            }; // end scope.togglePrettyPrint
-
-            scope.$watch('resultValue', queueDigest.bind(null, updateFirstLine, 0));
-            scope.$watch('resultFieldType', queueDigest.bind(null, updateFirstLine, 0));
-            scope.$watch('prettyPrint', queueDigest.bind(null, updateFirstLine, 0));
+            element.attr('data-html', '<div class="wrapper"><div class="content"><pre></pre></div></div>');
 
             function updateFirstLine()
             {
                 var value = scope.resultValue;
                 var fieldType = scope.resultFieldType, fieldName = scope.resultFieldName;
-                var displayValue = value, firstLine = value, language, prettyPrintable;
+                var displayValue = value, prettyDisplayValue = value, firstLine = value, language, prettyPrintable;
 
                 switch(fieldType)
                 {
                     case 'json':
                         firstLine = JSON.stringify(value);
-                        displayValue = JSON.stringify(value, null, scope.prettyPrint ? '\t' : null);
+                        displayValue = JSON.stringify(value);
+                        prettyDisplayValue = JSON.stringify(value, null, scope.indent || '    ');
                         language = 'json';
                         /* falls through */
                     case 'text':
@@ -62,10 +58,7 @@ angular.module('webPGQ.directives')
                     {
                         language = 'json';
                         prettyPrintable = true;
-                        if(scope.prettyPrint)
-                        {
-                            displayValue = JSON.stringify(JSON.parse(value), null, '\t');
-                        } // end if
+                        prettyDisplayValue = JSON.stringify(JSON.parse(value), null, scope.indent || '    ');
                     }
                     else if(maybeEWKTRE.test(value))
                     {
@@ -91,16 +84,87 @@ angular.module('webPGQ.directives')
                     } // end if
                 } // end if
 
-                scope.prettyPrintable = prettyPrintable;
-
                 if(firstLine != value && firstLine != scope.firstLine)
                 {
                     element.addClass(language || 'text');
-                    element.addClass('clickable ui dropdown');
-                    element.attr('data-content', displayValue);
+
+                    if(!element.hasClass('clickable'))
+                    {
+                        element.addClass('clickable');
+                        element.popup({
+                            on: 'click',
+                            position: 'top center',
+                            variation: 'inverted',
+                            className: { popup: 'code ui popup' },
+                            onCreate: function()
+                            {
+                                var $this = this;
+                                var $wrapper = $this.children('.wrapper');
+                                var $content = $wrapper.children('.content');
+                                var $contentPre = $content.children('pre');
+
+                                $contentPre.text(prettyPrint ? prettyDisplayValue : displayValue);
+
+                                if(prettyPrintable)
+                                {
+                                    $wrapper.addClass('pretty-printable');
+
+                                    var $ppToggleBtn = $('<a><i class="sort attributes ascending icon"></i></a>')
+                                        .addClass('pretty print ui left corner label')
+                                        .attr('title', 'Pretty Print')
+                                        .click(function()
+                                        {
+                                            prettyPrint = !prettyPrint;
+
+                                            updatePrettyPrint($content, $contentPre, $ppToggleBtn);
+                                        })
+                                        .appendTo($this);
+
+                                    updatePrettyPrint($content, $contentPre, $ppToggleBtn);
+                                }
+                                else
+                                {
+                                    // Highlight the content.
+                                    $contentPre.each(function() { hljs.highlightBlock(this); });
+                                } // end if
+
+                                // Apply perfectScrollbar.
+                                $window.setTimeout(function()
+                                {
+                                    $content.perfectScrollbar({ includePadding: true, minScrollbarLength: 12 });
+                                }, 0);
+                            }
+                        });
+                    } // end if
 
                     scope.firstLine = firstLine;
                 } // end if
+
+                function updatePrettyPrint($content, $contentPre, $ppToggleBtn)
+                {
+                    // Remove the old scrollbar so the popup will resize.
+                    $content.perfectScrollbar('destroy');
+
+                    // Set the 'Pretty Print' toggle button's color.
+                    $ppToggleBtn
+                        .removeClass(prettyPrint ? 'black' : 'green')
+                        .addClass(prettyPrint ? 'green' : 'black');
+
+                    // Update the text of the content <pre> element.
+                    $contentPre.text(prettyPrint ? prettyDisplayValue : displayValue);
+
+                    // Highlight the content.
+                    $contentPre.each(function() { hljs.highlightBlock(this); });
+
+                    // Reposition the popup, in case the size changed.
+                    element.popup('set position', 'top center');
+
+                    // Re-create the scrollbar.
+                    $window.setTimeout(function()
+                    {
+                        $content.perfectScrollbar({ includePadding: true, minScrollbarLength: 12 });
+                    }, 0);
+                } // end updatePrettyPrint
             } // end updateFirstLine
         } // end link
 
@@ -109,7 +173,7 @@ angular.module('webPGQ.directives')
                 resultValue: '=',
                 resultFieldType: '=',
                 resultFieldName: '=',
-                aceConfig: '='
+                indent: '='
             },
             templateUrl: '/js/directives/result-value.html',
             link: link

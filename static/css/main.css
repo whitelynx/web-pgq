@@ -239,17 +239,25 @@ code, pre, .ace_editor, table td.code {
 	white-space: nowrap;
 }
 
-.hoverable {
-	cursor: help;
-}
-.hoverable:hover {
-	fill: #00827c;
-}
+.clickable { cursor: pointer; }
+
+.hoverable { cursor: help; }
+.hoverable:hover { fill: #00827c; }
 
 table td.hoverable.ui.dropdown {
 	cursor: default;
 	box-shadow: 2px 0px 0px rgba(0, 181, 173, 0.9) inset;
-	padding-right: 1.5em;
+}
+
+table tbody tr td.clickable {
+	box-shadow: 2px 0px 0px rgba(127, 181, 0, 0.9) inset;
+}
+table tbody tr td.clickable:hover {
+	background: rgba(127, 181, 0, 0.2);
+}
+table tbody tr td.clickable.visible {
+	background: rgba(0, 0, 0, 0.1);
+	box-shadow: 2px 0px 0px rgba(0, 0, 0, 0.3) inset;
 }
 
 table td.ui.dropdown {
@@ -278,31 +286,90 @@ table td.hoverable.ui.dropdown > .ui.menu > .pretty.print {
 	font-size: 8px;
 }
 
-table td.ui.dropdown > i.icon {
+table td.hoverable,
+table td.clickable {
+	position: relative;
+	padding-right: 1.5em;
+}
+
+table td.hoverable > i.icon,
+table td.hoverable > .text > i.icon,
+table td.clickable > i.icon,
+table td.clickable > .text > i.icon {
 	position: absolute;
 	right: 0;
 	vertical-align: middle;
 	top: 4px;
 }
 
-.ps-container > .ps-scrollbar-x-rail,
-.ps-container > .ps-scrollbar-y-rail {
+.code.ui.popup {
+	max-width: 95%;
+	max-height: 95%;
+	padding: 0;
+}
+.code.ui.popup > .wrapper > .content {
+	overflow: hidden;
+}
+.code.ui.popup > .wrapper > .content > pre.hljs {
+	background: none;
+	overflow-x: hidden;
+	margin: 0;
+	display: inline-block;
+}
+@media (min-width: 769px) {
+	.code.ui.popup > .wrapper > .content { max-width: 577px; max-height: 577px; }
+}
+@media (min-width: 993px) {
+	.code.ui.popup > .wrapper > .content { max-width: 745px; max-height: 745px; }
+}
+@media (min-width: 1201px) {
+	.code.ui.popup > .wrapper > .content { max-width: 901px; max-height: 901px; }
+}
+
+.ui.popup > .left.corner.ui.label:after {
+	-webkit-clip-path: inset(-0.1px -5px -5px -0.1px round 2.5px);
+	clip-path: inset(-0.1px -5px -5px -0.1px round 2.5px);
+}
+.ui.popup > .right.corner.ui.label:after {
+	-webkit-clip-path: inset(-0.1px -0.1px -5px -5px round 2.5px);
+	clip-path: inset(-0.1px -0.1px -5px -5px round 2.5px);
+}
+
+.code.ui.popup > .wrapper.pretty-printable {
+	padding-left: 2em;
+	padding-right: 0.2em;
+}
+.code.ui.popup > .wrapper.pretty-printable > .content > pre.hljs {
+	position: relative;
+	z-index: 11;
+	padding-left: 0.3em;
+}
+.code.ui.popup > .wrapper.pretty-printable > .content > .ps-scrollbar-x-rail,
+.code.ui.popup > .wrapper.pretty-printable > .content > .ps-scrollbar-y-rail {
+	position: relative;
+	z-index: 12;
+}
+
+.ps-container.ace_scrollbar > .ps-scrollbar-x-rail,
+.ps-container.ace_scrollbar > .ps-scrollbar-y-rail {
 	visibility: hidden;
 }
 
-.ps-container.ps-active-x > .ps-scrollbar-x-rail,
-.ps-container.ps-active-y > .ps-scrollbar-y-rail {
+.ps-container.ace_scrollbar-h.ps-active-x > .ps-scrollbar-x-rail,
+.ps-container.ace_scrollbar-v.ps-active-y > .ps-scrollbar-y-rail,
+.ps-container.ace_scrollbar-h.hover > .ps-scrollbar-x-rail,
+.ps-container.ace_scrollbar-v.hover > .ps-scrollbar-y-rail {
 	visibility: visible;
 }
 
-#editor .ps-container > .ps-scrollbar-x-rail,
-#editor .ps-container > .ps-scrollbar-y-rail {
+#editor .ps-container.ace_scrollbar-h > .ps-scrollbar-x-rail,
+#editor .ps-container.ace_scrollbar-v > .ps-scrollbar-y-rail {
 	visibility: visible;
 }
 #editor .ps-container > .ps-scrollbar-x-rail:hover,
 #editor .ps-container > .ps-scrollbar-y-rail:hover,
-#editor .ps-container > .ps-scrollbar-x-rail.hover,
-#editor .ps-container > .ps-scrollbar-y-rail.hover,
+#editor .ps-container.hover > .ps-scrollbar-x-rail,
+#editor .ps-container.hover > .ps-scrollbar-y-rail,
 #editor .ps-container > .ps-scrollbar-x-rail.in-scrolling,
 #editor .ps-container > .ps-scrollbar-y-rail.in-scrolling {
 	background-color: #555;
@@ -636,10 +703,6 @@ svg .edgePath {
 	position: absolute;
 	top: 1rem;
 	left: -1rem;
-}
-
-.clickable {
-	cursor: pointer;
 }
 
 .squarish.ui.label {

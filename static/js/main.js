@@ -626,20 +626,6 @@ LIMIT 2;";
                 } // end if
             }); // end 'resultsTab' watch
 
-            $scope.$watch('results.rows', function()
-            {
-                $('#resultsContainer td.code.dropdown').popup({
-                    on: 'click',
-                    position: 'bottom center',
-                    variation: 'inverted',
-                    onShow: function()
-                    {
-                        console.log("#resultsContainer td.code: Popup shown!", this);
-                        hljs.highlightBlock(this);
-                    }
-                });
-            });
-
             // Logger (also provides banner messages) //
             $scope.logger = logger;
 

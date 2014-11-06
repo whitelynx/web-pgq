@@ -493,7 +493,7 @@
 								</td>
 							</tr-->
 							<tr ng-repeat="row in results.rows track by $index">
-								<td class="code" ng-repeat="value in row track by $index"
+								<td ng-repeat="value in row track by $index"
 									result-value="value" result-field-type="results.fields[$index].dataType">
 								</td>
 							</tr>
