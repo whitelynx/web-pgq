@@ -351,6 +351,8 @@ table td.clickable > .text > i.icon {
 }
 
 .null.ui.label {
+	color: #FFF;
+	background-color: #DDD;
 	padding-top: 0;
 	padding-bottom: 0;
 }
