@@ -1,2 +1,3 @@
-<pre ng-if="firstLine" class="text"><code>{{ firstLine || resultValue }}</code><i class="vertical ellipsis icon"></i></pre>
-<pre ng-if="!firstLine"><code>{{ resultValue }}</code></pre>
+<pre ng-if="firstLine" class="text"><code>{{ firstLine }}</code><i class="vertical ellipsis icon"></i></pre>
+<pre ng-if="isNull" class="null ui label">NULL</pre>
+<pre ng-if="!firstLine && !isNull"><code>{{ resultValue }}</code></pre>

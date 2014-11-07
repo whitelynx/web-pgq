@@ -26,6 +26,12 @@ angular.module('webPGQ.directives')
                 var fieldType = scope.resultFieldType, fieldName = scope.resultFieldName;
                 var displayValue = value, prettyDisplayValue = value, firstLine = value, language, prettyPrintable;
 
+                if(value === null)
+                {
+                    scope.isNull = true;
+                    return;
+                } // end if
+
                 switch(fieldType)
                 {
                     case 'json':
