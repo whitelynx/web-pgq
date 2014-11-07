@@ -350,6 +350,11 @@ table td.clickable > .text > i.icon {
 	z-index: 12;
 }
 
+.null.ui.label {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
 .ps-container.ace_scrollbar > .ps-scrollbar-x-rail,
 .ps-container.ace_scrollbar > .ps-scrollbar-y-rail {
 	visibility: hidden;
