@@ -35,8 +35,7 @@ angular.module('webPGQ.directives')
                 switch(fieldType)
                 {
                     case 'json':
-                        firstLine = JSON.stringify(value);
-                        displayValue = JSON.stringify(value);
+                        firstLine = displayValue = JSON.stringify(value);
                         prettyDisplayValue = JSON.stringify(value, null, scope.indent || '    ');
                         language = 'json';
                         /* falls through */
