@@ -683,8 +683,43 @@ svg .edgePath {
 	border-bottom: none;
 }
 
+#geometry-map {
+	display: block;
+	position: absolute;
+	top: 0; bottom: 0;
+	left: 0; right: 0;
+	z-index: 1001;
+	border: solid #DCDDDE;
+	border-width: 1px 1px 0;
+	visibility: hidden;
+	opacity: 0;
+}
+#geometry-map.visible {
+	visibility: visible;
+	opacity: 1;
+}
+
+#layers-dropdown.ui.menu {
+	left: auto;
+	right: 0;
+}
+#layers-dropdown.ui.menu .item .icon {
+	margin-top: 0;
+	margin-left: 0;
+}
+
 #resultsTabs > .ui.bottom.right.attached.label {
 	border-bottom-right-radius: 0;
+}
+
+a.ui.label {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
 }
 
 /* Fixes 1px gap at bottom of screen. */
@@ -713,6 +748,16 @@ svg .edgePath {
 	left: -1rem;
 }
 
+.top.attached.ui.labels > .ui.label {
+	margin-top: -1px;
+	padding-top: 1px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.normal-case.ui.label {
+	text-transform:	none;
+}
 .squarish.ui.label {
 	padding-left: 0.5em;
 	padding-right: 0.5em;
