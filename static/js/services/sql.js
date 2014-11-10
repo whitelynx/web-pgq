@@ -126,16 +126,21 @@ angular.module('webPGQ.services')
 
                 return promise(function(resolve)
                 {
-                    var onFields = this.emit.bind(this, 'fields');
-
                     var self = this;
-                    function onRow(qID, row)
+
+                    function reEmit(eventName)
                     {
-                        if(qID == queryDef.queryID)
+                        return function(qID)//, ...
                         {
-                            self.emit('row', row);
-                        } // end if
-                    } // end onRow
+                            if(qID == queryDef.queryID)
+                            {
+                                self.emit.apply(self, [eventName].concat(Array.prototype.slice.call(arguments, 1)));
+                            } // end if
+                        };
+                    } // end reEmit
+
+                    var onFields = reEmit('fields');
+                    var onRow = reEmit('row');
 
                     channel.on('fields', onFields);
                     channel.on('row', onRow);
