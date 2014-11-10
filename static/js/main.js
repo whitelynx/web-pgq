@@ -735,7 +735,7 @@ LIMIT 2;";
                 });
 
                 var resultsContainer = $('#resultsContainer');
-                resultsContainer.perfectScrollbar({ minScrollbarLength: 12 });
+                resultsContainer.perfectScrollbar({ includePadding: true, minScrollbarLength: 12 });
 
                 scrollContainers = scrollContainers.add(messagesContainer).add(resultsContainer);
 

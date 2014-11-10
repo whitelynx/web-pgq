@@ -697,8 +697,9 @@ svg .edgePath {
 	clear: both;
 	overflow: hidden;
 	position: absolute;
-	top: 1em; bottom: 1em;
-	left: 1em; right: 1em;
+	top: 0; bottom: 0;
+	left: 0; right: 0;
+	padding: 1em 1em 1.5em;
 }
 
 #settings-button {
@@ -774,8 +775,11 @@ svg .edgePath {
 	border-radius: 4px 0 5px 0;
 }
 
+#resultsTabs > .ui.bottom.right.attached.labels {
+	right: 0.8em;
+}
 #resultsTabs > .ui.bottom.right.attached.labels > .label:last-child {
-	border-radius: 4px 0 0 0;
+	border-radius: 4px 4px 0 0;
 }
 
 /* FIX: Remove border radii on dimmers inside attached segments. */
