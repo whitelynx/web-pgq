@@ -24,6 +24,8 @@
 		<!--
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" type="text/css">
 
+		<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
+
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-2.0.3.min.js"><\/script>')</script>
 
@@ -38,6 +40,8 @@
 		<!--
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" type="text/css">
 
+		<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-2.0.3.min.js"><\/script>')</script>
 
@@ -50,6 +54,8 @@
 
 		<!-- Local copy (offline) -->
 		<link rel="stylesheet" href="css/vendor/SourceSansPro-OpenSans-fonts.css">
+
+		<script src="lodash/dist/lodash.min.js"></script>
 
 		<script src="js/vendor/jquery-2.0.3.min.js"></script>
 
@@ -275,19 +281,19 @@
 								title="{{ conn.masked|json }}">
 							<div class="right compact tiny teal vertical animated ui button" ng-click="editConnection(name, $event)">
 								<div class="hidden content">Edit</div>
-								<div class="visible content"><i class="edit icon"></i></div>
+								<div class="visible content"><i class="edit sign icon"></i></div>
 							</div>
 							{{ name }}
 						</div>
 
 						<div class="item" ng-click="addConnection()">
-							<i class="add icon"></i>
+							<i class="add sign box icon"></i>
 							Add new connection...
 						</div>
 					</div>
 				</div>
 				<div class="item" ng-if="connecting">
-					<i class="spinner loading icon" data-content="Running query"></i>
+					<i class="spinner loading icon" data-content="Connecting..."></i>
 				</div>
 
 				<div id="editConnectionDimmer" class="ui page dimmer">
@@ -444,8 +450,24 @@
 					</div>
 				</div>
 
-				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Geometry')}" id="geometry-dimmer">
-					<openlayers id="geometry-map" class="content" layers="geomMapLayers" center="geomMapCenter">
+				<div ng-class="{visible: resultsTab == 'Geometry'}" id="geometry-map">
+					<div id="layers-button" class="green corner dropdown ui label">
+						<i class="map icon"></i>
+
+						<div id="layers-dropdown" class="vertical menu">
+							<div class="header item">Layers</div>
+							<a class="item" ng-repeat="layer in availableLayers" ng-click="toggleGeometryLayer(layer)"
+									ng-class="{active: layer.active, teal: layer.active}">
+								<i class="left map icon"></i>
+								{{ layer.desc || layer.name }}
+								<div class="squarish ui label" ng-class="{teal: layer.active}">
+									<i class="checkbox icon" ng-class="{disabled: !layer.active, empty: !layer.active, checked: layer.active}"></i>
+								</div>
+							</a>
+						</div>
+					</div>
+
+					<openlayers layers="activeLayers" center="geomMapCenter">
 					</openlayers>
 				</div>
 

@@ -2,8 +2,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
-        function($scope, $cookies, $timeout, $location, $window, $, hljs, graph, keybinding, logger, queueDigest, sql)
+        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
+        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, graph, keybinding, logger, queueDigest, sql)
         {
             function applyIfNecessary()
             {
@@ -428,6 +428,7 @@ LIMIT 2;";
 
                 var results = {rows: [], noticeMessages: []};
                 var firstResultRow = true;
+                var geoJSONColumns = [];
 
                 function queueUpdate(delay)
                 {
@@ -477,9 +478,36 @@ LIMIT 2;";
                     queueUpdate();
                 } // end onNotice
 
+                function contains(haystack, needle)
+                {
+                    return (haystack.indexOf(needle) != -1);
+                } // end contains
+
                 function onFields(fields)
                 {
                     results.fields = fields;
+
+                    console.log("Got fields:", fields);
+                    fields.forEach(function(field, idx)
+                    {
+                        var nameContains = contains.bind(this, field.name.toLowerCase());
+
+                        if(field.dataType == 'text' &&
+                            (nameContains('geojson') || nameContains('geom') || nameContains('shape')))
+                        {
+                            geoJSONColumns.push({
+                                source: {
+                                    type: 'GeoJSON',
+                                    geojson: {type: 'FeatureCollection', features: []},
+                                },
+                                name: field.name,
+                                index: idx,
+                                style: new ol.style.Style({
+                                    fill: new ol.style.Fill({ color: layerColors[geoJSONColumns.length] })
+                                })
+                            });
+                        } // end if
+                    });
 
                     queueUpdate();
                 } // end onFields
@@ -487,6 +515,26 @@ LIMIT 2;";
                 function onRow(row)
                 {
                     results.rows.push(row);
+
+                    geoJSONColumns.forEach(function(column)
+                    {
+                        var val = row[column.index];
+                        if(val === null)
+                        {
+                            return;
+                        } // end if
+
+                        try
+                        {
+                            var parsed = JSON.parse(val);
+                            column.source.geojson.features.push(parsed);
+                        }
+                        catch(exc)
+                        {
+                            console.error('Got exception while parsing possible GeoJSON value in column "' +
+                                column.name + '":', exc);
+                        } // end try
+                    });
 
                     queueUpdate();
                 } // end onRow
@@ -508,6 +556,8 @@ LIMIT 2;";
                     } // end for
 
                     console.log("runSQL call #" + runSQLCall + ": Complete response:", results);
+
+                    $scope.geoJSONColumns = geoJSONColumns;
 
                     $scope.queryRunning = false;
                     queueUpdate(0);
@@ -585,29 +635,84 @@ LIMIT 2;";
             $scope.results = {rows: []};
 
             // Geometry Map //
-            $scope.geomMapLayers = {
-                openstreetmap: { opacity: 0.9, source: { type: "OSM" } },
-                mapbox_geographyclass: { opacity: 0.5, source: { type: 'TileJSON',
-                        url: 'http://api.tiles.mapbox.com/v3/mapbox.geography-class.jsonp' } }
-            };
+            var defaultLayers = [
+                { name: '@#OpenStreetMap#@', display: 'OpenStreetMap', source: { type: "OSM" }, active: true },
+                { name: '@#Stamen Terrain#@', display: 'Stamen Terrain', source: { type: "Stamen", layer: "terrain" } }
+            ];
+
+            $scope.activeLayers = _.indexBy(_.filter(defaultLayers, 'active'), 'name');
+            $scope.availableLayers = defaultLayers;
+            $scope.geoJSONColumns = [];
+
+            function rgba(r, g, b, a) { return 'rgba(' + [r, g, b, a].join(',') + ')'; }
+
+            // The "trove" color scheme, from http://colrd.com/palette/19308/ (CC0 license)
+            var layerColors = [
+                rgba(81, 87, 74, 0.8),
+                rgba(68, 124, 105, 0.8),
+                rgba(116, 196, 147, 0.8),
+                rgba(142, 140, 109, 0.8),
+                rgba(228, 191, 128, 0.8),
+                rgba(233, 215, 142, 0.8),
+                rgba(226, 151, 93, 0.8),
+                rgba(241, 150, 112, 0.8),
+                rgba(225, 101, 82, 0.8),
+                rgba(201, 74, 83, 0.8),
+                rgba(190, 81, 104, 0.8),
+                rgba(163, 73, 116, 0.8),
+                rgba(153, 55, 103, 0.8),
+                rgba(101, 56, 125, 0.8),
+                rgba(78, 36, 114, 0.8),
+                rgba(145, 99, 182, 0.8),
+                rgba(226, 121, 163, 0.8),
+                rgba(224, 89, 139, 0.8),
+                rgba(124, 159, 176, 0.8),
+                rgba(86, 152, 196, 0.8),
+                rgba(154, 191, 136, 0.8)
+            ];
+
+            $scope.toggleGeometryLayer = function(layer)
+            {
+                layer.active = !layer.active;
+
+                updateLayers();
+            }; // end $scope.toggleGeometryLayer
+
+            $scope.$watch('geoJSONColumns', updateLayers);
+
+            function updateLayers()
+            {
+                $scope.availableLayers = defaultLayers.concat($scope.geoJSONColumns);
+
+                $scope.activeLayers = _.indexBy(_.filter($scope.availableLayers, 'active'), 'name');
+
+                applyIfNecessary();
+            } // end updateLayers
+
+            function getCenter(extent)
+            {
+                return {
+                    lon: (extent[2] + extent[0]) / 2,
+                    lat: (extent[3] + extent[1]) / 2,
+                    zoom: Math.floor(Math.max(
+                        Math.log(360 / (extent[2] - extent[0])) / Math.LN2,
+                        Math.log(360 / (extent[3] - extent[1])) / Math.LN2
+                    )) + 1
+                };
+            } // end getCenter
+
             var geomMapExtent = [
                 -102.09320068359375,
                 33.42456461884056,
                 -101.61392211914061,
                 33.70777628973998
             ];
-            console.log("Calculated center:", {
-                lon: (geomMapExtent[2] + geomMapExtent[0]) / 2,
-                lat: (geomMapExtent[3] + geomMapExtent[1]) / 2,
-                zoom: Math.floor(Math.max(
-                    Math.log(360 / (geomMapExtent[2] - geomMapExtent[0])) / Math.LN2,
-                    Math.log(360 / (geomMapExtent[3] - geomMapExtent[1])) / Math.LN2
-                )) + 1
-            });
+            console.log("Calculated center:", getCenter(geomMapExtent));
+
             $scope.geomMapCenter = {
-                lon: -101.85356140136719,
-                lat: 33.56617045429027,
-                zoom: 4
+                lon: 0,
+                lat: 0,
+                zoom: 2
             };
 
             // Switching results views //
@@ -871,6 +976,8 @@ LIMIT 2;";
                         position: 'bottom left',
                         transition: 'slide down'
                     });
+
+                $('#layers-button').dropdown();
 
                 $('[data-content], [data-html]').popup({ delay: 500 });
 
