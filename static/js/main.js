@@ -427,6 +427,7 @@ LIMIT 2;";
                 console.log("Starting runSQL call #" + runSQLCall);
 
                 var results = {rows: [], noticeMessages: []};
+                var firstResultRow = true;
 
                 function queueUpdate(delay)
                 {
@@ -443,6 +444,12 @@ LIMIT 2;";
                     } // end if
 
                     $scope.results = results;
+
+                    if(firstResultRow && lastRowCount > 0)
+                    {
+                        firstResultRow = false;
+                        scrollResultsToTop();
+                    } // end if
                 } // end updatePending
 
                 function onError(error)
@@ -617,12 +624,38 @@ LIMIT 2;";
 
             $scope.isString = function(val) { return typeof val == 'string'; };
 
-            $scope.$watch('resultsTab', function(value)
+            var resultsContainer;
+            var messagesContainer, messagesAtBottom = true;
+
+            function scrollResultsToTop()
+            {
+                $window.setTimeout(function()
+                {
+                    resultsContainer.scrollTop(0);
+                }, 0);
+            } // end scrollResultsToTop
+
+            function scrollMessagesToBottom()
+            {
+                $window.setTimeout(function()
+                {
+                    messagesContainer.scrollTop(messagesContainer.prop('scrollHeight') - messagesContainer.height());
+                    messagesAtBottom = true;
+                }, 0);
+            } // end scrollMessagesToBottom
+
+            $scope.$watch('resultsTab', function(value, oldValue)
             {
                 // Update the query plan view if necessary whenever it becomes visible.
                 if(value == 'Query Plan')
                 {
                     $scope.$broadcast('Update');
+                } // end if
+
+                // Scroll to the bottom of the Messages tab.
+                if(value == 'Messages' && value != oldValue)
+                {
+                    scrollMessagesToBottom();
                 } // end if
             }); // end 'resultsTab' watch
 
@@ -682,8 +715,6 @@ LIMIT 2;";
                 });
             } // end if
 
-            var messagesContainer, messagesAtBottom = true;
-
             logger.on('bannerMessage', function(message)
             {
                 if(message.severity == 'error')
@@ -695,10 +726,9 @@ LIMIT 2;";
 
                 $window.setTimeout(function()
                 {
-                    if(messagesContainer && ($scope.resultsTab != 'Messages' || messagesAtBottom))
+                    if(messagesContainer && $scope.resultsTab == 'Messages' && messagesAtBottom)
                     {
-                        messagesContainer.scrollTop(messagesContainer.prop('scrollHeight') -
-                            messagesContainer.height());
+                        scrollMessagesToBottom();
                     }
                     else
                     {
@@ -734,7 +764,7 @@ LIMIT 2;";
                     } // end if
                 });
 
-                var resultsContainer = $('#resultsContainer');
+                resultsContainer = $('#resultsContainer');
                 resultsContainer.perfectScrollbar({ includePadding: true, minScrollbarLength: 12 });
 
                 scrollContainers = scrollContainers.add(messagesContainer).add(resultsContainer);
