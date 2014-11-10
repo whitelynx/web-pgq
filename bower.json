@@ -39,6 +39,6 @@
     "highlightjs": "~8.3.0"
   },
   "resolutions": {
-    "angular": "~1.x"
+    "graphlib": "^1.0.1"
   }
 }
