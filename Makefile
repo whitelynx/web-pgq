@@ -1,3 +1,6 @@
+# Ensure that openlayers3's build.py doesn't try to call python 3.x on newer Linux distros.
+PYTHON ::= python2
+
 all: bower_components/openlayers3/build/ol.js
 
 node_modules/.bin/bower:
