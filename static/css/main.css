@@ -689,6 +689,7 @@ svg .edgePath {
 	top: 0; bottom: 0;
 	left: 0; right: 0;
 	z-index: 1001;
+	background: #000;
 	border: solid #DCDDDE;
 	border-width: 1px 1px 0;
 	visibility: hidden;
@@ -702,10 +703,15 @@ svg .edgePath {
 #layers-dropdown.ui.menu {
 	left: auto;
 	right: 0;
+	width: 20rem; /*WTF??*/
 }
-#layers-dropdown.ui.menu .item .icon {
-	margin-top: 0;
-	margin-left: 0;
+#layers-dropdown.ui.menu > .item {
+	padding-right: 3em !important;
+}
+#layers-dropdown.ui.menu > .item > .squarish.ui.label {
+	position: absolute;
+	top: 0.85em;
+	right: 1em;
 }
 
 #resultsTabs > .ui.bottom.right.attached.label {
@@ -765,6 +771,17 @@ a.ui.label {
 	box-sizing: content-box;
 	text-align: center;
 }
+.squarish.ui.label > .icon {
+	margin-top: 0;
+	margin-left: 0;
+}
+.clickable.ui.label {
+}
+.disabled.clickable.ui.label {
+	cursor: default;
+	background: rgba(0, 0, 0, 0.35);
+}
+
 .ui.menu .item > .label {
 	padding-left: 0.3em;
 	padding-right: 0.3em;

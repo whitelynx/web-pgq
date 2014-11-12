@@ -2,8 +2,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
-        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, graph, keybinding, logger, queueDigest, sql)
+        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'olData', 'olHelpers', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
+        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, olData, olHelpers, graph, keybinding, logger, queueDigest, sql)
         {
             function applyIfNecessary()
             {
@@ -488,6 +488,7 @@ LIMIT 2;";
                     results.fields = fields;
 
                     console.log("Got fields:", fields);
+                    var geomFieldLayerNames = [];
                     fields.forEach(function(field, idx)
                     {
                         var nameContains = contains.bind(this, field.name.toLowerCase());
@@ -495,16 +496,35 @@ LIMIT 2;";
                         if(field.dataType == 'text' &&
                             (nameContains('geojson') || nameContains('geom') || nameContains('shape')))
                         {
+                            var layerColor = getUnusedLayerColor();
+
+                            var initialLayerName = queryDef.queryID + '/' + field.name;
+                            var layerName = initialLayerName;
+                            var uniquenessCounter = 1;
+                            while(geomFieldLayerNames.indexOf(layerName) != -1)
+                            {
+                                layerName = initialLayerName + '#' + (++uniquenessCounter);
+                            } // end while
+
                             geoJSONColumns.push({
                                 source: {
                                     type: 'GeoJSON',
-                                    geojson: {type: 'FeatureCollection', features: []},
+                                    geojson: { object: { type: 'FeatureCollection', features: [] }, projection: 'EPSG:3857' }
                                 },
-                                name: field.name,
+
                                 index: idx,
-                                style: new ol.style.Style({
-                                    fill: new ol.style.Fill({ color: layerColors[geoJSONColumns.length] })
-                                })
+                                fieldName: field.name,
+
+                                name: layerName,
+                                display: field.name +
+                                    (uniquenessCounter > 1 ? ' #' + uniquenessCounter : ''),
+                                queryID: queryDef.queryID,
+
+                                color: layerColor,
+                                style: {
+                                    fill: { color: colorArrayAlpha(layerColor, 0.5) },
+                                    stroke: { color: colorArrayAlpha(layerColor, 1), width: 2 }
+                                }
                             });
                         } // end if
                     });
@@ -524,16 +544,30 @@ LIMIT 2;";
                             return;
                         } // end if
 
+                        var parsed;
                         try
                         {
-                            var parsed = JSON.parse(val);
-                            column.source.geojson.features.push(parsed);
+                            parsed = JSON.parse(val);
                         }
                         catch(exc)
                         {
                             console.error('Got exception while parsing possible GeoJSON value in column "' +
-                                column.name + '":', exc);
+                                column.fieldName + '":', exc);
                         } // end try
+
+                        var feature = parsed.type == 'Feature' ? parsed : { type: 'Feature', geometry: parsed };
+                        if(parsed.crs)
+                        {
+                            feature.crs = parsed.crs;
+                            delete parsed.crs;
+
+                            if(feature.crs.type == 'name' && feature.crs.properties && feature.crs.properties.name)
+                            {
+                                column.source.geojson.defaultProjection = feature.crs.properties.name;
+                            } // end if
+                        } // end if
+
+                        column.source.geojson.object.features.push(feature);
                     });
 
                     queueUpdate();
@@ -557,7 +591,12 @@ LIMIT 2;";
 
                     console.log("runSQL call #" + runSQLCall + ": Complete response:", results);
 
-                    $scope.geoJSONColumns = geoJSONColumns;
+                    removeLayers(currentColumnLayerNames, true);
+                    addLayers(geoJSONColumns);
+
+                    currentColumnLayerNames = _.pluck(geoJSONColumns, 'name');
+                    console.log("Set currentColumnLayerNames to:", currentColumnLayerNames);
+                    console.log("...from geoJSONColumns:", geoJSONColumns);
 
                     $scope.queryRunning = false;
                     queueUpdate(0);
@@ -635,85 +674,194 @@ LIMIT 2;";
             $scope.results = {rows: []};
 
             // Geometry Map //
-            var defaultLayers = [
-                { name: '@#OpenStreetMap#@', display: 'OpenStreetMap', source: { type: "OSM" }, active: true },
-                { name: '@#Stamen Terrain#@', display: 'Stamen Terrain', source: { type: "Stamen", layer: "terrain" } }
-            ];
+            $scope.defaultLayers = {
+                '@#OpenStreetMap#@': { display: 'OpenStreetMap', source: { type: "OSM" }, active: true },
+                '@#Stamen Terrain#@': { display: 'Stamen Terrain', source: { type: "Stamen", layer: "terrain" } }
+            };
+            $scope.availableLayers = [];
+            var currentColumnLayerNames = [];
 
-            $scope.activeLayers = _.indexBy(_.filter(defaultLayers, 'active'), 'name');
-            $scope.availableLayers = defaultLayers;
-            $scope.geoJSONColumns = [];
+            $window.setTimeout(function()
+            {
+                olData.getLayers().then(function(layers)
+                {
+                    $scope.availableLayers = [];
+                    _.forIn(layers, function(layer, name)
+                    {
+                        extendLayer(layer, $scope.defaultLayers[name]);
 
-            function rgba(r, g, b, a) { return 'rgba(' + [r, g, b, a].join(',') + ')'; }
+                        $scope.availableLayers.push(layer);
+                    });
+
+                    olData.setLayers(layers);
+
+                    console.log("setLayers:", layers);
+                    console.log("Set availableLayers to:", $scope.availableLayers);
+                    applyIfNecessary();
+                });
+            }, 0);
+
+            function colorArrayAlpha(colorArr, a) { return 'rgba(' + colorArr.concat(a).join(',') + ')'; }
 
             // The "trove" color scheme, from http://colrd.com/palette/19308/ (CC0 license)
             var layerColors = [
-                rgba(81, 87, 74, 0.8),
-                rgba(68, 124, 105, 0.8),
-                rgba(116, 196, 147, 0.8),
-                rgba(142, 140, 109, 0.8),
-                rgba(228, 191, 128, 0.8),
-                rgba(233, 215, 142, 0.8),
-                rgba(226, 151, 93, 0.8),
-                rgba(241, 150, 112, 0.8),
-                rgba(225, 101, 82, 0.8),
-                rgba(201, 74, 83, 0.8),
-                rgba(190, 81, 104, 0.8),
-                rgba(163, 73, 116, 0.8),
-                rgba(153, 55, 103, 0.8),
-                rgba(101, 56, 125, 0.8),
-                rgba(78, 36, 114, 0.8),
-                rgba(145, 99, 182, 0.8),
-                rgba(226, 121, 163, 0.8),
-                rgba(224, 89, 139, 0.8),
-                rgba(124, 159, 176, 0.8),
-                rgba(86, 152, 196, 0.8),
-                rgba(154, 191, 136, 0.8)
+                [81, 87, 74],
+                [68, 124, 105],
+                [116, 196, 147],
+                [142, 140, 109],
+                [228, 191, 128],
+                [233, 215, 142],
+                [226, 151, 93],
+                [241, 150, 112],
+                [225, 101, 82],
+                [201, 74, 83],
+                [190, 81, 104],
+                [163, 73, 116],
+                [153, 55, 103],
+                [101, 56, 125],
+                [78, 36, 114],
+                [145, 99, 182],
+                [226, 121, 163],
+                [224, 89, 139],
+                [124, 159, 176],
+                [86, 152, 196],
+                [154, 191, 136]
             ];
 
-            $scope.toggleGeometryLayer = function(layer)
+            function getUnusedLayerColor()
+            {
+                var usedColors = _.pluck($scope.availableLayers, 'color');
+                return _.find(layerColors, function(color)
+                {
+                    return !_.contains(usedColors, color);
+                });
+            } // end getUnusedLayerColor
+
+            $scope.eatEvent = function(event, nextFunc)//, args...
+            {
+                if(nextFunc)
+                {
+                    nextFunc.apply(this, _.rest(arguments, 2));
+                } // end if
+
+                event.stopPropagation();
+            }; // end $scope.eatEvent
+
+            $scope.centerMapLayer = function(layer)
+            {
+                if(layer.hasExtent)
+                {
+                    olData.getMap().then(function(map)
+                    {
+                        var source = layer.getSource();
+                        var extent = source.getExtent();
+                        map.getView().fitExtent(extent, map.getSize());
+                    });
+                } // end if
+            }; // end $scope.centerMapLayer
+
+            $scope.toggleMapLayer = function(layer)
             {
                 layer.active = !layer.active;
 
-                updateLayers();
-            }; // end $scope.toggleGeometryLayer
+                console.log("Toggled map layer:", layer);
+            }; // end $scope.toggleMapLayer
 
-            $scope.$watch('geoJSONColumns', updateLayers);
-
-            function updateLayers()
+            function extendLayer(layer, layerDef)
             {
-                $scope.availableLayers = defaultLayers.concat($scope.geoJSONColumns);
+                layer.name = layerDef.name;
+                layer.display = layerDef.display;
+                layer.color = layerDef.color;
+                layer.queryID = layerDef.queryID;
 
-                $scope.activeLayers = _.indexBy(_.filter($scope.availableLayers, 'active'), 'name');
+                Object.defineProperty(layer, 'active', {
+                    get: function()
+                    {
+                        return this.getVisible();
+                    },
+                    set: function(active)
+                    {
+                        console.log("this.setVisible:", active);
+                        console.log("...this.getVisible() was:", this.getVisible());
+                        this.setVisible(active);
+                    }
+                });
 
-                applyIfNecessary();
-            } // end updateLayers
+                Object.defineProperty(layer, 'hasExtent', {
+                    get: function()
+                    {
+                        return typeof this.getSource().getExtent == 'function';
+                    }
+                });
 
-            function getCenter(extent)
+                // Since layers default to visible, we need to hide any that aren't marked as active.
+                layer.active = Boolean(layerDef.active);
+            } // end extendLayer
+
+            function addLayers(layerDefs)
             {
-                return {
-                    lon: (extent[2] + extent[0]) / 2,
-                    lat: (extent[3] + extent[1]) / 2,
-                    zoom: Math.floor(Math.max(
-                        Math.log(360 / (extent[2] - extent[0])) / Math.LN2,
-                        Math.log(360 / (extent[3] - extent[1])) / Math.LN2
-                    )) + 1
-                };
-            } // end getCenter
+                console.log("addLayers: arguments =", arguments);
+                olData.getMap().then(function(map)
+                {
+                    olData.getLayers().then(function(layers)
+                    {
+                        var mapProjection = layers[_.first(_.keys(layers))].projection;
 
-            var geomMapExtent = [
-                -102.09320068359375,
-                33.42456461884056,
-                -101.61392211914061,
-                33.70777628973998
-            ];
-            console.log("Calculated center:", getCenter(geomMapExtent));
+                        _.forEach(layerDefs, function(layerDef)
+                        {
+                            var layer = olHelpers.createLayer(layerDef, mapProjection);
+                            if(olHelpers.isDefined(layer))
+                            {
+                                extendLayer(layer, layerDef);
 
-            $scope.geomMapCenter = {
-                lon: 0,
-                lat: 0,
-                zoom: 2
-            };
+                                layers[layerDef.name] = layer;
+                                map.addLayer(layer);
+                            } // end if
+                        });
+
+                        $scope.availableLayers = _.values(layers);
+                        olData.setLayers(layers);
+
+                        console.log("setLayers:", layers);
+                        console.log("Set availableLayers to:", $scope.availableLayers);
+                        applyIfNecessary();
+                    });
+                });
+            } // end addLayers
+
+            function removeLayers(layerNames, onlyIfHidden)
+            {
+                console.log("removeLayers: arguments =", arguments);
+                olData.getMap().then(function(map)
+                {
+                    olData.getLayers().then(function(layers)
+                    {
+                        _.forEach(layerNames, function(layerName)
+                        {
+                            if(olHelpers.isDefined(layers[layerName]))
+                            {
+                                if(onlyIfHidden && layers[layerName].getVisible())
+                                {
+                                    // This layer is currently shown, and `onlyIfHidden` is set; don't remove this one.
+                                    return;
+                                } // end if
+
+                                map.removeLayer(layers[layerName]);
+                                delete layers[layerName];
+                            } // end if
+                        });
+
+                        $scope.availableLayers = _.values(layers);
+                        olData.setLayers(layers);
+
+                        console.log("setLayers:", layers);
+                        console.log("Set availableLayers to:", $scope.availableLayers);
+                        applyIfNecessary();
+                    });
+                });
+            } // end removeLayers
+
+            $scope.geomMapCenter = { lon: 0, lat: 0, zoom: 2 };
 
             // Switching results views //
             $scope.resultsTab = 'Messages';

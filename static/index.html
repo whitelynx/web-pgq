@@ -456,18 +456,25 @@
 
 						<div id="layers-dropdown" class="vertical menu">
 							<div class="header item">Layers</div>
-							<a class="item" ng-repeat="layer in availableLayers" ng-click="toggleGeometryLayer(layer)"
+
+							<a class="item" ng-repeat="layer in availableLayers" ng-click="eatEvent($event, toggleMapLayer, layer)"
 									ng-class="{active: layer.active, teal: layer.active}">
-								<i class="left map icon"></i>
-								{{ layer.desc || layer.name }}
-								<div class="squarish ui label" ng-class="{teal: layer.active}">
-									<i class="checkbox icon" ng-class="{disabled: !layer.active, empty: !layer.active, checked: layer.active}"></i>
+
+								<i class="left checkbox icon"
+										ng-class="{disabled: !layer.active, empty: !layer.active, checked: layer.active}"></i>
+
+								{{ layer.display || layer.name }}
+								<em ng-if="layer.queryID">(query # {{layer.queryID}})</em>
+
+								<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.hasExtent}"
+										title="Zoom to fit" ng-click="eatEvent($event, centerMapLayer, layer)">
+									<i class="left map icon"></i>
 								</div>
 							</a>
 						</div>
 					</div>
 
-					<openlayers layers="activeLayers" center="geomMapCenter">
+					<openlayers layers="defaultLayers" center="geomMapCenter">
 					</openlayers>
 				</div>
 
