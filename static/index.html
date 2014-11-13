@@ -464,6 +464,7 @@
 										ng-class="{disabled: !layer.active, empty: !layer.active, checked: layer.active}"></i>
 
 								{{ layer.display || layer.name }}
+								<i class="color icon" ng-if="layer.htmlColor" ng-style="{'background-color': layer.htmlColor}"></i>
 								<em ng-if="layer.queryID">(query # {{layer.queryID}})</em>
 
 								<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.hasExtent}"
