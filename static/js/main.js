@@ -703,8 +703,19 @@ LIMIT 2;";
 
             function colorArrayAlpha(colorArr, a) { return 'rgba(' + colorArr.concat(a).join(',') + ')'; }
 
-            // The "trove" color scheme, from http://colrd.com/palette/19308/ (CC0 license)
             var layerColors = [
+                // The "Dark2" color scheme, from matplotlib (matplotlib license)
+                // https://github.com/matplotlib/matplotlib/blob/v1.4.2/lib/matplotlib/_cm.py#L661
+                [119, 158, 27],
+                [2, 95, 217],
+                [179, 112, 117],
+                [138, 41, 231],
+                [30, 166, 102],
+                [2, 171, 230],
+                [29, 118, 166],
+                [102, 102, 102],
+
+                // The "trove" color scheme, from http://colrd.com/palette/19308/ (CC0 license)
                 [81, 87, 74],
                 [68, 124, 105],
                 [116, 196, 147],
