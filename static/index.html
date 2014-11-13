@@ -404,10 +404,10 @@
 				</div>
 
 				<div class="horizontally fitted borderless item right compact ui buttons">
-					<a class="red icon ui button" data-content="Cancel query" ng-if="queryRunning"
-							ng-click="cancelQuery().then(showMessages)">
-
-						<i class="spinner loading icon"></i>
+					<a class="fast fade animation red vertical animated ui button" data-content="Cancel query"
+							ng-if="queryRunning" ng-click="cancelQuery()">
+						<div class="hidden content">Cancel</div>
+						<div class="visible content"><i class="spinner loading icon"></i></div>
 					</a>
 				</div>
 			</div>

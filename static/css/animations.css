@@ -34,6 +34,13 @@
 	transition-duration: 0.2s;
 }
 
+#mainMenu > .container > .item.ui.buttons > .ui.button {
+	-webkit-transition: 0.2s linear;
+	transition: 0.2s linear;
+	-webkit-transition-property: background-color, color, opacity, box-shadow;
+	transition-property: background-color, color, opacity, box-shadow;
+}
+
 
 #messagesContainer > .content {
 	-webkit-transition: 0.5s linear;
