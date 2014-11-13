@@ -713,6 +713,19 @@ svg .edgePath {
 	top: 0.85em;
 	right: 1em;
 }
+#layers-dropdown.ui.menu .icon {
+	font-size: 1em;
+}
+#layers-dropdown.ui.menu > a {
+	opacity: 1;
+}
+
+.color.icon {
+	display: inline-block;
+	width: 1.22em;
+	height: 1.22em;
+	border: 1px solid #000;
+}
 
 #resultsTabs > .ui.bottom.right.attached.label {
 	border-bottom-right-radius: 0;

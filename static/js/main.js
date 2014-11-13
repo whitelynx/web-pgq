@@ -521,6 +521,7 @@ LIMIT 2;";
                                 queryID: queryDef.queryID,
 
                                 color: layerColor,
+                                htmlColor: colorArrayAlpha(layerColor, 1),
                                 style: {
                                     fill: { color: colorArrayAlpha(layerColor, 0.5) },
                                     stroke: { color: colorArrayAlpha(layerColor, 1), width: 2 }
@@ -783,6 +784,7 @@ LIMIT 2;";
                 layer.name = layerDef.name;
                 layer.display = layerDef.display;
                 layer.color = layerDef.color;
+                layer.htmlColor = layerDef.htmlColor;
                 layer.queryID = layerDef.queryID;
 
                 Object.defineProperty(layer, 'active', {
