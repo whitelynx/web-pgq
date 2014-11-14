@@ -1,4 +1,5 @@
 /* global angular: true */
+"use strict";
 
 angular.module('webPGQ.services')
     .service('queueDigest', ['$exceptionHandler', 'await', '$timeout', function($exceptionHandler, await, $timeout)

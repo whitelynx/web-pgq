@@ -1,4 +1,5 @@
 /* global angular: true */
+"use strict";
 
 angular.module('webPGQ.services')
     .service('promise', ['$exceptionHandler', '$q', 'eventEmitter', function($exceptionHandler, $q, eventEmitter)
