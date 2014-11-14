@@ -1,4 +1,5 @@
-/* global angular: true */
+/* jshint browser:true, globalstrict:true */
+/* global angular:true */
 "use strict";
 
 angular.module('webPGQ.directives')

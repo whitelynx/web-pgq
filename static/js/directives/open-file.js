@@ -1,4 +1,5 @@
-/* global angular: true, FileReader: true */
+/* jshint browser:true, globalstrict:true */
+/* global angular:true, console:true, FileReader: true */
 "use strict";
 
 angular.module('webPGQ.directives')
