@@ -142,13 +142,20 @@ util.inherits(UniSocketClient, EventEmitter);
 // Internal API
 //----------------------------------------------------------------------------------------------------------------------
 
+UniSocketClient.closeReasons = {
+    CLOSE_NORMAL: { code: 1000, reason: 'default close reason.' },
+    disconnected: { code: 4000, reason: 'disconnected.' },
+    connecting: { code: 4001, reason: 'connecting.' },
+    closing: { code: 4002, reason: 'closing.' }
+};
+
 UniSocketClient.prototype._getSeqId = function()
 {
     this.seqId++;
     return this.seqId.toString();
 }; // end _getSeqId
 
-UniSocketClient.prototype._cleanup = function()
+UniSocketClient.prototype._cleanup = function(reason)
 {
     if(this.ws)
     {
@@ -158,11 +165,13 @@ UniSocketClient.prototype._cleanup = function()
         this.waitingCallbacks = {};
         this.pendingMessages = [];
 
-        // Cleanup our websocket instance
-        this.ws.close();
+        // Cleanup our websocket instance.
+        // Always send a code and reason to `ws.close()`, to avoid "InvalidAccessError" errors in Chrome.
+        reason = reason || UniSocketClient.closeReasons.CLOSE_NORMAL;
+        this.ws.close(reason.code, reason.reason);
 
         // Give the close event a chance to propagate
-        setImmediate(this.ws.removeAllListeners.bind(this.ws));
+        setTimeout(this.ws.removeAllListeners.bind(this.ws), 0);
         this.ws = undefined;
     } // end if
 }; // end _cleanup
@@ -176,37 +185,42 @@ UniSocketClient.prototype._handleDisconnect = function()
     {
         var url = this.url;
         this.state = 'reconnecting';
-        this._cleanup();
+        this._cleanup(UniSocketClient.closeReasons.disconnected);
 
         // Only set this if it's not set
         this.disconnectMS = this.disconnectMS || Date.now();
         var diff = (Date.now() - this.disconnectMS) / 1000;
 
-        if(diff <= 30)
+        var delayMS;
+        if(diff <= 1)
         {
-            this.connect(url);
+            delayMS = 10;
+        }
+        else if(diff <= 30)
+        {
+            delayMS = 1000;
         }
         else if(diff <= 120)
         {
-            setTimeout(function()
-            {
-                self.connect(url);
-            }, 15000);
+            delayMS = 15000;
         }
         else if(diff <= 300)
         {
-            setTimeout(function()
-            {
-                self.connect(url);
-            }, 30000);
+            delayMS = 30000;
         }
         else
         {
-            setTimeout(function()
-            {
-                self.connect(url);
-            }, 60000);
+            delayMS = 60000;
         } // end if
+
+        setTimeout(function()
+        {
+            self.connect(url)
+                .catch(function()
+                {
+                    // Ignore errors, since we'll get the 'disconnected' event again.
+                });
+        }, delayMS);
     }
     else
     {
@@ -294,7 +308,7 @@ UniSocketClient.prototype.connect = function(url)
     else
     {
         // Ensure we have a clean state.
-        this._cleanup();
+        this._cleanup(UniSocketClient.closeReasons.connecting);
         if(this.state != 'reconnecting')
         {
             this.state = 'connecting';
@@ -373,6 +387,7 @@ UniSocketClient.prototype.connect = function(url)
                 {
                     self.logger.error("Connection timed out.");
                     reject(new Error("Connection timed out."));
+                    self.ws.removeListener('error', reject);
 
                     self.emit('timeout');
                 } // end if
@@ -494,7 +509,7 @@ UniSocketClient.prototype.close = function()
     {
         // Stop any attempts to reconnect; and cleanup.
         this.reconnect = false;
-        this._cleanup();
+        this._cleanup(UniSocketClient.closeReasons.closing);
 
         this.emit('closed');
     } // end if
