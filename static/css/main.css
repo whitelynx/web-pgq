@@ -654,6 +654,19 @@ svg .edgePath {
 	float: right;
 }
 
+.dropdown.item .value.teal {
+	color: #00B5AD;
+}
+.dropdown.item .value.red {
+	color: #D95C5C;
+}
+.dropdown.item .value.yellow {
+	color: #FFFF00;
+}
+.dropdown.item .value.placeholder {
+	color: #AAAAAA;
+}
+
 #paramsGrid .column .ui.labeled.icon.button > .icon {
 	width: 1.75em;
 }
