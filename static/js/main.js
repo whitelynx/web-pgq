@@ -4,8 +4,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'olData', 'olHelpers', 'graph', 'keybinding', 'logger', 'queueDigest', 'sql',
-        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, olData, olHelpers, graph, keybinding, logger, queueDigest, sql)
+        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'olData', 'olHelpers', 'graph', 'keybinding', 'logger', 'queueDigest', 'socket', 'sql',
+        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, olData, olHelpers, graph, keybinding, logger, queueDigest, socket, sql)
         {
             function applyIfNecessary()
             {
@@ -15,6 +15,39 @@ angular.module('webPGQ')
                 } // end if
             } // end applyIfNecessary
 
+
+            $scope.connected = false;
+            $scope.connecting = true;
+
+            socket.on('connected', function()
+            {
+                $scope.connected = true;
+                $scope.connecting = false;
+                applyIfNecessary();
+                console.log("Socket connected.");
+
+                if($scope.currentConnection)
+                {
+                    console.log("Reconnecting to database:", $scope.currentConnection);
+
+                    sql.on('ready', function()
+                    {
+                        $scope.connect($scope.currentConnection);
+                    });
+                } // end if
+            });
+            socket.on('disconnected', function()
+            {
+                $scope.connected = false;
+                $scope.dbConnected = false;
+                $scope.connecting = true;
+                applyIfNecessary();
+                console.log("Socket disconnected.");
+            });
+            socket.on('error', function(error)
+            {
+                logger.error("Error connecting to web-pgq server!", error.stack || error.toString());
+            });
 
             $scope.tabSize = 4;
             $scope.softTabs = true;
@@ -241,20 +274,20 @@ angular.module('webPGQ')
                     return;
                 } // end if
 
-                $scope.connecting = true;
-                $scope.connected = false;
+                $scope.dbConnecting = true;
+                $scope.dbConnected = false;
                 $scope.currentConnection = connectionName;
 
                 return sql.connect(connInfo)
                 .then(function()
                 {
-                    $scope.connecting = false;
-                    $scope.connected = true;
+                    $scope.dbConnecting = false;
+                    $scope.dbConnected = true;
                     return true;
                 })
                 .catch(function()
                 {
-                    $scope.connecting = false;
+                    $scope.dbConnecting = false;
                     $scope.currentConnection = null;
                     return false;
                 });
