@@ -1,4 +1,5 @@
 /* global angular: true, FileReader: true */
+"use strict";
 
 angular.module('webPGQ.directives')
     .directive('openFile', function()

@@ -1,4 +1,5 @@
 /* global angular: true */
+"use strict";
 
 angular.module('webPGQ.directives')
     .directive('resultValue', ['$window', '$', 'hljs', 'queueDigest', function($window, $, hljs, queueDigest)

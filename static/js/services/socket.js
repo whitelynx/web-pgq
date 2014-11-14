@@ -1,4 +1,5 @@
 /* global angular: true */
+"use strict";
 
 angular.module('webPGQ.services')
     .service('socket', ['$window', 'unisocket', function($window, unisocket)

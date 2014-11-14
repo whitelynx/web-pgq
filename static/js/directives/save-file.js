@@ -1,4 +1,5 @@
 /* global angular: true */
+"use strict";
 
 angular.module('webPGQ.directives')
     .directive('saveFile', function()
