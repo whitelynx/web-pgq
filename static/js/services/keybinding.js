@@ -21,7 +21,7 @@ angular.module('webPGQ.services')
         var defaultTarget = $document[0];
         var codePointRE = /^U\+([0-9A-F]+)$/;
 
-        function handleKeyEvent(type, capture, event)
+        function handleKeyEvent(target, type, capture, event)
         {
             if(event.repeat) { return true; }
 
@@ -42,7 +42,7 @@ angular.module('webPGQ.services')
             event.combo = combo.filter(function(v) { return v; }).join('+');
 
             var bindingsKey = '__' + type + (capture ? '_capture' : '') + '_bindings__';
-            return this[bindingsKey].every(function(binding)
+            return target[bindingsKey].every(function(binding)
             {
                 if(keybindingService.matchesKeyDef(event, binding.keyDef))
                 {
@@ -71,7 +71,7 @@ angular.module('webPGQ.services')
 
                 target.addEventListener(
                     type,
-                    function(event) { return handleKeyEvent.call(this, type, binding.capture, event); },
+                    function(event) { return handleKeyEvent.call(null, this, type, binding.capture, event); },
                     binding.capture
                 );
 

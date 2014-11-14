@@ -31,29 +31,29 @@ angular.module('webPGQ.services')
         var initPlanRefRE = /\$\d+\b/g;
         var nodeRefRE = /\$\d+\b|\((CTE [^)]+|SubPlan \d+)\)/g;
 
-        function findReferences(key, val)
+        function findReferences(node, key, val)
         {
             var match;
             if(key == 'Subplan Name')
             {
                 if((match = initPlanRefRE.exec(val)) !== null)
                 {
-                    this.refName = match[0];
+                    node.refName = match[0];
                 }
                 else
                 {
-                    this.refName = val;
+                    node.refName = val;
                 } // end if
             }
             else if(key == 'CTE Name')
             {
-                this.references.push({name: 'CTE ' + val, field: key});
+                node.references.push({name: 'CTE ' + val, field: key});
             }
             else
             {
                 while((match = nodeRefRE.exec(val)) !== null)
                 {
-                    this.references.push({name: match[1] || match[0], field: key});
+                    node.references.push({name: match[1] || match[0], field: key});
                 } // end while
             } // end if
         } // end findReferences
@@ -76,11 +76,11 @@ angular.module('webPGQ.services')
 
                         if(Array.isArray(val))
                         {
-                            val.forEach(findReferences.bind(thisNode, key));
+                            val.forEach(findReferences.bind(null, thisNode, key));
                         }
                         else
                         {
-                            findReferences.call(thisNode, key, val);
+                            findReferences.call(null, thisNode, key, val);
                         } // end if
                     } // end if
                 } // end for
