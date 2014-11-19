@@ -5,11 +5,11 @@
 angular.module('webPGQ.services')
     .service('promise', ['$exceptionHandler', '$q', 'eventEmitter', function($exceptionHandler, $q, eventEmitter)
     {
-        return function promise(func)
+        function promise(func)
         {
             var deferred = $q.defer();
 
-            eventEmitter.inject({prototype: deferred.promise});
+            eventEmitter.inject({ prototype: deferred.promise });
             deferred.promise.removeListener = deferred.promise.off;
 
             try
@@ -24,5 +24,44 @@ angular.module('webPGQ.services')
             } // end try
 
             return deferred.promise;
-        }; // end promise
+        } // end promise
+
+        function chainEmit(sourceEmitter, destEmitter)
+        {
+            var baseEmit = sourceEmitter.emit;
+
+            if(baseEmit)
+            {
+                sourceEmitter.emit = function()
+                {
+                    destEmitter.emit.apply(this, arguments);
+                    return baseEmit.apply(this, arguments);
+                }; // end sourceEmitter.emit
+            } // end if
+        } // end chainEmit
+
+        promise.all = function(promises)
+        {
+            var p = $q.all(promises);
+            eventEmitter.inject({ prototype: p });
+
+            for(var key in promises)
+            {
+                chainEmit(promises[key]);
+            } // end for
+
+            return p;
+        }; // end promise.all
+
+        promise.reject = $q.reject;
+
+        promise.when = function()
+        {
+            var p = $q.when.apply($q, arguments);
+            eventEmitter.inject({ prototype: p });
+            return p;
+        }; // end promise.when
+        promise.resolve = promise.when;
+
+        return promise;
     }]);
