@@ -666,6 +666,9 @@ svg .edgePath {
 .dropdown.item .value.placeholder {
 	color: #AAAAAA;
 }
+.dropdown.item.disabled .value {
+	color: #777777;
+}
 
 #paramsGrid .column .ui.labeled.icon.button > .icon {
 	width: 1.75em;
