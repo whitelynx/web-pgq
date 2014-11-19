@@ -97,14 +97,17 @@ angular.module('webPGQ.services')
 
             ConnectionInfo: ConnectionInfo,
 
-            connect: function(connectionInfo)
+            connect: function(connectionInfo, dbName)
             {
                 if(!(connectionInfo instanceof ConnectionInfo))
                 {
                     connectionInfo = new ConnectionInfo(connectionInfo);
                 } // end if
 
-                logger.debug('Connecting...', connectionInfo.masked, 'sql');
+                var dbNameDisplay = dbName ? ' ' + JSON.stringify(dbName) : '';
+
+                logger.debug('Connecting to database' + dbNameDisplay + '...',
+                    connectionInfo.masked, 'sql');
 
                 return promise(function(resolve)
                 {
@@ -112,13 +115,14 @@ angular.module('webPGQ.services')
                 })
                 .then(function(args)
                 {
+                    sqlService.connectionInfo = connectionInfo;
                     sqlService.serverSettings = args[0];
-                    logger.success('Connected to database.', connectionInfo.masked, 'sql');
+                    logger.success('Connected to database' + dbNameDisplay + '.', connectionInfo.masked, 'sql');
                     return true;
                 })
                 .catch(function(error)
                 {
-                    logger.error('Error connecting to ' + connectionInfo + ':', error, 'sql');
+                    logger.error('Error connecting to ' + dbNameDisplay + ':', error, 'sql');
                     throw error;
                 });
             }, // end connect
