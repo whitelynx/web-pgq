@@ -123,6 +123,31 @@ angular.module('webPGQ.services')
                 });
             }, // end connect
 
+            disconnect: function(connectionInfo)
+            {
+                if(!sqlService.connectionInfo)
+                {
+                    logger.debug('Not connected; ignoring disconnect().', null, 'sql');
+                    return;
+                } // end if
+
+                logger.debug('Disconnecting...', sqlService.connectionInfo.masked, 'sql');
+
+                return channel.request('disconnect')
+                .then(function()
+                {
+                    delete sqlService.connectionInfo;
+                    delete sqlService.serverSettings;
+                    logger.success('Disconnected from database.', connectionInfo.masked, 'sql');
+                    return true;
+                })
+                .catch(function(error)
+                {
+                    logger.error('Error attempting to disconnect:', error, 'sql');
+                    throw error;
+                });
+            }, // end disconnect
+
             run: function(queryDef)
             {
                 queryDef.queryID = ++queryID;
