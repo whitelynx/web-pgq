@@ -212,9 +212,9 @@ angular.module('webPGQ.services')
 
             explain: function(queryDef, explainOptions, analyze)
             {
-                queryDef.text = this.formatExplain(explainOptions, analyze) + queryDef.text;
+                queryDef.text = sqlService.formatExplain(explainOptions, analyze) + queryDef.text;
 
-                return this.run(queryDef);
+                return sqlService.run(queryDef);
             } // end explain
         };
 
