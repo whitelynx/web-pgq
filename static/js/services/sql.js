@@ -19,7 +19,7 @@ angular.module('webPGQ.services')
     {
         var channel;
 
-        socket.on('connected', function()
+        function onSocketConnected()
         {
             socket.channel('sql')
                 .then(function(chan)
@@ -40,7 +40,9 @@ angular.module('webPGQ.services')
 
                     sqlService.emit('ready');
                 });
-        });
+        } // end onSocketConnected
+        socket.on('connected', onSocketConnected);
+        socket.on('reconnected', onSocketConnected);
 
         var explainOptions = {
             VERBOSE: {
