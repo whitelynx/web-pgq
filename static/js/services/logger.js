@@ -5,16 +5,18 @@
 angular.module('webPGQ.services')
     .service('logger', ['eventEmitter', function(eventEmitter)
     {
-        var showBannersFor = {
+        var defaultShowBannersFor = {
             error: true,
             warning: true,
             success: true,
             info: true,
-            debug: true,
+            debug: false,
         };
 
         var icons = {
             sql: 'hdd',
+            connection: 'sitemap',
+            web: 'globe'
         };
 
         // Log messages
@@ -39,7 +41,7 @@ angular.module('webPGQ.services')
 
             var errlog = (
                     severity == 'error' ? console.error :
-                        ((severity == 'warn' && console.warn) ? console.warn : console.log)
+                        ((severity == 'warning' && console.warn) ? console.warn : console.log)
                     )
                     .bind(console);
 
@@ -47,7 +49,7 @@ angular.module('webPGQ.services')
             {
                 message.detailType = typeof message.detail;
 
-                errlog(severity + ": " + message.header + ":", message.detail);
+                errlog(severity + ": " + message.header, message.detail);
             }
             else
             {
@@ -57,7 +59,7 @@ angular.module('webPGQ.services')
             messages.push(message);
 
             logger.emit('message', message);
-            if(showBannersFor[severity])
+            if(logger.showBannersFor[severity])
             {
                 logger.emit('bannerMessage', message);
             } // end if
@@ -70,7 +72,7 @@ angular.module('webPGQ.services')
         } // end removeBannerAt
 
         var logger = {
-            showBannersFor: showBannersFor,
+            showBannersFor: defaultShowBannersFor,
             icons: icons,
             messages: messages,
             log: log,
@@ -79,7 +81,7 @@ angular.module('webPGQ.services')
             debug: log.bind(this, 'debug'),
             info: log.bind(this, 'info'),
             success: log.bind(this, 'success'),
-            warn: log.bind(this, 'warn'),
+            warn: log.bind(this, 'warning'),
             error: log.bind(this, 'error')
         };
         eventEmitter.inject({prototype: logger});
@@ -89,7 +91,7 @@ angular.module('webPGQ.services')
             {
                 return messages.filter(function(message)
                 {
-                    return !message.hidden && showBannersFor[message.severity];
+                    return !message.hidden && logger.showBannersFor[message.severity];
                 });
             }
         });

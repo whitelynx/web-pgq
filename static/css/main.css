@@ -780,6 +780,16 @@ a.ui.label {
 	left: -1rem;
 }
 
+.ui.dimmer .top.right.attached.ui.labels {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 100;
+}
+.ui.dimmer .top.right.attached.ui.labels > .label {
+	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.7);
+}
+
 .top.attached.ui.labels > .ui.label {
 	margin-top: -1px;
 	padding-top: 1px;
@@ -863,7 +873,8 @@ a.ui.label {
 	border-radius: 4px 0 5px 0;
 }
 
-#resultsTabs > .ui.bottom.right.attached.labels {
+#resultsTabs > .ui.bottom.right.attached.labels,
+#resultsTabs .ui.top.right.attached.labels {
 	right: 0.8em;
 }
 #resultsTabs > .ui.bottom.right.attached.labels > .label:last-child {
