@@ -48,6 +48,8 @@ code, pre, .ace_editor, table td.code {
 	#resultsTabs .ui.ribbon.label:after {
 		display: none;
 	}
+
+	.hide.on.mobile { display: none; }
 }
 
 @media (min-width: 769px) {
