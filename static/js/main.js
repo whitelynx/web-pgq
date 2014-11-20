@@ -19,23 +19,41 @@ angular.module('webPGQ')
             $scope.connected = false;
             $scope.connecting = true;
 
-            socket.on('connected', function()
+            $scope.connectSocket = function()
+            {
+                if($scope.connected)
+                {
+                    // Already connected to web-pgq server.
+                    return promise.resolve(true);
+                } // end if
+
+                return socket.connect(socket.url)
+                    .then(function()
+                    {
+                        return true;
+                    })
+                    .catch(function(error)
+                    {
+                        logger.error("Error connecting to web-pgq server!", error, 'connection');
+                        throw error;
+                    });
+            }; // end $scope.connectSocket
+
+            function onSocketConnect()
             {
                 $scope.connected = true;
                 $scope.connecting = false;
+
                 applyIfNecessary();
                 console.log("Socket connected.");
-
-                if($scope.currentConnection)
-                {
-                    console.log("Reconnecting to database:", $scope.currentConnection);
-
-                    sql.on('ready', function()
-                    {
-                        $scope.connect($scope.currentConnection);
-                    });
-                } // end if
+            } // end onSocketConnect
+            socket.on('connected', onSocketConnect);
+            socket.on('reconnected', function()
+            {
+                logger.success("Reconnected to web-pgq server.", null, 'connection');
+                onSocketConnect();
             });
+
             socket.on('disconnected', function()
             {
                 if($scope.connected)
@@ -185,6 +203,7 @@ angular.module('webPGQ')
                 $cookies.connections = JSON.stringify(value);
             });
 
+            var currentConnectionInfo;
             $scope.currentConnection = null;
 
             $scope.editingConnectionIsNew = false;
@@ -252,12 +271,7 @@ angular.module('webPGQ')
                 }
                 else
                 {
-                    if(editConnectionDimmer)
-                    {
-                        editConnectionDimmer.dimmer('hide');
-                    } // end if
-
-                    $scope.editConnectionError = undefined;
+                    $scope.hideEditConnection();
 
                     if($scope.editingConnectionName)
                     {
@@ -274,8 +288,10 @@ angular.module('webPGQ')
                 applyIfNecessary();
             }; // end $scope.saveConnection
 
-            $scope.connect = function(connectionName)
+            $scope.connectDB = function(connectionName)
             {
+                connectionName = connectionName || $scope.currentConnection;
+
                 var connInfo = $scope.connections[connectionName];
                 if(!connInfo)
                 {
@@ -283,26 +299,65 @@ angular.module('webPGQ')
                     logger.error(errMsg, null, 'connection');
                     return promise.reject(new Error(errMsg));
                 } // end if
+
+                if($scope.dbConnected && _.isEqual(currentConnectionInfo, connInfo))
+                {
+                    logger.debug("Already connected to database " + JSON.stringify(connectionName) +
+                        "; ignoring connectDB() call.", connInfo.masked, 'connection');
+                    return promise.resolve(true);
                 } // end if
 
-                $scope.dbConnecting = true;
                 $scope.dbConnected = false;
                 $scope.currentConnection = connectionName;
+                currentConnectionInfo = connInfo;
 
-                return sql.connect(connInfo)
-                .then(function()
+                if(!$scope.connected)
                 {
-                    $scope.dbConnecting = false;
-                    $scope.dbConnected = true;
-                    return true;
-                })
-                .catch(function()
+                    // Not yet connected to web-pgq server.
+                    return promise(function(resolve)
+                    {
+                        sql.once('connected', function()
+                        {
+                            resolve(true);
+                        });
+
+                        $scope.connectSocket();
+                    });
+                }
+                else
                 {
-                    $scope.dbConnecting = false;
-                    $scope.currentConnection = null;
-                    return false;
-                });
-            }; // end $scope.connect
+                    return _connectDB();
+                } // end if
+            }; // end $scope.connectDB
+
+            function _connectDB()
+            {
+                if(!$scope.currentConnection)
+                {
+                    return;
+                } // end if
+
+                console.log("(re)Connecting to database:", $scope.currentConnection);
+
+                $scope.dbConnected = false;
+                $scope.dbConnecting = true;
+
+                return sql.connect(currentConnectionInfo, $scope.currentConnection)
+                    .then(function()
+                    {
+                        $scope.dbConnected = true;
+                        $scope.dbConnecting = false;
+                        return true;
+                    })
+                    .catch(function()
+                    {
+                        $scope.dbConnected = false;
+                        $scope.dbConnecting = false;
+                        return false;
+                    });
+            } // end _connectDB
+
+            sql.on('ready', _connectDB);
 
             // Queries //
             $scope.queryParams = [];
@@ -1019,12 +1074,7 @@ LIMIT 2;";
             // Connection name
             if(initialURLParams.connectionName)
             {
-                var connName = initialURLParams.connectionName;
-
-                sql.on('ready', function()
-                {
-                    $scope.connect(connName);
-                });
+                $scope.connectDB(initialURLParams.connectionName);
             } // end if
 
             logger.on('bannerMessage', function(message)
