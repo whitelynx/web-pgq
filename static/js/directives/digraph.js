@@ -18,10 +18,6 @@ angular.module('webPGQ.directives')
 
         function nesting(preceeding)
         {
-            console.log("nesting(" + JSON.stringify(preceeding) + ") ->",
-                count(openGroupRE, preceeding) - count(closeGroupRE, preceeding));
-            console.log("count(openGroupRE, preceeding):", count(openGroupRE, preceeding));
-            console.log("count(closeGroupRE, preceeding):", count(closeGroupRE, preceeding));
             return count(openGroupRE, preceeding) - count(closeGroupRE, preceeding);
         } // end nesting
 
@@ -423,7 +419,6 @@ angular.module('webPGQ.directives')
                 return selection.transition().duration(500);
             } // end transition
 
-            //angular.element($window).resize(function() { console.log("Element resized."); scope.$broadcast('Render'); });
             angular.element($window).resize(function() { scope.$broadcast('Render'); });
 
             scope.$on('ZoomFit', function()
@@ -480,7 +475,6 @@ angular.module('webPGQ.directives')
                     {
                         if(element.is(":hidden"))
                         {
-                            //console.log("Element is hidden; delaying render.");
                             needsRender = true;
                             return;
                         }
