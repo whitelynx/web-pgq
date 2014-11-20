@@ -25,6 +25,8 @@ code, pre, .ace_editor, table td.code {
 	#resultsArea {
 		padding: 0 !important;
 	}
+
+	.show.on.mobile { display: none; }
 }
 
 .fill-parent {
