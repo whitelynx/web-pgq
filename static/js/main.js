@@ -363,57 +363,14 @@ angular.module('webPGQ')
             $scope.queryParams = [];
             $scope.currentFileName = "untitled.sql";
 
-            //$scope.queryText = "SELECT * FROM clu.release LIMIT 10;";
-            /*
-            $scope.queryText = "SELECT\n\
-    db_insureds.bond_id,\n\
-    db_insureds.layout_layer_id,\n\
-    db_insureds.label_layer_id,\n\
-\n\
-    GOLayoutPage.rid,\n\
-    ST_MakeEnvelope(\n\
-        GOLayoutPage.xminwgs84, GOLayoutPage.yminwgs84,\n\
-        GOLayoutPage.xmaxwgs84, GOLayoutPage.ymaxwgs84,\n\
-        4326\n\
-    ) AS pageGeom,\n\
-    GOLayoutPage.pageNum,\n\
-    GOLayoutPage.pageTitle,\n\
-    (\n\
-        SELECT dim_county.id\n\
-        FROM government.dim_county\n\
-        WHERE dim_county.county_code::integer = GOLayoutPage.countyCode\n\
-            AND dim_county.state_code::integer = GOLayoutPage.stateCode\n\
-        --LIMIT 1\n\
-    ) AS countyID,\n\
-\n\
-    nextval('feature.feature_id_seq') AS feature_id\n\
-\n\
-FROM db_insureds\n\
-    INNER JOIN agrinet_ref.insureds\n\
-        ON insureds.bond_id = db_insureds.bond_id\n\
-    INNER JOIN db_feature_insured_links\n\
-        ON db_feature_insured_links.idInsuredRID = insureds.rid\n\
-    INNER JOIN old.GOLayout\n\
-        ON GOLayout.goFieldMapRID = db_feature_insured_links.goFieldMapRID\n\
-    INNER JOIN old.GOLayoutPage\n\
-        ON GOLayoutPage.goLayoutRID = GOLayout.rid\n\
-LIMIT 2;";
-            //*/
-            //*
-            $scope.queryText = "SELECT\n\
-    work.workID, work.title, work.year,\n\
-    character.charName, character.abbrev, character.speechCount,\n\
-    count(chapter) AS chapters,\n\
-    count(paragraph) AS paragraphs\n\
-FROM work\n\
-    NATURAL LEFT JOIN chapter\n\
-    NATURAL LEFT JOIN paragraph\n\
-    NATURAL LEFT JOIN character\n\
-GROUP BY\n\
-    work.workID, work.title, work.year,\n\
-    character.charName, character.abbrev, character.speechCount\n\
-LIMIT 2;";
-            //*/
+            $scope.queryText = '';
+
+            $scope.newFile = function()
+            {
+                $scope.queryText = '';
+                $scope.currentFileName = "untitled.sql";
+                applyIfNecessary();
+            }; // end $scope.newFile
 
             $scope.fileLoaded = function(file, content)
             {
