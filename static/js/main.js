@@ -206,11 +206,13 @@ angular.module('webPGQ')
             var currentConnectionInfo;
             $scope.currentConnection = null;
 
-            $scope.editingConnectionIsNew = false;
-            $scope.editingConnectionIsValid = true;
-            $scope.editingConnectionName = '';
-            $scope.editingConnectionNewName = '';
-            $scope.editingConnection = new sql.ConnectionInfo();
+            $scope.editingConnection = {
+                isNew: false,
+                isValid: true,
+                name: '',
+                newName: '',
+                info: new sql.ConnectionInfo()
+            };
 
             var editConnectionDimmer;
             function showEditConnection()
@@ -223,7 +225,7 @@ angular.module('webPGQ')
 
             $scope.addConnection = function()
             {
-                $scope.editingConnectionIsNew = true;
+                $scope.editingConnection.isNew = true;
                 showEditConnection();
             }; // end $scope.addConnection
 
@@ -241,11 +243,11 @@ angular.module('webPGQ')
                     return;
                 } // end if
 
-                $scope.editingConnectionIsNew = false;
-                $scope.editingConnectionIsValid = true;
-                $scope.editingConnectionName = connectionName;
-                $scope.editingConnectionNewName = connectionName;
-                $scope.editingConnection = new sql.ConnectionInfo(connInfo);
+                $scope.editingConnection.isNew = false;
+                $scope.editingConnection.isValid = true;
+                $scope.editingConnection.name = connectionName;
+                $scope.editingConnection.newName = connectionName;
+                $scope.editingConnection.info = new sql.ConnectionInfo(connInfo);
                 showEditConnection();
             }; // end $scope.editConnection
 
@@ -261,11 +263,11 @@ angular.module('webPGQ')
 
             $scope.saveConnection = function()
             {
-                if(!$scope.editingConnectionIsValid)
+                if(!$scope.editingConnection.isValid)
                 {
                     // Don't do anything.
                 }
-                else if($scope.editingConnectionNewName.length === 0)
+                else if($scope.editingConnection.newName.length === 0)
                 {
                     $scope.editConnectionError = "You must specify a name for the new connection!";
                 }
@@ -273,16 +275,16 @@ angular.module('webPGQ')
                 {
                     $scope.hideEditConnection();
 
-                    if($scope.editingConnectionName)
+                    if($scope.editingConnection.name)
                     {
-                        delete $scope.connections[$scope.editingConnectionName];
+                        delete $scope.connections[$scope.editingConnection.name];
                     } // end if
-                    $scope.connections[$scope.editingConnectionNewName] = $scope.editingConnection;
+                    $scope.connections[$scope.editingConnection.newName] = $scope.editingConnection;
 
-                    //$scope.editingConnectionIsValid = false;
-                    $scope.editingConnectionNewName = '';
-                    $scope.editingConnectionName = '';
-                    $scope.editingConnection = new sql.ConnectionInfo();
+                    //$scope.editingConnection.isValid = false;
+                    $scope.editingConnection.newName = '';
+                    $scope.editingConnection.name = '';
+                    $scope.editingConnection.info = new sql.ConnectionInfo();
                 } // end if
 
                 applyIfNecessary();
@@ -1084,11 +1086,11 @@ angular.module('webPGQ')
                 scrollContainers.perfectScrollbar('update');
             } // end updateScrollbars
 
-            // Update scrollbars on resize.
-            $($window).resize(updateScrollbars);
-
             $(function()
             {
+                // Update scrollbars on resize.
+                $($window).resize(updateScrollbars);
+
                 scrollContainers = $('#querySidebar');
                 scrollContainers.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
 
@@ -1123,21 +1125,21 @@ angular.module('webPGQ')
                     rules: {
                         notExistingConnectionName: function(value)
                         {
-                            return !$scope.connections[value] || (value == $scope.editingConnectionName);
+                            return !$scope.connections[value] || (value == $scope.editingConnection.name);
                         }
                     },
                     //FIXME: These never get called!
                     onSuccess: function()
                     {
                         console.log("Success!");
-                        $scope.editingConnectionIsValid = true;
+                        $scope.editingConnection.isValid = true;
                         applyIfNecessary();
                         return true;
                     },
                     onFailure: function()
                     {
                         console.log("Failure!");
-                        $scope.editingConnectionIsValid = false;
+                        $scope.editingConnection.isValid = false;
                         applyIfNecessary();
                         return false;
                     }
