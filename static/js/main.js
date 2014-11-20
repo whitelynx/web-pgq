@@ -360,22 +360,25 @@ angular.module('webPGQ')
             sql.on('ready', _connectDB);
 
             // Queries //
-            $scope.queryParams = [];
-            $scope.currentFileName = "untitled.sql";
-
-            $scope.queryText = '';
+            var defaultFilename = "untitled.sql";
+            $scope.query = {
+                text: '',
+                params: [],
+                fileName: defaultFilename
+            };
 
             $scope.newFile = function()
             {
-                $scope.queryText = '';
-                $scope.currentFileName = "untitled.sql";
+                $scope.query.text = '';
+                $scope.query.fileName = defaultFilename;
                 applyIfNecessary();
             }; // end $scope.newFile
 
             $scope.fileLoaded = function(file, content)
             {
-                $scope.queryText = content;
+                $scope.query.text = content;
                 logger.info("Loaded file " + file.name + ".");
+                applyIfNecessary();
             }; // end $scope.fileLoaded
 
             $scope.addQueryParam = function()
@@ -383,7 +386,7 @@ angular.module('webPGQ')
                 console.log("Adding new query param...");
                 queueDigest(function()
                 {
-                    $scope.queryParams.push({value: '', type: 'text'});
+                    $scope.query.params.push({value: '', type: 'text'});
                 }, maxUpdateDelay)
                 .then(function()
                 {
@@ -391,19 +394,19 @@ angular.module('webPGQ')
                     {
                         console.log("Query param(s) added, digest done.");
                         $('.ui.dropdown').dropdown();
-                        $("#queryParam_" + $scope.queryParams.length).focus();
+                        $("#queryParam_" + $scope.query.params.length).focus();
                     }, 0, false);
                 });
             }; // end $scope.addQueryParam
 
             $scope.removeQueryParam = function(index)
             {
-                $scope.queryParams.splice(index, 1);
+                $scope.query.params.splice(index, 1);
             }; // end $scope.removeQueryParam
 
             function getQueryParams()
             {
-                return $scope.queryParams.map(function(param)
+                return $scope.query.params.map(function(param)
                 {
                     switch(param.type)
                     {
@@ -475,7 +478,7 @@ angular.module('webPGQ')
             var runSQLCallCount = 0;
             function runSQL(queryDef)
             {
-                if($scope.queryRunning)
+                if($scope.query.running)
                 {
                     // Ignore calls to runSQL() while another query is running.
                     return;
@@ -515,7 +518,7 @@ angular.module('webPGQ')
                 {
                     console.error("runSQL call #" + runSQLCall + ": Query failed with error:", error);
 
-                    $scope.queryRunning = false;
+                    $scope.query.running = false;
                     queueUpdate(0);
 
                     if(error.position)
@@ -657,13 +660,13 @@ angular.module('webPGQ')
                     console.log("Set currentColumnLayerNames to:", currentColumnLayerNames);
                     console.log("...from geoJSONColumns:", geoJSONColumns);
 
-                    $scope.queryRunning = false;
+                    $scope.query.running = false;
                     queueUpdate(0);
 
                     return results;
                 } // end onEnd
 
-                $scope.queryRunning = true;
+                $scope.query.running = true;
                 queueUpdate(0);
 
                 sql.on('notice', onNotice);
@@ -690,7 +693,7 @@ angular.module('webPGQ')
                 else
                 {
                     return {
-                        text: $scope.queryText,
+                        text: $scope.query.text,
                         startIndex: 0
                     };
                 } // end if
@@ -990,31 +993,45 @@ angular.module('webPGQ')
             var initialURLParams = $location.search();
 
             // Query text, parameters, etc.
-            if(initialURLParams.query) { $scope.queryText = initialURLParams.query; }
+            if(initialURLParams.query) { $scope.query.text = initialURLParams.query; }
             if(initialURLParams.queryParams)
             {
                 try
                 {
-                    $scope.queryParams = JSON.parse(initialURLParams.queryParams);
+                    $scope.query.params = JSON.parse(initialURLParams.queryParams);
                 }
                 catch(exc)
                 {
                     logger.error("Couldn't load query parameters from URL!", exc, 'web');
-                    $scope.queryParams = [];
+                    $scope.query.params = [];
                 } // end try
             }
-            if(initialURLParams.fileName) { $scope.currentFileName = initialURLParams.fileName; }
+            if(initialURLParams.fileName) { $scope.query.fileName = initialURLParams.fileName; }
+
+
+            function setPermalink()
+            {
+                console.log("setPermalink() called.");
+                return $location
+                    .search({
+                        query: $scope.query.text || null,
+                        queryParams: $scope.query.params.length > 0 ? JSON.stringify($scope.query.params) : null,
+                        fileName: ($scope.query.fileName != defaultFilename) ? $scope.query.fileName : null,
+                        connectionName: $scope.currentConnection || null
+                    })
+                    .replace();
+            } // end setPermalink
+
+            var setPermalinkThrottled = _.throttle(setPermalink, 100);
 
             function getPermalink()
             {
-                $location.search({
-                    query: $scope.queryText,
-                    queryParams: JSON.stringify($scope.queryParams),
-                    fileName: $scope.currentFileName,
-                    connectionName: $scope.currentConnection
-                });
-                return $location.absUrl();
+                return setPermalink().absUrl();
             } // end getPermalink
+
+            $scope.$watchCollection('query', setPermalinkThrottled);
+            $scope.$watchCollection('query.params', setPermalinkThrottled);
+            $scope.$watch('currentConnection', setPermalinkThrottled);
 
             $('#permalink')
                 .popup({

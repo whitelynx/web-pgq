@@ -157,7 +157,7 @@
 		<bg-splitter orientation="vertical">
 			<bg-pane min-size="128" id="topPane">
 				<div id="editorArea">
-					<div id="editor" class="inverted ui segment" ui-ace="mainEditorConfig" ng-model="queryText"></div>
+					<div id="editor" class="inverted ui segment" ui-ace="mainEditorConfig" ng-model="query.text"></div>
 
 					<a id="permalink" class="black corner ui label">
 						<i class="url icon"></i>
@@ -172,7 +172,7 @@
 								</div>
 							</div>
 
-							<save-file ng-model="queryText" file-name="currentFileName"></save-file>
+							<save-file ng-model="query.text" file-name="query.fileName"></save-file>
 
 							<open-file on-open="fileLoaded(file, content)"></open-file>
 						</div>
@@ -185,7 +185,7 @@
 									<div class="two wide column">#</div>
 									<div class="twelve wide column">Value / Type</div>
 								</div>
-								<div class="row" ng-cloak ng-repeat="param in queryParams track by $index">
+								<div class="row" ng-cloak ng-repeat="param in query.params track by $index">
 									<div class="two wide column"><code>${{ $index + 1 }}</code></div>
 									<div class="twelve wide column">
 										<div class="fluid mini action ui input">
@@ -244,7 +244,7 @@
 					<!--div class="text item">
 						Put in a query. Hit run or explain. Done.
 					</div-->
-					<div class="ui simple dropdown item" ng-class="{disabled: !connected || queryRunning}">
+					<div class="ui simple dropdown item" ng-class="{disabled: !connected || query.running}">
 						<span ng-if="!currentConnection" class="value placeholder">Connect to...</span>
 
 						<span ng-cloak ng-if="currentConnection" class="value"
@@ -355,7 +355,7 @@
 					<div class="borderless right fitted item hide on mobile">
 						<div class="horizontally fitted borderless item compact ui buttons">
 							<a class="fast fade animation red vertical animated ui button" data-content="Cancel query"
-									ng-if="queryRunning" ng-click="cancelQuery()">
+									ng-if="query.running" ng-click="cancelQuery()">
 								<div class="hidden content">Cancel</div>
 								<div class="visible content"><i class="spinner loading icon"></i></div>
 							</a>
@@ -363,7 +363,7 @@
 
 						<div class="item compact ui buttons">
 							<a class="teal labeled icon ui button" ng-click="runQuery()"
-									ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>F5</b>">
+									ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>F5</b>">
 								<i class="play icon"></i>
 								Run
 							</a>
@@ -371,12 +371,12 @@
 
 						<div class="horizontally fitted borderless item compact ui buttons">
 							<a class="orange labeled icon ui button" ng-click="explainQuery()"
-									ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>F7</b>">
+									ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>F7</b>">
 								<i class="question icon"></i>
 								Explain
 							</a>
 							<a class="orange labeled icon ui button" ng-click="explainQuery(true)"
-									ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>Shift+F7</b>">
+									ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>Shift+F7</b>">
 								<i class="stethoscope icon"></i>
 								Analyze
 							</a>
@@ -403,7 +403,7 @@
 					<div class="borderless right fitted item show on mobile">
 						<div class="horizontally fitted borderless item compact ui buttons">
 							<a class="fast fade animation red vertical animated ui button" data-content="Cancel query"
-									ng-if="queryRunning" ng-click="cancelQuery()">
+									ng-if="query.running" ng-click="cancelQuery()">
 								<div class="hidden content">Cancel</div>
 								<div class="visible content"><i class="spinner loading icon"></i></div>
 							</a>
@@ -411,7 +411,7 @@
 
 						<div class="item compact ui buttons">
 							<a class="teal icon vertical animated ui button" ng-click="runQuery()"
-									ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>F5</b>">
+									ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>F5</b>">
 								<div class="hidden content">Run</div>
 								<div class="visible content"><i class="play icon"></i></div>
 							</a>
@@ -419,12 +419,12 @@
 
 						<div class="horizontally fitted borderless item compact ui buttons">
 							<a class="orange vertical animated ui button" ng-click="explainQuery()"
-									ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>F7</b>">
+									ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>F7</b>">
 								<div class="hidden content">Explain</div>
 								<div class="visible content"><i class="question icon"></i></div>
 							</a>
 							<a class="orange vertical animated ui button" ng-click="explainQuery(true)"
-									ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>Shift+F7</b>">
+									ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>Shift+F7</b>">
 								<div class="hidden content">Analyze</div>
 								<div class="visible content"><i class="stethoscope icon"></i></div>
 							</a>
@@ -565,7 +565,7 @@
 						</div>
 					</div>
 
-					<div id="noRowsLabel" ng-if="!queryRunning && results.rows.length == 0 && resultsTab == 'Results'"
+					<div id="noRowsLabel" ng-if="!query.running && results.rows.length == 0 && resultsTab == 'Results'"
 							class="fast fade animation red ribbon ui label">
 						No rows returned.
 					</div>
