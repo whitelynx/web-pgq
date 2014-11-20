@@ -286,29 +286,29 @@
 						<div class="content">
 							<div class="center">
 								<div class="inverted small ui form segment" ng-class="{error: editConnectionError}">
-									<h2 ng-if="editingConnectionIsNew">Add Connection</h2>
-									<h2 ng-if="!editingConnectionIsNew">Edit Connection {{ editingConnectionName|json }}</h2>
+									<h2 ng-show="editingConnection.isNew">Add Connection</h2>
+									<h2 ng-show="!editingConnection.isNew">Edit Connection {{ editingConnection.name|json }}</h2>
 
 									<div class="inline field">
 										<label>Connection Name</label>
-										<input type="text" ng-model="editingConnectionNewName" name="connectionName">
+										<input type="text" ng-model="editingConnection.newName" name="connectionName">
 									</div>
 
 									<div class="two fields">
 										<div class="field">
 											<label>Server</label>
-											<input placeholder="hostname" type="text" ng-model="editingConnection.host">
+											<input placeholder="hostname" type="text" ng-model="editingConnection.info.host">
 										</div>
 										<div class="field">
 											<label>&nbsp;</label>
-											<input placeholder="port" type="text" autocomplete="off" ng-model="editingConnection.port">
+											<input placeholder="port" type="text" autocomplete="off" ng-model="editingConnection.info.port">
 										</div>
 									</div>
 
 									<div class="two fields">
 										<div class="field">
 											<label>Database Name</label>
-											<input type="text" ng-model="editingConnection.database">
+											<input type="text" ng-model="editingConnection.info.database">
 										</div>
 										<div class="inline field">
 											<div class="toggle ui checkbox">
@@ -322,31 +322,32 @@
 										<div class="field">
 											<label>Username</label>
 											<div class="ui left labeled icon input">
-												<input type="text" ng-model="editingConnection.user">
+												<input type="text" ng-model="editingConnection.info.user">
 												<i class="user icon"></i>
 											</div>
 										</div>
 										<div class="field">
 											<label>Password</label>
-											<input type="password" autocomplete="off" ng-model="editingConnection.password">
+											<input type="password" autocomplete="off" ng-model="editingConnection.info.password">
 										</div>
 									</div>
 
 									<div class="actions">
 										<div class="negative ui button" ng-click="hideEditConnection()">Cancel</div>
-										<div class="positive icon ui button" ng-if="editingConnectionIsNew"
-												ng-click="saveConnection()" ng-class="{disabled: !editingConnectionIsValid}">
+										<div class="positive icon ui button" ng-show="editingConnection.isNew"
+												ng-click="saveConnection()" ng-class="{disabled: !editingConnection.isValid}">
 											Add Connection
 											<i class="add icon"></i>
 										</div>
-										<div class="positive icon ui button" ng-if="!editingConnectionIsNew"
-												ng-click="saveConnection()" ng-class="{disabled: !editingConnectionIsValid}">
+										<div class="positive icon ui button" ng-show="!editingConnection.isNew"
+												ng-click="saveConnection()" ng-class="{disabled: !editingConnection.isValid}">
 											Save Connection
 											<i class="save icon"></i>
 										</div>
 									</div>
 
 									<div class="ui error message"></div>
+									<div class="ui error message" ng-if="editConnectionError">{{ editConnectionError }}</div>
 								</div>
 							</div>
 						</div>
