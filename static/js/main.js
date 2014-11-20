@@ -937,7 +937,7 @@ LIMIT 2;";
             $scope.isString = function(val) { return typeof val == 'string'; };
 
             var resultsContainer;
-            var messagesContainer, messagesAtBottom = true;
+            var messagesContainer, messagesAtBottom = true, ignoreMessagesContainerScroll = false;
 
             function scrollResultsToTop()
             {
@@ -1036,6 +1036,8 @@ LIMIT 2;";
 
                 applyIfNecessary();
 
+                ignoreMessagesContainerScroll = true;
+
                 $window.setTimeout(function()
                 {
                     if(messagesContainer && $scope.resultsTab == 'Messages' && messagesAtBottom)
@@ -1046,6 +1048,8 @@ LIMIT 2;";
                     {
                         updateScrollbars();
                     } // end if
+
+                    ignoreMessagesContainerScroll = false;
                 }, 0);
             });
 
@@ -1068,11 +1072,14 @@ LIMIT 2;";
                 messagesContainer.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
                 messagesContainer.scroll(function()
                 {
-                    messagesAtBottom = false;
-                    if(messagesContainer.scrollTop() ===
-                        (messagesContainer.prop('scrollHeight') - messagesContainer.height()))
+                    if($scope.resultsTab != 'Messages' || !ignoreMessagesContainerScroll)
                     {
-                        messagesAtBottom = true;
+                        messagesAtBottom = false;
+                        if(messagesContainer.scrollTop() >=
+                            (messagesContainer.prop('scrollHeight') - messagesContainer.height()))
+                        {
+                            messagesAtBottom = true;
+                        } // end if
                     } // end if
                 });
 
