@@ -285,7 +285,7 @@
 					<i class="dropdown icon"></i>
 
 					<div class="menu">
-						<div class="item" ng-repeat="(name, conn) in connections" ng-click="connect(name)"
+						<div class="item" ng-repeat="(name, conn) in connections" ng-click="connectDB(name)"
 								title="{{ conn.masked|json }}">
 							<div class="right compact tiny teal vertical animated ui button" ng-click="editConnection(name, $event)">
 								<div class="hidden content">Edit</div>
@@ -300,8 +300,14 @@
 						</div>
 					</div>
 				</div>
-				<div class="item" ng-if="connecting || dbConnecting">
-					<i class="spinner loading icon" data-content="Connecting..."></i>
+				<div class="item" ng-show="connecting" ng-click="connectSocket()"
+						data-content="Click to force reconnect.">
+					<i class="spinner loading icon"></i>
+					<span class="hide on mobile">Connecting...</span>
+				</div>
+				<div class="item" ng-show="dbConnecting">
+					<i class="spinner loading icon"></i>
+					<span class="hide on mobile">Connecting to {{ currentConnection }}...</span>
 				</div>
 
 				<div id="editConnectionDimmer" class="ui page dimmer">
