@@ -13,38 +13,7 @@ code, pre, .ace_editor, table td.code {
 	font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
 }
 
-.container,
-.container.fill-parent,
-.container.segment {
-	margin-right: auto !important;
-	margin-left: auto !important;
-	padding-left: 0 !important;
-	padding-right: 0 !important;
-	position: relative;
-}
-@media (min-width: 769px) {
-	.container, .container.fill-parent { width: 750px !important; }
-}
-@media (min-width: 993px) {
-	.container, .container.fill-parent { width: 970px !important; }
-
-	#editor {
-		border-bottom-right-radius: 0;
-	}
-}
-@media (min-width: 1201px) {
-	.container, .container.fill-parent { width: 1170px !important; }
-}
 @media (max-width: 768px) {
-	.container {
-		margin-right: 0 !important;
-		margin-left: 0 !important;
-	}
-
-	#editor {
-		border-radius: 0;
-	}
-
 	#resultsTabs .ui.ribbon.label:after {
 		display: none;
 	}
@@ -53,28 +22,9 @@ code, pre, .ace_editor, table td.code {
 }
 
 @media (min-width: 769px) {
-	#resultsArea, #mainMenu > .container {
+	#resultsArea {
 		padding: 0 !important;
 	}
-}
-
-/* Fix for menu overflow. */
-.container::after {
-	content: '.';
-	display: block;
-	height: 0px;
-	clear: both;
-	visibility: hidden;
-}
-
-#mainMenu > .container > #copyright {
-	font-size: smaller;
-	position: absolute;
-	right: 0;
-	bottom: -1.5em;
-	font-size: x-small;
-	color: #bbbbbb;
-	text-align: right;
 }
 
 .fill-parent {
@@ -99,6 +49,83 @@ code, pre, .ace_editor, table td.code {
 	transition: left 0.5s, right 0.5s;
 }
 
+#topPane {
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	-ms-flex-direction: column;
+	flex-direction: column;
+	-webkit-flex-wrap: nowrap;
+	-ms-flex-wrap: nowrap;
+	flex-wrap: nowrap;
+	-webkit-justify-content: flex-start;
+	-ms-flex-pack: start;
+	justify-content: flex-start;
+	-webkit-align-content: flex-start;
+	-ms-flex-line-pack: start;
+	align-content: flex-start;
+	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
+	align-items: flex-start;
+}
+
+#editorArea {
+	-webkit-flex: 1 1 auto;
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;
+	-webkit-align-self: stretch;
+	-ms-flex-item-align: stretch;
+	align-self: stretch;
+	position: relative;
+	margin: 0;
+	overflow: hidden;
+}
+
+#mainMenu, #copyright {
+	-webkit-flex: 0 1 auto;
+	-ms-flex: 0 1 auto;
+	flex: 0 1 auto;
+	-webkit-align-self: stretch;
+	-ms-flex-item-align: stretch;
+	align-self: stretch;
+}
+#mainMenu {
+	border-top: 2px solid #bbbbbb;
+}
+
+#copyright {
+	line-height: 1rem;
+	font-size: x-small;
+	background: #bbbbbb;
+	color: #888888;
+	text-align: right;
+	padding-right: 0.5em;
+}
+.split-panes > #topPane + .split-handler {
+	height: 1rem;
+	margin-top: -1rem;
+}
+.split-panes > #topPane + .split-handler:hover {
+	background: rgba(0, 0, 0, 0.2);
+}
+.split-panes > #topPane + .split-handler::before {
+	font-size: 1.22em;
+	position: absolute;
+	line-height: 1em;
+	left: 50%;
+	margin-left: -1em;
+	top: 50%;
+	margin-top: -0.51em;
+	width: 2em;
+	text-align: center;
+	content: '\294C';
+	color: #EEEEEE;
+}
+.split-panes > #topPane + .split-handler:hover::before {
+	color: #FFFFFF;
+}
+
 #editor {
 	position: absolute;
 	top: 0;
@@ -108,6 +135,7 @@ code, pre, .ace_editor, table td.code {
 	width: auto;
 	height: auto;
 	margin: 0;
+	border-top: none;
 	border-radius: 0;
 	z-index: 100;
 	-webkit-transition: left 0.5s, right 0.5s;
@@ -183,26 +211,20 @@ code, pre, .ace_editor, table td.code {
 }
 
 @media (min-width: 769px) {
-	#editor {
-		border-bottom-right-radius: 5px;
-		border-bottom-left-radius: 5px;
-	}
-
 	#querySidebar {
-		border-bottom-right-radius: 5px;
+		border-radius: 0;
 	}
 }
 
 @media (min-width: 993px) {
 	#editor {
-		border-bottom-right-radius: 0;
 		right: 320px;
 	}
 
 	#querySidebar,
 	#querySidebar.active {
 		right: 0;
-		border-radius: 0 0 0.25em 0;
+		border-radius: 0;
 	}
 
 	#querySidebar > h3 {
@@ -382,6 +404,7 @@ table td.clickable > .text > i.icon {
 #editor .ps-container > .ps-scrollbar-x-rail.in-scrolling,
 #editor .ps-container > .ps-scrollbar-y-rail.in-scrolling {
 	background-color: #555;
+	opacity: 1;
 }
 
 .ui.dropdown > .menu > .ps-scrollbar-x-rail,
@@ -445,46 +468,6 @@ table td > pre:only-child, table td.ui.dropdown > pre.text, table td.ui.dropdown
 	text-align: center;
 }
 
-body {
-	display: -ms-flexbox;
-	display: -webkit-flex;
-	display: flex;
-	-webkit-flex-direction: column;
-	-ms-flex-direction: column;
-	flex-direction: column;
-	-webkit-flex-wrap: nowrap;
-	-ms-flex-wrap: nowrap;
-	flex-wrap: nowrap;
-	-webkit-justify-content: flex-start;
-	-ms-flex-pack: start;
-	justify-content: flex-start;
-	-webkit-align-content: flex-start;
-	-ms-flex-line-pack: start;
-	align-content: flex-start;
-	-webkit-align-items: flex-start;
-	-ms-flex-align: start;
-	align-items: flex-start;
-}
-
-body > :nth-child(1),
-body > :nth-child(3) {
-	-webkit-flex: 1 1 auto;
-	-ms-flex: 1 1 auto;
-	flex: 1 1 auto;
-	-webkit-align-self: stretch;
-	-ms-flex-item-align: stretch;
-	align-self: stretch;
-}
-
-body > :nth-child(2) {
-	-webkit-flex: 0 1 auto;
-	-ms-flex: 0 1 auto;
-	flex: 0 1 auto;
-	-webkit-align-self: stretch;
-	-ms-flex-item-align: stretch;
-	align-self: stretch;
-}
-
 svg {
 	display: block;
     overflow: hidden;
@@ -517,8 +500,7 @@ svg .edgePath {
 }
 
 #resultsArea {
-	margin-top: 1rem;
-	position: relative;
+	margin: 0.25em 0 0;
 	display: -ms-flexbox;
 	display: -webkit-flex;
 	display: flex;
@@ -537,6 +519,7 @@ svg .edgePath {
 	-webkit-align-items: flex-start;
 	-ms-flex-align: start;
 	align-items: flex-start;
+	border-top: none;
 }
 
 #resultsArea > :nth-child(1) {
@@ -598,21 +581,6 @@ svg .edgePath {
 .compact.ui.label {
 	padding-top: 0.25em;
 	padding-bottom: 0.25em;
-}
-
-#editorArea {
-	display: block;
-	position: relative;
-	margin-bottom: 1em;
-	overflow: hidden;
-}
-
-#editor {
-	position: absolute;
-	margin: 0;
-	border-top: none;
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
 }
 
 .heading.row {
@@ -873,17 +841,11 @@ a.ui.label {
 	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-#editorArea > .ui.bottom.right.attached.labels > .label:last-child,
-.ui.segment .ui.bottom.right.attached.labels > .label:last-child {
-	border-radius: 4px 0 5px 0;
-}
-
-#resultsTabs > .ui.bottom.right.attached.labels,
-#resultsTabs .ui.top.right.attached.labels {
+.ui.top.right.attached.labels,
+.ui.bottom.right.attached.labels,
+.ui.dimmer .ui.top.right.attached.labels {
+	/* Make room for scrollbars! */
 	right: 0.8em;
-}
-#resultsTabs > .ui.bottom.right.attached.labels > .label:last-child {
-	border-radius: 4px 4px 0 0;
 }
 
 /* FIX: Remove border radii on dimmers inside attached segments. */

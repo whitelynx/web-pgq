@@ -90,6 +90,9 @@
 		<script src="js/vendor/ol-debug.js"></script>
 		<script src="angular-openlayers-directive/dist/angular-openlayers-directive.js"></script>
 
+		<link rel="stylesheet" href="bg-splitter/css/style.css">
+		<script src="bg-splitter/js/splitter.js"></script>
+
 		<link rel="stylesheet" href="highlightjs/styles/railscasts.css">
 		<script src="highlightjs/highlight.pack.js"></script>
 
@@ -151,435 +154,402 @@
 			<div class="ui text loader">Loading</div>
 		</div>
 
-		<div id="editorArea" class="container">
-			<div id="editor" class="inverted ui segment" ui-ace="mainEditorConfig" ng-model="queryText"></div>
+		<bg-splitter orientation="vertical">
+			<bg-pane min-size="128" id="topPane">
+				<div id="editorArea">
+					<div id="editor" class="inverted ui segment" ui-ace="mainEditorConfig" ng-model="queryText"></div>
 
-			<a id="permalink" class="black corner ui label">
-				<i class="url icon"></i>
-			</a>
+					<a id="permalink" class="black corner ui label">
+						<i class="url icon"></i>
+					</a>
 
-			<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
-				<div class="compact tiny compact ui buttons">
-					<save-file ng-model="queryText" file-name="currentFileName"></save-file>
+					<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
+						<div class="compact tiny compact ui buttons">
+							<save-file ng-model="queryText" file-name="currentFileName"></save-file>
 
-					<open-file on-open="fileLoaded(file, content)"></open-file>
-				</div>
-
-				<h3 class="ui header">Parameters</h3>
-
-				<!--table class="top attached inverted compact definition ui table segment">
-					<thead>
-						<tr>
-							<th>#</th>
-							<th>Value</th>
-							<th>Type</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-cloak ng-repeat="param in queryParams">
-							<td><code>${{ $index + 1 }}</code></td>
-							<td>
-								<div class="fluid mini ui input">
-									<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
-										ng-model="param.value">
-								</div>
-							</td>
-							<td>
-								<div class="fluid mini top pointing dropdown labeled right icon ui button">
-									<i class="dropdown icon"></i>
-									<span class="text">{{ param.type }}</span>
-									<div class="menu">
-										<div class="item" ng-click="param.type = 'text'">Text</div>
-										<div class="item" ng-click="param.type = 'integer'">Integer</div>
-									</div>
-								</div>
-							</td>
-							<td ng-click="removeQueryParam($index)">
-								<i class="close ui icon"></i>
-							</td>
-						</tr>
-					</tbody>
-				</table-->
-
-				<div id="paramsGrid" class="top attached inverted ui segment">
-					<div class="middle aligned ui grid">
-						<div class="heading row">
-							<div class="two wide column">#</div>
-							<div class="twelve wide column">Value / Type</div>
+							<open-file on-open="fileLoaded(file, content)"></open-file>
 						</div>
-						<div class="row" ng-cloak ng-repeat="param in queryParams track by $index">
-							<div class="two wide column"><code>${{ $index + 1 }}</code></div>
-							<div class="twelve wide column">
-								<div class="fluid mini action ui input">
-									<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
-										ng-model="param.value">
 
-									<div class="mini top dropdown labeled right icon ui button">
-										<i class="dropdown icon"></i>
-										<span class="text">{{ param.type }}</span>
-										<div class="menu">
-											<div class="item" ng-click="param.type = 'text'">Text</div>
-											<div class="item" ng-click="param.type = 'integer'">Integer</div>
+						<h3 class="ui header">Parameters</h3>
+
+						<div id="paramsGrid" class="top attached inverted ui segment">
+							<div class="middle aligned ui grid">
+								<div class="heading row">
+									<div class="two wide column">#</div>
+									<div class="twelve wide column">Value / Type</div>
+								</div>
+								<div class="row" ng-cloak ng-repeat="param in queryParams track by $index">
+									<div class="two wide column"><code>${{ $index + 1 }}</code></div>
+									<div class="twelve wide column">
+										<div class="fluid mini action ui input">
+											<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
+												ng-model="param.value">
+
+											<div class="mini top dropdown labeled right icon ui button">
+												<i class="dropdown icon"></i>
+												<span class="text">{{ param.type }}</span>
+												<div class="menu">
+													<div class="item" ng-click="param.type = 'text'">Text</div>
+													<div class="item" ng-click="param.type = 'integer'">Integer</div>
+												</div>
+											</div>
 										</div>
 									</div>
+									<div class="two wide column" ng-click="removeQueryParam($index)">
+										<i class="close ui icon"></i>
+									</div>
 								</div>
 							</div>
-							<div class="two wide column" ng-click="removeQueryParam($index)">
-								<i class="close ui icon"></i>
+						</div>
+						<div class="bottom attached mini black labeled icon ui button" ng-click="addQueryParam()">
+							<i class="add icon"></i>
+							Add parameter
+						</div>
+
+						<div class="launch button wrapper">
+							<div class="small black icon launch ui button" ng-click="showQuerySidebar = !showQuerySidebar">
+								<!--i class="menu icon"></i-->
+								<i class="list layout icon"></i>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="bottom attached mini black labeled icon ui button" ng-click="addQueryParam()">
-					<i class="add icon"></i>
-					Add parameter
-				</div>
 
-				<div class="launch button wrapper">
-					<div class="small black icon launch ui button" ng-click="showQuerySidebar = !showQuerySidebar">
-						<!--i class="menu icon"></i-->
-						<i class="list layout icon"></i>
+					<div class="hiding bottom right attached black ui labels">
+						<div class="small compact ui label" ng-if="editor.overwrite">
+							<div class="detail">OVR</div>
+						</div>
+						<div class="small compact ui label">
+							<span>row</span> <div class="detail">{{ editor.pos.row }}</div>
+							/ <div class="detail">{{ editor.rows }}</div>
+						</div>
+						<div class="small compact ui label">
+							<span>column</span> <div class="detail">{{ editor.pos.column }}</div>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="hiding bottom right attached black ui labels">
-				<div class="small compact ui label" ng-if="editor.overwrite">
-					<div class="detail">OVR</div>
-				</div>
-				<div class="small compact ui label">
-					<span>row</span> <div class="detail">{{ editor.pos.row }}</div>
-					/ <div class="detail">{{ editor.rows }}</div>
-				</div>
-				<div class="small compact ui label">
-					<span>column</span> <div class="detail">{{ editor.pos.column }}</div>
-				</div>
-			</div>
-		</div>
+				<div id="mainMenu" class="transparent small inverted attached compact main ui menu">
+					<div class="header item">
+						<!--i class="database icon"></i-->
+						<i class="hdd icon"></i>
+						<b>web-pgq</b>
+					</div>
+					<!--div class="text item">
+						Put in a query. Hit run or explain. Done.
+					</div-->
+					<div class="ui simple dropdown item" ng-class="{disabled: !connected || queryRunning}">
+						<span ng-if="!currentConnection" class="value placeholder">Connect to...</span>
 
-		<div id="mainMenu" class="transparent small inverted attached compact main ui menu">
-			<div class="container">
-				<div id="copyright">
-					&copy; 2014 David H. Bronke
-				</div>
+						<span ng-cloak ng-if="currentConnection" class="value"
+								ng-class="{teal: dbConnected, yellow: connected && dbConnecting, red: connected && !dbConnecting && !dbConnected}">
+							<i ng-if="connected && !dbConnecting && !dbConnected" class="attention icon" title="Disconnected from chosen database!"></i>
+							<i ng-if="!connected" class="attention icon" title="Disconnected from web-pgq server!"></i>
+							{{ currentConnection }}
+						</span>
 
-				<div class="header item">
-					<!--i class="database icon"></i-->
-					<i class="hdd icon"></i>
-					<b>web-pgq</b>
-				</div>
-				<!--div class="text item">
-					Put in a query. Hit run or explain. Done.
-				</div-->
-				<div class="ui simple dropdown item" ng-class="{disabled: !connected || queryRunning}">
-					<span ng-if="!currentConnection" class="value placeholder">Connect to...</span>
+						<i class="dropdown icon"></i>
 
-					<span ng-cloak ng-if="currentConnection" class="value"
-							ng-class="{teal: dbConnected, yellow: connected && dbConnecting, red: connected && !dbConnecting && !dbConnected}">
-						<i ng-if="connected && !dbConnecting && !dbConnected" class="attention icon" title="Disconnected from chosen database!"></i>
-						<i ng-if="!connected" class="attention icon" title="Disconnected from web-pgq server!"></i>
-						{{ currentConnection }}
-					</span>
-
-					<i class="dropdown icon"></i>
-
-					<div class="menu">
-						<div class="item" ng-repeat="(name, conn) in connections" ng-click="connectDB(name)"
-								title="{{ conn.masked|json }}">
-							<div class="right compact tiny teal vertical animated ui button" ng-click="editConnection(name, $event)">
-								<div class="hidden content">Edit</div>
-								<div class="visible content"><i class="edit sign icon"></i></div>
+						<div class="menu">
+							<div class="item" ng-repeat="(name, conn) in connections" ng-click="connectDB(name)"
+									title="{{ conn.masked|json }}">
+								<div class="right compact tiny teal vertical animated ui button" ng-click="editConnection(name, $event)">
+									<div class="hidden content">Edit</div>
+									<div class="visible content"><i class="edit sign icon"></i></div>
+								</div>
+								{{ name }}
 							</div>
-							{{ name }}
-						</div>
 
-						<div class="item" ng-click="addConnection()">
-							<i class="add sign box icon"></i>
-							Add new connection...
+							<div class="item" ng-click="addConnection()">
+								<i class="add sign box icon"></i>
+								Add new connection...
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="item" ng-show="connecting" ng-click="connectSocket()"
-						data-content="Click to force reconnect.">
-					<i class="spinner loading icon"></i>
-					<span class="hide on mobile">Connecting...</span>
-				</div>
-				<div class="item" ng-show="dbConnecting">
-					<i class="spinner loading icon"></i>
-					<span class="hide on mobile">Connecting to {{ currentConnection }}...</span>
-				</div>
+					<div class="item" ng-show="connecting" ng-click="connectSocket()"
+							data-content="Click to force reconnect.">
+						<i class="spinner loading icon"></i>
+						<span class="hide on mobile">Connecting...</span>
+					</div>
+					<div class="item" ng-show="dbConnecting">
+						<i class="spinner loading icon"></i>
+						<span class="hide on mobile">Connecting to {{ currentConnection }}...</span>
+					</div>
 
-				<div id="editConnectionDimmer" class="ui page dimmer">
-					<div class="content">
-						<div class="center">
-							<div class="inverted small ui form segment" ng-class="{error: editConnectionError}">
-								<h2 ng-if="editingConnectionIsNew">Add Connection</h2>
-								<h2 ng-if="!editingConnectionIsNew">Edit Connection {{ editingConnectionName|json }}</h2>
+					<div id="editConnectionDimmer" class="ui page dimmer">
+						<div class="content">
+							<div class="center">
+								<div class="inverted small ui form segment" ng-class="{error: editConnectionError}">
+									<h2 ng-if="editingConnectionIsNew">Add Connection</h2>
+									<h2 ng-if="!editingConnectionIsNew">Edit Connection {{ editingConnectionName|json }}</h2>
 
-								<div class="inline field">
-									<label>Connection Name</label>
-									<input type="text" ng-model="editingConnectionNewName" name="connectionName">
-								</div>
-
-								<div class="two fields">
-									<div class="field">
-										<label>Server</label>
-										<input placeholder="hostname" type="text" ng-model="editingConnection.host">
-									</div>
-									<div class="field">
-										<label>&nbsp;</label>
-										<input placeholder="port" type="text" autocomplete="off" ng-model="editingConnection.port">
-									</div>
-								</div>
-
-								<div class="two fields">
-									<div class="field">
-										<label>Database Name</label>
-										<input type="text" ng-model="editingConnection.database">
-									</div>
 									<div class="inline field">
-										<div class="toggle ui checkbox">
-											<input type="checkbox" id="terms">
-											<label for="terms">Use SSL</label>
+										<label>Connection Name</label>
+										<input type="text" ng-model="editingConnectionNewName" name="connectionName">
+									</div>
+
+									<div class="two fields">
+										<div class="field">
+											<label>Server</label>
+											<input placeholder="hostname" type="text" ng-model="editingConnection.host">
+										</div>
+										<div class="field">
+											<label>&nbsp;</label>
+											<input placeholder="port" type="text" autocomplete="off" ng-model="editingConnection.port">
 										</div>
 									</div>
-								</div>
 
-								<div class="two fields">
-									<div class="field">
-										<label>Username</label>
-										<div class="ui left labeled icon input">
-											<input type="text" ng-model="editingConnection.user">
-											<i class="user icon"></i>
+									<div class="two fields">
+										<div class="field">
+											<label>Database Name</label>
+											<input type="text" ng-model="editingConnection.database">
+										</div>
+										<div class="inline field">
+											<div class="toggle ui checkbox">
+												<input type="checkbox" id="terms">
+												<label for="terms">Use SSL</label>
+											</div>
 										</div>
 									</div>
-									<div class="field">
-										<label>Password</label>
-										<input type="password" autocomplete="off" ng-model="editingConnection.password">
-									</div>
-								</div>
 
-								<div class="actions">
-									<div class="negative ui button" ng-click="hideEditConnection()">Cancel</div>
-									<div class="positive icon ui button" ng-if="editingConnectionIsNew"
-											ng-click="saveConnection()" ng-class="{disabled: !editingConnectionIsValid}">
-										Add Connection
-										<i class="add icon"></i>
+									<div class="two fields">
+										<div class="field">
+											<label>Username</label>
+											<div class="ui left labeled icon input">
+												<input type="text" ng-model="editingConnection.user">
+												<i class="user icon"></i>
+											</div>
+										</div>
+										<div class="field">
+											<label>Password</label>
+											<input type="password" autocomplete="off" ng-model="editingConnection.password">
+										</div>
 									</div>
-									<div class="positive icon ui button" ng-if="!editingConnectionIsNew"
-											ng-click="saveConnection()" ng-class="{disabled: !editingConnectionIsValid}">
-										Save Connection
-										<i class="save icon"></i>
-									</div>
-								</div>
 
-								<div class="ui error message"></div>
+									<div class="actions">
+										<div class="negative ui button" ng-click="hideEditConnection()">Cancel</div>
+										<div class="positive icon ui button" ng-if="editingConnectionIsNew"
+												ng-click="saveConnection()" ng-class="{disabled: !editingConnectionIsValid}">
+											Add Connection
+											<i class="add icon"></i>
+										</div>
+										<div class="positive icon ui button" ng-if="!editingConnectionIsNew"
+												ng-click="saveConnection()" ng-class="{disabled: !editingConnectionIsValid}">
+											Save Connection
+											<i class="save icon"></i>
+										</div>
+									</div>
+
+									<div class="ui error message"></div>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="borderless item right compact ui buttons">
-					<a id="settings-button" class="orange icon ui button">
-						<i class="settings icon"></i>
-					</a>
-					<div id="settings-popup" class="popup vertical ui menu">
-						<div class="header item">EXPLAIN settings</div>
-						<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
-								ng-class="{active: val.enabled, teal: val.enabled}" data-content="{{ val.description }}">
-							<i class="left icon" ng-class="val.icon"></i>
-							{{ key }}
-							<div class="squarish ui label" ng-class="{teal: val.enabled}">
-								<i class="checkbox icon" ng-class="{disabled: !val.enabled, empty: !val.enabled, checked: val.enabled}"></i>
-							</div>
+					<div class="borderless item right compact ui buttons">
+						<a id="settings-button" class="orange icon ui button">
+							<i class="settings icon"></i>
 						</a>
-					</div>
-				</div>
-
-				<div class="horizontally fitted borderless item right compact ui buttons">
-					<a class="orange labeled icon ui button" ng-click="explainQuery()"
-							ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>F7</b>">
-						<i class="question icon"></i>
-						Explain
-					</a>
-					<a class="orange ui button" ng-click="explainQuery(true)"
-							ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>Shift+F7</b>">
-						Analyze
-					</a>
-				</div>
-
-				<div class="borderless item right compact ui buttons">
-					<a class="teal labeled icon ui button" ng-click="runQuery()"
-							ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>F5</b>">
-						<i class="play icon"></i>
-						Run
-					</a>
-				</div>
-
-				<div class="horizontally fitted borderless item right compact ui buttons">
-					<a class="fast fade animation red vertical animated ui button" data-content="Cancel query"
-							ng-if="queryRunning" ng-click="cancelQuery()">
-						<div class="hidden content">Cancel</div>
-						<div class="visible content"><i class="spinner loading icon"></i></div>
-					</a>
-				</div>
-			</div>
-		</div>
-
-		<div id="resultsArea" class="container">
-			<div class="transparent top attached small tabular ui menu">
-				<a class="item" ng-class="{active: (resultsTab == 'Results')}" ng-click="showResults()">
-					<i class="table icon"></i>
-					Results
-				</a>
-				<a class="item" ng-class="{active: (resultsTab == 'Geometry')}" ng-click="showGeometry()">
-					<i class="table icon"></i>
-					Geometry
-				</a>
-				<a class="item" ng-class="{active: (resultsTab == 'Query Plan')}" ng-click="showPlan()">
-					<i class="sitemap icon"></i>
-					Query Plan
-				</a>
-				<a class="item" ng-class="{active: (resultsTab == 'Messages')}" ng-click="showMessages()">
-					<i class="browser icon"></i>
-					Messages
-				</a>
-			</div>
-
-			<div id="resultsTabs" class="dimmable attached ui segment">
-
-				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer">
-					<div class="content">
-						<a class="green corner ui label" data-content="Zoom to fit" ng-click="zoomFit()">
-							<i class="fullscreen icon"></i>
-						</a>
-						<svg digraph graph="graph" class="fill-parent">
-							<defs>
-								<g ng-repeat="node in graphNodes" id="{{ node.useDef }}">
-									<image xlink:href="{{ node.iconURL }}" x="-32" y="-32" width="64px" height="64px"></image>
-								</g>
-							</defs>
-						</svg>
-					</div>
-				</div>
-
-				<div ng-class="{visible: resultsTab == 'Geometry'}" id="geometry-map">
-					<div id="layers-button" class="green corner dropdown ui label">
-						<i class="map icon"></i>
-
-						<div id="layers-dropdown" class="vertical menu">
-							<div class="header item">Layers</div>
-
-							<a class="item" ng-repeat="layer in availableLayers" ng-click="eatEvent($event, toggleMapLayer, layer)"
-									ng-class="{active: layer.active, teal: layer.active}">
-
-								<i class="left checkbox icon"
-										ng-class="{disabled: !layer.active, empty: !layer.active, checked: layer.active}"></i>
-
-								{{ layer.display || layer.name }}
-								<i class="color icon" ng-if="layer.htmlColor" ng-style="{'background-color': layer.htmlColor}"></i>
-								<em ng-if="layer.queryID">(query # {{layer.queryID}})</em>
-
-								<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.hasExtent}"
-										title="Zoom to fit" ng-click="eatEvent($event, centerMapLayer, layer)">
-									<i class="left map icon"></i>
+						<div id="settings-popup" class="popup vertical ui menu">
+							<div class="header item">EXPLAIN settings</div>
+							<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
+									ng-class="{active: val.enabled, teal: val.enabled}" data-content="{{ val.description }}">
+								<i class="left icon" ng-class="val.icon"></i>
+								{{ key }}
+								<div class="squarish ui label" ng-class="{teal: val.enabled}">
+									<i class="checkbox icon" ng-class="{disabled: !val.enabled, empty: !val.enabled, checked: val.enabled}"></i>
 								</div>
 							</a>
 						</div>
 					</div>
 
-					<openlayers layers="defaultLayers" center="geomMapCenter">
-					</openlayers>
+					<div class="horizontally fitted borderless item right compact ui buttons">
+						<a class="orange labeled icon ui button" ng-click="explainQuery()"
+								ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>F7</b>">
+							<i class="question icon"></i>
+							Explain
+						</a>
+						<a class="orange ui button" ng-click="explainQuery(true)"
+								ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>Shift+F7</b>">
+							Analyze
+						</a>
+					</div>
+
+					<div class="borderless item right compact ui buttons">
+						<a class="teal labeled icon ui button" ng-click="runQuery()"
+								ng-class="{disabled: !dbConnected || queryRunning}" data-html="Shortcut: <b>F5</b>">
+							<i class="play icon"></i>
+							Run
+						</a>
+					</div>
+
+					<div class="horizontally fitted borderless item right compact ui buttons">
+						<a class="fast fade animation red vertical animated ui button" data-content="Cancel query"
+								ng-if="queryRunning" ng-click="cancelQuery()">
+							<div class="hidden content">Cancel</div>
+							<div class="visible content"><i class="spinner loading icon"></i></div>
+						</a>
+					</div>
 				</div>
 
-				<div class="ui dimmer" ng-class="{active: (resultsTab == 'Messages')}" id="messages-dimmer">
-					<div class="left aligned content">
-						<section>
-							<div class="top right attached ui labels">
-								<a class="small compact squarish ui label" ng-class="{black: logger.showBannersFor.debug}"
-										ng-click="logger.showBannersFor.debug = !logger.showBannersFor.debug">
-									<i class="bug icon" ng-class="{disabled: !logger.showBannersFor.debug}"></i>
-								</a>
-								<a class="small compact squarish ui label" ng-class="{teal: logger.showBannersFor.info}"
-										ng-click="logger.showBannersFor.info = !logger.showBannersFor.info">
-									<i class="info letter icon" ng-class="{disabled: !logger.showBannersFor.info}"></i>
-								</a>
-								<a class="small compact squarish ui label" ng-class="{green: logger.showBannersFor.success}"
-										ng-click="logger.showBannersFor.success = !logger.showBannersFor.success">
-									<i class="checkmark icon" ng-class="{disabled: !logger.showBannersFor.success}"></i>
-								</a>
-								<a class="small compact squarish ui label" ng-class="{orange: logger.showBannersFor.warning}"
-										ng-click="logger.showBannersFor.warning = !logger.showBannersFor.warning">
-									<i class="warning icon" ng-class="{disabled: !logger.showBannersFor.warning}"></i>
-								</a>
-								<a class="small compact squarish ui label" ng-class="{red: logger.showBannersFor.error}"
-										ng-click="logger.showBannersFor.error = !logger.showBannersFor.error">
-									<i class="attention icon" ng-class="{disabled: !logger.showBannersFor.error}"></i>
+				<div id="copyright">
+					&copy; 2014 David H. Bronke
+				</div>
+			</bg-pane>
+
+			<bg-pane min-size="128" id="resultsArea">
+				<div class="transparent top attached small tabular ui menu">
+					<a class="item" ng-class="{active: (resultsTab == 'Results')}" ng-click="showResults()">
+						<i class="table icon"></i>
+						Results
+					</a>
+					<a class="item" ng-class="{active: (resultsTab == 'Geometry')}" ng-click="showGeometry()">
+						<i class="table icon"></i>
+						Geometry
+					</a>
+					<a class="item" ng-class="{active: (resultsTab == 'Query Plan')}" ng-click="showPlan()">
+						<i class="sitemap icon"></i>
+						Query Plan
+					</a>
+					<a class="item" ng-class="{active: (resultsTab == 'Messages')}" ng-click="showMessages()">
+						<i class="browser icon"></i>
+						Messages
+					</a>
+				</div>
+
+				<div id="resultsTabs" class="dimmable attached ui segment">
+
+					<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer">
+						<div class="content">
+							<a class="green corner ui label" data-content="Zoom to fit" ng-click="zoomFit()">
+								<i class="fullscreen icon"></i>
+							</a>
+							<svg digraph graph="graph" class="fill-parent">
+								<defs>
+									<g ng-repeat="node in graphNodes" id="{{ node.useDef }}">
+										<image xlink:href="{{ node.iconURL }}" x="-32" y="-32" width="64px" height="64px"></image>
+									</g>
+								</defs>
+							</svg>
+						</div>
+					</div>
+
+					<div ng-class="{visible: resultsTab == 'Geometry'}" id="geometry-map">
+						<div id="layers-button" class="green corner dropdown ui label">
+							<i class="map icon"></i>
+
+							<div id="layers-dropdown" class="vertical menu">
+								<div class="header item">Layers</div>
+
+								<a class="item" ng-repeat="layer in availableLayers" ng-click="eatEvent($event, toggleMapLayer, layer)"
+										ng-class="{active: layer.active, teal: layer.active}">
+
+									<i class="left checkbox icon"
+											ng-class="{disabled: !layer.active, empty: !layer.active, checked: layer.active}"></i>
+
+									{{ layer.display || layer.name }}
+									<i class="color icon" ng-if="layer.htmlColor" ng-style="{'background-color': layer.htmlColor}"></i>
+									<em ng-if="layer.queryID">(query # {{layer.queryID}})</em>
+
+									<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.hasExtent}"
+											title="Zoom to fit" ng-click="eatEvent($event, centerMapLayer, layer)">
+										<i class="left map icon"></i>
+									</div>
 								</a>
 							</div>
+						</div>
 
-							<div class="fade slide animation small icon ui message" ng-class="banner.severity"
-									ng-repeat="(idx, banner) in logger.bannerMessages">
-								<i class="icon" ng-class="banner.icon"></i>
-								<div class="header">
-									{{ banner.header }}
+						<openlayers layers="defaultLayers" center="geomMapCenter">
+						</openlayers>
+					</div>
+
+					<div class="ui dimmer" ng-class="{active: (resultsTab == 'Messages')}" id="messages-dimmer">
+						<div class="left aligned content">
+							<section>
+								<div class="top right attached ui labels">
+									<a class="small compact squarish ui label" ng-class="{black: logger.showBannersFor.debug}"
+											ng-click="logger.showBannersFor.debug = !logger.showBannersFor.debug">
+										<i class="bug icon" ng-class="{disabled: !logger.showBannersFor.debug}"></i>
+									</a>
+									<a class="small compact squarish ui label" ng-class="{teal: logger.showBannersFor.info}"
+											ng-click="logger.showBannersFor.info = !logger.showBannersFor.info">
+										<i class="info letter icon" ng-class="{disabled: !logger.showBannersFor.info}"></i>
+									</a>
+									<a class="small compact squarish ui label" ng-class="{green: logger.showBannersFor.success}"
+											ng-click="logger.showBannersFor.success = !logger.showBannersFor.success">
+										<i class="checkmark icon" ng-class="{disabled: !logger.showBannersFor.success}"></i>
+									</a>
+									<a class="small compact squarish ui label" ng-class="{orange: logger.showBannersFor.warning}"
+											ng-click="logger.showBannersFor.warning = !logger.showBannersFor.warning">
+										<i class="warning icon" ng-class="{disabled: !logger.showBannersFor.warning}"></i>
+									</a>
+									<a class="small compact squarish ui label" ng-class="{red: logger.showBannersFor.error}"
+											ng-click="logger.showBannersFor.error = !logger.showBannersFor.error">
+										<i class="attention icon" ng-class="{disabled: !logger.showBannersFor.error}"></i>
+									</a>
 								</div>
-								<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
-								<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
-									<li ng-repeat="(key, val) in banner.detail">
-										<strong>{{ key }}:</strong>
-										<pre ng-if="!isString(val)"><code>{{ val|json }}</code></pre>
-										<pre ng-if="isString(val)"><code>{{ val }}</code></pre>
-									</li>
-								</ul>
-							</div>
-						</section>
+
+								<div class="fade slide animation small icon ui message" ng-class="banner.severity"
+										ng-repeat="(idx, banner) in logger.bannerMessages">
+									<i class="icon" ng-class="banner.icon"></i>
+									<div class="header">
+										{{ banner.header }}
+									</div>
+									<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
+									<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
+										<li ng-repeat="(key, val) in banner.detail">
+											<strong>{{ key }}:</strong>
+											<pre ng-if="!isString(val)"><code>{{ val|json }}</code></pre>
+											<pre ng-if="isString(val)"><code>{{ val }}</code></pre>
+										</li>
+									</ul>
+								</div>
+							</section>
+						</div>
+					</div>
+
+					<div id="noRowsLabel" ng-if="!queryRunning && results.rows.length == 0 && resultsTab == 'Results'"
+							class="fast fade animation red ribbon ui label">
+						No rows returned.
+					</div>
+
+					<div id="resultsContainer">
+						<table ng-if="results.rows.length > 0" class="fade animation compact sortable celled ui table">
+							<thead>
+								<tr>
+									<th ng-repeat="field in results.fields track by $index"
+										title="Data Type: {{ field.dataType }}">{{ field.name }}</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								<!--tr ng-repeat="row in results.rows track by $index" class="fade animation">
+									<td ng-repeat="value in row track by $index"
+										result-value="value" result-field-type="results.fields[$index].dataType"
+										ace-config="commonEditorConfig">
+									</td>
+								</tr-->
+								<tr ng-repeat="row in results.rows track by $index">
+									<td ng-repeat="value in row track by $index"
+										result-value="value" result-field-type="results.fields[$index].dataType">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="hiding bottom right attached ui labels" ng-class="{black: resultsTab == 'Messages'}">
+						<div class="small compact ui label">
+							<span>Rows:</span> <div class="detail">{{ results.rowCount || 0 }}</div>
+						</div>
+						<div class="small compact ui label" ng-if="results && results.affectedRowCount">
+							<span>Affected:</span> <div class="detail">{{ results.affectedRowCount }}</div>
+						</div>
+						<div class="small compact ui label" ng-if="results && results.totalTimeMS">
+							<div class="detail">{{ results.totalTimeMS }}</div> <span>ms</span>
+						</div>
 					</div>
 				</div>
-
-				<div id="noRowsLabel" ng-if="!queryRunning && results.rows.length == 0 && resultsTab == 'Results'"
-						class="fast fade animation red ribbon ui label">
-					No rows returned.
-				</div>
-
-				<div id="resultsContainer">
-					<table ng-if="results.rows.length > 0" class="fade animation compact sortable celled ui table">
-						<thead>
-							<tr>
-								<th ng-repeat="field in results.fields track by $index"
-									title="Data Type: {{ field.dataType }}">{{ field.name }}</th>
-							</tr>
-						</thead>
-
-						<tbody>
-							<!--tr ng-repeat="row in results.rows track by $index" class="fade animation">
-								<td ng-repeat="value in row track by $index"
-									result-value="value" result-field-type="results.fields[$index].dataType"
-									ace-config="commonEditorConfig">
-								</td>
-							</tr-->
-							<tr ng-repeat="row in results.rows track by $index">
-								<td ng-repeat="value in row track by $index"
-									result-value="value" result-field-type="results.fields[$index].dataType">
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-
-				<div class="hiding bottom right attached ui labels" ng-class="{black: resultsTab == 'Messages'}">
-					<div class="small compact ui label">
-						<span>Rows:</span> <div class="detail">{{ results.rowCount || 0 }}</div>
-					</div>
-					<div class="small compact ui label" ng-if="results && results.affectedRowCount">
-						<span>Affected:</span> <div class="detail">{{ results.affectedRowCount }}</div>
-					</div>
-					<div class="small compact ui label" ng-if="results && results.totalTimeMS">
-						<div class="detail">{{ results.totalTimeMS }}</div> <span>ms</span>
-					</div>
-				</div>
-			</div>
-		</div>
+			</bg-pane>
+		</bg-splitter>
 	</body>
 </html>

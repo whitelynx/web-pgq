@@ -35,9 +35,11 @@
     "angular-openlayers-directive": "*",
     "angular-cookies": "~1.3.0",
     "highlightjs": "~8.3.0",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "bg-splitter": "*"
   },
   "resolutions": {
-    "graphlib": "^1.0.1"
+    "graphlib": "^1.0.1",
+    "angular": "1.3.2"
   }
 }
