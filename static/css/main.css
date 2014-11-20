@@ -107,6 +107,7 @@ code, pre, .ace_editor, table td.code {
 .split-panes > #topPane + .split-handler {
 	height: 1rem;
 	margin-top: -1rem;
+	z-index: 10;
 }
 .split-panes > #topPane + .split-handler:hover {
 	background: rgba(0, 0, 0, 0.2);
