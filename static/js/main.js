@@ -4,8 +4,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'olData', 'olHelpers', 'graph', 'keybinding', 'logger', 'queueDigest', 'socket', 'sql',
-        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, olData, olHelpers, graph, keybinding, logger, queueDigest, socket, sql)
+        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'olData', 'olHelpers', 'graph', 'keybinding', 'logger', 'promise', 'queueDigest', 'socket', 'sql',
+        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, olData, olHelpers, graph, keybinding, logger, promise, queueDigest, socket, sql)
         {
             function applyIfNecessary()
             {
@@ -38,15 +38,24 @@ angular.module('webPGQ')
             });
             socket.on('disconnected', function()
             {
+                if($scope.connected)
+                {
+                    logger.warn("Connection to web-pgq server interrupted!", null, 'connection');
+                }
+                else
+                {
+                    console.warn("Unable to reconnect to web-pgq server.");
+                } // end if
+
                 $scope.connected = false;
                 $scope.dbConnected = false;
-                $scope.connecting = true;
+                $scope.connecting = socket.reconnect;
+
                 applyIfNecessary();
-                console.log("Socket disconnected.");
             });
             socket.on('error', function(error)
             {
-                logger.error("Error connecting to web-pgq server!", error.stack || error.toString());
+                logger.error("Error connecting to web-pgq server!", error, 'connection');
             });
 
             $scope.tabSize = 4;
@@ -209,7 +218,7 @@ angular.module('webPGQ')
                 var connInfo = $scope.connections[connectionName];
                 if(!connInfo)
                 {
-                    logger.error("No connection named:", connectionName);
+                    logger.error("No connection named " + JSON.stringify(connectionName) + "!", null, 'connection');
                     return;
                 } // end if
 
@@ -270,8 +279,10 @@ angular.module('webPGQ')
                 var connInfo = $scope.connections[connectionName];
                 if(!connInfo)
                 {
-                    logger.error("No connection named:", connectionName);
-                    return;
+                    var errMsg = "No connection named " + JSON.stringify(connectionName) + "!";
+                    logger.error(errMsg, null, 'connection');
+                    return promise.reject(new Error(errMsg));
+                } // end if
                 } // end if
 
                 $scope.dbConnecting = true;
@@ -976,7 +987,7 @@ LIMIT 2;";
                 }
                 catch(exc)
                 {
-                    logger.error("Couldn't load query parameters from URL!", exc.stack || exc.toString());
+                    logger.error("Couldn't load query parameters from URL!", exc, 'web');
                     $scope.queryParams = [];
                 } // end try
             }
