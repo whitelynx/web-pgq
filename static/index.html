@@ -165,6 +165,13 @@
 
 					<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
 						<div class="compact tiny compact ui buttons">
+							<div class="black vertical animated ui button" ng-click="newFile()">
+								<div class="hidden content">New</div>
+								<div class="visible content">
+									<i class="file outline icon"></i>
+								</div>
+							</div>
+
 							<save-file ng-model="queryText" file-name="currentFileName"></save-file>
 
 							<open-file on-open="fileLoaded(file, content)"></open-file>
