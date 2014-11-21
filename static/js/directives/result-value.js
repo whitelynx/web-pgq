@@ -3,9 +3,20 @@
 "use strict";
 
 angular.module('webPGQ.directives')
-    .directive('resultValue', ['$window', '$', 'hljs', 'queueDigest', function($window, $, hljs, queueDigest)
+    .directive('resultValue', ['$window', '$', '_', 'hljs', 'queueDigest', function($window, $, _, hljs, queueDigest)
     {
         var prettyPrint = true;
+
+        // Number of pixels to subtract from the available space when setting max width/height of the detail popup.
+        var sizeAdjustment = 10;
+
+        var defaultPopupSettings = {
+            on: 'click',
+            //position: 'top center', //FIXME: If we use 'top center', semantic ONLY checks '* center' positions!
+            position: 'top left',
+            variation: 'inverted',
+            className: { popup: 'code ui popup' },
+        };
 
         var firstLineRE = /^([^\n]*)\n/;
 
@@ -20,7 +31,7 @@ angular.module('webPGQ.directives')
             scope.$watch('resultValue', queueDigest.bind(null, updateFirstLine, 10));
             scope.$watch('resultFieldType', queueDigest.bind(null, updateFirstLine, 10));
 
-            element.attr('data-html', '<div class="wrapper"><div class="content"><pre></pre></div></div>');
+            element.attr('data-html', '<div class="wrapper"><pre></pre></div>');
 
             function updateFirstLine()
             {
@@ -98,19 +109,32 @@ angular.module('webPGQ.directives')
                     if(!element.hasClass('clickable'))
                     {
                         element.addClass('clickable');
-                        element.popup({
-                            on: 'click',
-                            position: 'top center',
-                            variation: 'inverted',
-                            className: { popup: 'code ui popup' },
+                        element.popup(_.defaults({
                             onCreate: function()
                             {
-                                var $this = this;
-                                var $wrapper = $this.children('.wrapper');
-                                var $content = $wrapper.children('.content');
-                                var $contentPre = $content.children('pre');
+                                var $popup = this;
+                                var $wrapper = $popup.children('.wrapper');
+                                var $contentPre = $wrapper.children('pre');
 
                                 $contentPre.text(prettyPrint ? prettyDisplayValue : displayValue);
+
+                                var offset = element.offset();
+                                var windowWidth = $($window).width(), windowHeight = $($window).height();
+
+                                // Calculate and set max-width and max-height for the popup.
+                                var maxWidth = Math.max(
+                                    offset.left - sizeAdjustment,
+                                    windowWidth - offset.left - element.outerWidth() - sizeAdjustment
+                                );
+                                var maxHeight = Math.max(
+                                    offset.top - sizeAdjustment,
+                                    windowHeight - offset.top - element.outerHeight() - sizeAdjustment
+                                );
+
+                                $wrapper.css({
+                                    'max-width': maxWidth,
+                                    'max-height': maxHeight
+                                });
 
                                 if(prettyPrintable)
                                 {
@@ -123,11 +147,11 @@ angular.module('webPGQ.directives')
                                         {
                                             prettyPrint = !prettyPrint;
 
-                                            updatePrettyPrint($content, $contentPre, $ppToggleBtn);
+                                            updatePrettyPrint($wrapper, $contentPre, $ppToggleBtn);
                                         })
-                                        .appendTo($this);
+                                        .appendTo($popup);
 
-                                    updatePrettyPrint($content, $contentPre, $ppToggleBtn);
+                                    updatePrettyPrint($wrapper, $contentPre, $ppToggleBtn);
                                 }
                                 else
                                 {
@@ -138,19 +162,19 @@ angular.module('webPGQ.directives')
                                 // Apply perfectScrollbar.
                                 $window.setTimeout(function()
                                 {
-                                    $content.perfectScrollbar({ includePadding: true, minScrollbarLength: 12 });
+                                    $wrapper.perfectScrollbar({ includePadding: true, minScrollbarLength: 12 });
                                 }, 0);
-                            }
-                        });
+                            } // end onCreate
+                        }, defaultPopupSettings));
                     } // end if
 
                     scope.firstLine = firstLine;
                 } // end if
 
-                function updatePrettyPrint($content, $contentPre, $ppToggleBtn)
+                function updatePrettyPrint($wrapper, $contentPre, $ppToggleBtn)
                 {
                     // Remove the old scrollbar so the popup will resize.
-                    $content.perfectScrollbar('destroy');
+                    $wrapper.perfectScrollbar('destroy');
 
                     // Set the 'Pretty Print' toggle button's color.
                     $ppToggleBtn
@@ -164,12 +188,12 @@ angular.module('webPGQ.directives')
                     $contentPre.each(function() { hljs.highlightBlock(this); });
 
                     // Reposition the popup, in case the size changed.
-                    element.popup('set position', 'top center');
+                    element.popup('event resize');
 
                     // Re-create the scrollbar.
                     $window.setTimeout(function()
                     {
-                        $content.perfectScrollbar({ includePadding: true, minScrollbarLength: 12 });
+                        $wrapper.perfectScrollbar({ includePadding: true, minScrollbarLength: 12 });
                     }, 0);
                 } // end updatePrettyPrint
             } // end updateFirstLine
