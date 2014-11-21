@@ -859,7 +859,6 @@ a.ui.label {
 .ui.dimmer .top.right.attached.ui.labels {
 	position: absolute;
 	top: 0;
-	right: 0;
 	z-index: 100;
 }
 .ui.dimmer .top.right.attached.ui.labels > .label {
@@ -917,31 +916,17 @@ a.ui.label {
 	top: auto;
 	bottom: 0;
 	left: auto;
-	right: 0;
 	width: auto;
 	opacity: 0.9;
 	z-index: 825;
 }
-#resultsTabs > .ui.bottom.right.attached.labels {
-	z-index: 1001;
-}
-
-
-.ui.hiding.attached.labels {
-	padding: 2em 0 0 2em;
-	pointer-events: none;
-}
-.ui.hiding.attached.labels .label {
-	position: relative;
-	top: 0;
-}
-.ui.hiding.attached.labels.hide .label {
-	top: 1.5em;
-}
-
 .ui.bottom.right.attached.labels > .label {
 	border-radius: 4px 4px 0 0;
 	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+#resultsTabs > .ui.bottom.right.attached.labels {
+	z-index: 1001;
 }
 
 .ui.top.right.attached.labels,
@@ -949,6 +934,24 @@ a.ui.label {
 .ui.dimmer .ui.top.right.attached.labels {
 	/* Make room for scrollbars! */
 	right: 0.8em;
+}
+
+.ui.hiding.bottom.attached.labels {
+	padding: 2em 0 0 2em;
+	pointer-events: none;
+}
+.ui.hiding.bottom.attached.labels .label {
+	position: relative;
+	top: 0;
+}
+.ui.hiding.bottom.attached.labels.hide .label {
+	top: 1.5em;
+}
+
+.ui.hiding.bottom.right.attached.labels {
+	/* Extend the padding so the labels still hide when mousing over the scrollbar. */
+	right: 0;
+	padding-right: 0.8em;
 }
 
 /* FIX: Remove border radii on dimmers inside attached segments. */
