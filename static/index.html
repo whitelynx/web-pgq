@@ -250,7 +250,7 @@
 						<span ng-cloak ng-if="currentConnection" class="value"
 								ng-class="{teal: dbConnected, yellow: connected && dbConnecting, red: connected && !dbConnecting && !dbConnected}">
 							<i ng-if="connected && !dbConnecting && !dbConnected" class="attention icon" title="Disconnected from chosen database!"></i>
-							<i ng-if="!connected" class="attention icon" title="Disconnected from web-pgq server!"></i>
+							<i ng-if="!connected" class="red attention icon" title="Disconnected from web-pgq server!"></i>
 							{{ currentConnection }}
 						</span>
 
