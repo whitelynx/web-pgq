@@ -467,6 +467,11 @@ angular.module('webPGQ.directives')
                 } // end if
             }); // end 'Update' handler
 
+            scope.$on('Resize', function()
+            {
+                scope.$broadcast('Render');
+            }); // end 'Resize' handler
+
             scope.$on('Render', function()
             {
                 try
