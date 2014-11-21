@@ -67,6 +67,7 @@ angular.module('webPGQ')
 
                 $scope.connected = false;
                 $scope.dbConnected = false;
+                $scope.dbConnecting = false;
                 $scope.connecting = socket.reconnect;
 
                 applyIfNecessary();
@@ -309,7 +310,6 @@ angular.module('webPGQ')
                     return promise.resolve(true);
                 } // end if
 
-                $scope.dbConnected = false;
                 $scope.currentConnection = connectionName;
                 currentConnectionInfo = connInfo;
 
@@ -349,12 +349,14 @@ angular.module('webPGQ')
                     {
                         $scope.dbConnected = true;
                         $scope.dbConnecting = false;
+                        applyIfNecessary();
                         return true;
                     })
                     .catch(function()
                     {
                         $scope.dbConnected = false;
                         $scope.dbConnecting = false;
+                        applyIfNecessary();
                         return false;
                     });
             } // end _connectDB
