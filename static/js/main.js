@@ -1088,8 +1088,37 @@ angular.module('webPGQ')
 
             $(function()
             {
-                // Update scrollbars on resize.
-                $($window).resize(updateScrollbars);
+                var splitterPos = $('#topPane').height();
+                $($window)
+                    // Update scrollbars on resize.
+                    .resize(updateScrollbars)
+                    // If the position of the splitter has changed, update scrollbars, OpenLayers, Ace, etc.
+                    .bind('mouseup', function ()
+                    {
+                        var curPos = $('#topPane').height();
+                        if(curPos != splitterPos)
+                        {
+                            splitterPos = curPos;
+
+                            // Update any Ace editors.
+                            allEditors.forEach(function(editor)
+                            {
+                                editor.resize();
+                            });
+
+                            // Update OpenLayers map.
+                            olData.getMap().then(function(map)
+                            {
+                                map.updateSize();
+                            });
+
+                            // Re-render the query plan view. (or queue a re-render for the next time it's shown)
+                            $scope.$broadcast('Resize');
+
+                            // Update scrollbars.
+                            updateScrollbars();
+                        } // end if
+                    });
 
                 scrollContainers = $('#querySidebar');
                 scrollContainers.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
