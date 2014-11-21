@@ -1028,26 +1028,9 @@ angular.module('webPGQ')
 
             var setPermalinkThrottled = _.throttle(setPermalink, 100);
 
-            function getPermalink()
-            {
-                return setPermalink().absUrl();
-            } // end getPermalink
-
             $scope.$watchCollection('query', setPermalinkThrottled);
             $scope.$watchCollection('query.params', setPermalinkThrottled);
             $scope.$watch('currentConnection', setPermalinkThrottled);
-
-            $('#permalink')
-                .popup({
-                    on: 'click',
-                    position: 'bottom left',
-                    transition: 'slide down',
-                    html: '<input onclick="this.setSelectionRange(0, this.value.length)">',
-                    onCreate: function()
-                    {
-                        $('input', this).val(getPermalink());
-                    }
-                });
 
             // Connection name
             if(initialURLParams.connectionName)
