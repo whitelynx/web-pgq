@@ -518,31 +518,31 @@
 					</div>
 
 					<div class="ui dimmer" ng-class="{active: (resultsTab == 'Messages')}" id="messages-dimmer">
+						<div class="top right attached ui labels">
+							<a class="small compact squarish ui label" ng-class="{black: logger.showBannersFor.debug}"
+									ng-click="logger.showBannersFor.debug = !logger.showBannersFor.debug">
+								<i class="bug icon" ng-class="{disabled: !logger.showBannersFor.debug}"></i>
+							</a>
+							<a class="small compact squarish ui label" ng-class="{teal: logger.showBannersFor.info}"
+									ng-click="logger.showBannersFor.info = !logger.showBannersFor.info">
+								<i class="info letter icon" ng-class="{disabled: !logger.showBannersFor.info}"></i>
+							</a>
+							<a class="small compact squarish ui label" ng-class="{green: logger.showBannersFor.success}"
+									ng-click="logger.showBannersFor.success = !logger.showBannersFor.success">
+								<i class="checkmark icon" ng-class="{disabled: !logger.showBannersFor.success}"></i>
+							</a>
+							<a class="small compact squarish ui label" ng-class="{orange: logger.showBannersFor.warning}"
+									ng-click="logger.showBannersFor.warning = !logger.showBannersFor.warning">
+								<i class="warning icon" ng-class="{disabled: !logger.showBannersFor.warning}"></i>
+							</a>
+							<a class="small compact squarish ui label" ng-class="{red: logger.showBannersFor.error}"
+									ng-click="logger.showBannersFor.error = !logger.showBannersFor.error">
+								<i class="attention icon" ng-class="{disabled: !logger.showBannersFor.error}"></i>
+							</a>
+						</div>
+
 						<div class="left aligned inverted content">
 							<section>
-								<div class="top right attached ui labels">
-									<a class="small compact squarish ui label" ng-class="{black: logger.showBannersFor.debug}"
-											ng-click="logger.showBannersFor.debug = !logger.showBannersFor.debug">
-										<i class="bug icon" ng-class="{disabled: !logger.showBannersFor.debug}"></i>
-									</a>
-									<a class="small compact squarish ui label" ng-class="{teal: logger.showBannersFor.info}"
-											ng-click="logger.showBannersFor.info = !logger.showBannersFor.info">
-										<i class="info letter icon" ng-class="{disabled: !logger.showBannersFor.info}"></i>
-									</a>
-									<a class="small compact squarish ui label" ng-class="{green: logger.showBannersFor.success}"
-											ng-click="logger.showBannersFor.success = !logger.showBannersFor.success">
-										<i class="checkmark icon" ng-class="{disabled: !logger.showBannersFor.success}"></i>
-									</a>
-									<a class="small compact squarish ui label" ng-class="{orange: logger.showBannersFor.warning}"
-											ng-click="logger.showBannersFor.warning = !logger.showBannersFor.warning">
-										<i class="warning icon" ng-class="{disabled: !logger.showBannersFor.warning}"></i>
-									</a>
-									<a class="small compact squarish ui label" ng-class="{red: logger.showBannersFor.error}"
-											ng-click="logger.showBannersFor.error = !logger.showBannersFor.error">
-										<i class="attention icon" ng-class="{disabled: !logger.showBannersFor.error}"></i>
-									</a>
-								</div>
-
 								<div class="fade slide animation small icon ui message" ng-class="banner.severity"
 										ng-repeat="(idx, banner) in logger.bannerMessages">
 									<i class="icon" ng-class="banner.icon"></i>
