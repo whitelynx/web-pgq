@@ -3,46 +3,64 @@
 "use strict";
 
 angular.module('webPGQ.services')
-    .service('queueDigest', ['$exceptionHandler', 'await', '$timeout', function($exceptionHandler, await, $timeout)
-    {
-        var currentTimer;
-        var currentTimerTargetTime;
-        var queuedFuncs = [];
-
-        function runDigest()
+    .service('queueDigest', [
+        '$exceptionHandler', '_', 'await', '$timeout',
+        function($exceptionHandler, _, await, $timeout)
         {
-            var funcs = queuedFuncs;
-            queuedFuncs = [];
-            currentTimer = undefined;
-            currentTimerTargetTime = undefined;
+            var currentTimer;
+            var currentTimerTargetTime;
+            var queuedAwaits = [];
 
-            funcs.forEach(function(call) { call(); });
-        } // end runDigest
-
-        return function queueDigest(func, maxDelay)
-        {
-            maxDelay = maxDelay || 0;
-
-            var wrapped = await(func);
-
-            queuedFuncs.push(wrapped.trigger);
-
-            var targetTime = Date.now() + maxDelay;
-
-            if(currentTimer)
+            function runDigest()
             {
-                if(currentTimerTargetTime < targetTime)
+                var awaits = queuedAwaits;
+                queuedAwaits = [];
+                currentTimer = undefined;
+                currentTimerTargetTime = undefined;
+
+                awaits.forEach(function(queued)
                 {
-                    // Current timer will expire before maxDelay is up; leave that timer alone.
-                    return wrapped.promise;
+                    delete queued.func.__queueDigest__promise;
+                    queued.trigger();
+                });
+            } // end runDigest
+
+            return function queueDigest(func, maxDelay)
+            {
+                maxDelay = maxDelay || 0;
+                func = func || _.noop;
+
+                var promise;
+                if(func.__queueDigest__promise)
+                {
+                    // The given function has already been registered since the last runDigest().
+                    promise = func.__queueDigest__promise;
+                }
+                else
+                {
+                    var awaited = await(func);
+                    promise = awaited.promise;
+                    func.__queueDigest__promise = promise;
+
+                    queuedAwaits.push(awaited);
                 } // end if
 
-                $timeout.cancel(currentTimer);
-            } // end if
+                var targetTime = Date.now() + maxDelay;
 
-            currentTimerTargetTime = targetTime;
-            currentTimer = $timeout(runDigest, maxDelay);
+                if(currentTimer)
+                {
+                    if(currentTimerTargetTime < targetTime)
+                    {
+                        // Current timer will expire before maxDelay is up; leave that timer alone.
+                        return promise;
+                    } // end if
 
-            return wrapped.promise;
-        }; // end queueDigest
-    }]);
+                    $timeout.cancel(currentTimer);
+                } // end if
+
+                currentTimerTargetTime = targetTime;
+                currentTimer = $timeout(runDigest, maxDelay);
+
+                return promise;
+            }; // end queueDigest
+        }]);
