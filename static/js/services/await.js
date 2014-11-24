@@ -10,6 +10,7 @@ angular.module('webPGQ.services')
             var deferred = $q.defer();
 
             return {
+                func: func,
                 trigger: function()
                 {
                     try
