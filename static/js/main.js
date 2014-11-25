@@ -80,6 +80,10 @@ angular.module('webPGQ')
             $scope.tabSize = 4;
             $scope.softTabs = true;
 
+            var updateEditorInfoDelay = 250;
+            var setPermalinkDelay = 1000;
+            var runSQLUpdateDelay = 500;
+
             var allEditors = [];
 
             $scope.$watch('tabSize', function(value)
@@ -156,11 +160,12 @@ angular.module('webPGQ')
                         pos: editor.getCursorPosition(),
                         overwrite: false
                     };
+                    $scope.editor = mainEditorInfo;
 
                     session.on('change', function()
                     {
                         mainEditorInfo.rows = session.getDocument().getLength();
-                        queueUpdateEditorInfo();
+                        queueUpdateEditorInfoAndPermalink();
                     });
 
                     session.on('changeOverwrite', function()
@@ -178,19 +183,19 @@ angular.module('webPGQ')
                 advanced: {
                     enableSnippets: true,
                     enableBasicAutocompletion: true,
-                    enableLiveAutocompletion: true
+                    //enableLiveAutocompletion: true
                 }
             }); // end $scope.mainEditorConfig
 
+            function queueUpdateEditorInfoAndPermalink()
+            {
+                return queueDigest(setPermalink, Math.min(updateEditorInfoDelay, setPermalinkDelay));
+            } // end queueUpdateEditorInfoAndPermalink
+
             function queueUpdateEditorInfo()
             {
-                queueDigest(updateEditorInfo, 0);
+                queueDigest(null, updateEditorInfoDelay);
             } // end queueUpdateEditorInfo
-
-            function updateEditorInfo()
-            {
-                $scope.editor = mainEditorInfo;
-            } // end updateEditorInfo
 
             // Connections //
             $scope.connections = JSON.parse($cookies.connections || '{}');
@@ -387,12 +392,9 @@ angular.module('webPGQ')
 
             $scope.addQueryParam = function()
             {
-                console.log("Adding new query param...");
+                $scope.query.params.push({value: '', type: 'text'});
+
                 queueDigest(function()
-                {
-                    $scope.query.params.push({value: '', type: 'text'});
-                }, maxUpdateDelay)
-                .then(function()
                 {
                     $timeout(function()
                     {
@@ -476,8 +478,6 @@ angular.module('webPGQ')
             $scope.explainOptionDescriptions = sql.explainOptionDescriptions;
 
             // Running queries //
-            var maxUpdateDelay = 200;
-
             var lastRowCount = 0;
             var runSQLCallCount = 0;
             function runSQL(queryDef)
@@ -497,7 +497,7 @@ angular.module('webPGQ')
 
                 function queueUpdate(delay)
                 {
-                    queueDigest(updatePending, delay === undefined ? maxUpdateDelay : delay);
+                    queueDigest(updatePending, delay === undefined ? runSQLUpdateDelay : delay);
                 } // end queueUpdate
 
                 function updatePending()
@@ -747,14 +747,23 @@ angular.module('webPGQ')
             $scope.availableLayers = [];
             var currentColumnLayerNames = [];
 
-            $window.setTimeout(function()
+            function initDefaultLayers()
             {
                 olData.getLayers().then(function(layers)
                 {
                     $scope.availableLayers = [];
-                    _.forIn(layers, function(layer, name)
+                    layers.forEach(function(layer, name)
                     {
-                        extendLayer(layer, $scope.defaultLayers[name]);
+                        if($scope.defaultLayers[name])
+                        {
+                            console.log("Found default layer matching layer name " + JSON.stringify(name) + ".", layer);
+                            console.log("defaultLayers." + name + ":", $scope.defaultLayers[name]);
+                            extendLayer(layer, $scope.defaultLayers[name]);
+                        }
+                        else
+                        {
+                            console.warn("No default layer matching layer name " + JSON.stringify(name) + "!", layer);
+                        } // end if
 
                         $scope.availableLayers.push(layer);
                     });
@@ -765,7 +774,7 @@ angular.module('webPGQ')
                     console.log("Set availableLayers to:", $scope.availableLayers);
                     applyIfNecessary();
                 });
-            }, 0);
+            } // end initDefaultLayers
 
             function colorArrayAlpha(colorArr, a) { return 'rgba(' + colorArr.concat(a).join(',') + ')'; }
 
@@ -977,16 +986,28 @@ angular.module('webPGQ')
 
             $scope.$watch('resultsTab', function(value, oldValue)
             {
-                // Update the query plan view if necessary whenever it becomes visible.
-                if(value == 'Query Plan')
+                switch(value)
                 {
-                    $scope.$broadcast('Update');
-                } // end if
+                    case 'Query Plan':
+                        // Update the query plan view if necessary whenever it becomes visible.
+                        $scope.$broadcast('Update');
+                        break;
 
-                // Scroll to the bottom of the Messages tab.
-                if(value == 'Messages' && value != oldValue)
-                {
-                    scrollMessagesToBottom();
+                    case 'Geometry':
+                        // Update OpenLayers map.
+                        olData.getMap().then(function(map)
+                        {
+                            map.updateSize();
+                        });
+                        break;
+
+                    case 'Messages':
+                        // Scroll to the bottom of the Messages tab.
+                        if(value != oldValue)
+                        {
+                            scrollMessagesToBottom();
+                        } // end if
+                        break;
                 } // end if
             }); // end 'resultsTab' watch
 
@@ -1013,23 +1034,30 @@ angular.module('webPGQ')
             if(initialURLParams.fileName) { $scope.query.fileName = initialURLParams.fileName; }
 
 
-            function setPermalink()
+            var cachedParams;
+            function setPermalink(newParams)
             {
                 console.log("setPermalink() called.");
-                return $location
+                if((cachedParams === undefined) || newParams)
+                {
+                    cachedParams = $scope.query.params.length > 0 ? JSON.stringify($scope.query.params) : null;
+                } // end if
+
+                $location
                     .search({
                         query: $scope.query.text || null,
-                        queryParams: $scope.query.params.length > 0 ? JSON.stringify($scope.query.params) : null,
+                        queryParams: cachedParams,
                         fileName: ($scope.query.fileName != defaultFilename) ? $scope.query.fileName : null,
                         connectionName: $scope.currentConnection || null
                     })
                     .replace();
             } // end setPermalink
 
-            var setPermalinkThrottled = _.throttle(setPermalink, 100);
+            var setPermalinkThrottled = _.throttle(setPermalink, setPermalinkDelay, {leading: false});
+            var setPermalinkParamsThrottled = _.throttle(setPermalink.bind(this, true), setPermalinkDelay, {leading: false});
 
-            $scope.$watchCollection('query', setPermalinkThrottled);
-            $scope.$watchCollection('query.params', setPermalinkThrottled);
+            //$scope.$watchCollection('query', setPermalinkThrottled);
+            $scope.$watch('query.params', setPermalinkParamsThrottled, true);
             $scope.$watch('currentConnection', setPermalinkThrottled);
 
             // Connection name
@@ -1073,6 +1101,8 @@ angular.module('webPGQ')
 
             $(function()
             {
+                $window.setTimeout(initDefaultLayers, 100);
+
                 var splitterPos = $('#topPane').height();
                 $($window)
                     // Update scrollbars on resize.
