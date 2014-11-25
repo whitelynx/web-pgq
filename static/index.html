@@ -72,8 +72,8 @@
 		-->
 
 		<!-- Non-minified -->
-		<link rel="stylesheet" href="semantic-ui/build/packaged/css/semantic.css">
-		<script src="semantic-ui/build/packaged/javascript/semantic.js"></script>
+		<link rel="stylesheet" href="semantic-ui/dist/semantic.css">
+		<script src="semantic-ui/dist/semantic.js"></script>
 
 		<script src="js/vendor/unisocket.js"></script>
 
@@ -98,8 +98,8 @@
 
 		<!-- Minified -->
 		<!--
-		<link rel="stylesheet" href="semantic-ui/build/packaged/css/semantic.css">
-		<script src="semantic-ui/build/packaged/javascript/semantic.min.js"></script>
+		<link rel="stylesheet" href="semantic-ui/dist/semantic.min.css">
+		<script src="semantic-ui/dist/semantic.min.js"></script>
 
 		<script src="js/vendor/unisocket.js"></script>
 
@@ -157,14 +157,28 @@
 		<bg-splitter orientation="vertical">
 			<bg-pane min-size="128" id="topPane">
 				<div id="editorArea">
-					<div id="editor" class="inverted ui segment" ui-ace="mainEditorConfig" ng-model="query.text"></div>
+					<div id="editor" class="inverted ui segment">
+						<div ui-ace="mainEditorConfig" ng-model="query.text"></div>
+						<div class="hiding bottom right attached ui labels">
+							<div class="small compact ui label" ng-if="editor.overwrite">
+								<div class="detail">OVR</div>
+							</div>
+							<div class="small compact ui label">
+								<span>row</span> <div class="detail">{{ editor.pos.row }}</div>
+								/ <div class="detail">{{ editor.rows }}</div>
+							</div>
+							<div class="small compact ui label">
+								<span>column</span> <div class="detail">{{ editor.pos.column }}</div>
+							</div>
+						</div>
+					</div>
 
 					<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
 						<div class="compact tiny compact ui buttons">
 							<div class="black vertical animated ui button" ng-click="newFile()">
 								<div class="hidden content">New</div>
 								<div class="visible content">
-									<i class="file outline icon"></i>
+									<i class="file icon"></i>
 								</div>
 							</div>
 
@@ -184,13 +198,13 @@
 								<div class="row" ng-cloak ng-repeat="param in query.params track by $index">
 									<div class="two wide column"><code>${{ $index + 1 }}</code></div>
 									<div class="twelve wide column">
-										<div class="fluid mini action ui input">
+										<div class="fluid mini right labeled ui input">
 											<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
 												ng-model="param.value">
 
-											<div class="mini top dropdown labeled right icon ui button">
+											<div class="mini dropdown icon ui label">
+												{{ param.type }}
 												<i class="dropdown icon"></i>
-												<span class="text">{{ param.type }}</span>
 												<div class="menu">
 													<div class="item" ng-click="param.type = 'text'">Text</div>
 													<div class="item" ng-click="param.type = 'integer'">Integer</div>
@@ -204,7 +218,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="bottom attached mini black labeled icon ui button" ng-click="addQueryParam()">
+						<div class="bottom attached mini teal labeled icon ui button" ng-click="addQueryParam()">
 							<i class="add icon"></i>
 							Add parameter
 						</div>
@@ -216,25 +230,11 @@
 							</div>
 						</div>
 					</div>
-
-					<div class="hiding bottom right attached black ui labels">
-						<div class="small compact ui label" ng-if="editor.overwrite">
-							<div class="detail">OVR</div>
-						</div>
-						<div class="small compact ui label">
-							<span>row</span> <div class="detail">{{ editor.pos.row }}</div>
-							/ <div class="detail">{{ editor.rows }}</div>
-						</div>
-						<div class="small compact ui label">
-							<span>column</span> <div class="detail">{{ editor.pos.column }}</div>
-						</div>
-					</div>
 				</div>
 
 				<div id="mainMenu" class="transparent small inverted attached compact main ui menu">
 					<div class="header item">
-						<!--i class="database icon"></i-->
-						<i class="hdd icon"></i>
+						<i class="database icon"></i>
 						<b class="hide on mobile">web-pgq</b>
 					</div>
 					<!--div class="text item">
@@ -374,7 +374,7 @@
 							</a>
 							<a class="orange labeled icon ui button" ng-click="explainQuery(true)"
 									ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>Shift+F7</b>">
-								<i class="stethoscope icon"></i>
+								<i class="treatment icon"></i>
 								Analyze
 							</a>
 						</div>
@@ -423,7 +423,7 @@
 							<a class="orange vertical animated ui button" ng-click="explainQuery(true)"
 									ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>Shift+F7</b>">
 								<div class="hidden content">Analyze</div>
-								<div class="visible content"><i class="stethoscope icon"></i></div>
+								<div class="visible content"><i class="treatment icon"></i></div>
 							</a>
 						</div>
 
@@ -458,7 +458,7 @@
 						Results
 					</a>
 					<a class="item" ng-class="{active: (resultsTab == 'Geometry')}" ng-click="showGeometry()">
-						<i class="table icon"></i>
+						<i class="map icon"></i>
 						Geometry
 					</a>
 					<a class="item" ng-class="{active: (resultsTab == 'Query Plan')}" ng-click="showPlan()">
@@ -474,10 +474,14 @@
 				<div id="resultsTabs" class="dimmable attached ui segment">
 
 					<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer">
-						<div class="content">
-							<a class="green corner ui label" data-content="Zoom to fit" ng-click="zoomFit()">
-								<i class="fullscreen icon"></i>
+						<div class="top right attached ui labels">
+							<a class="small compact squarish green ui label" data-content="Zoom to fit"
+									ng-click="zoomFit()">
+								<i class="maximize icon"></i>
 							</a>
+						</div>
+
+						<div class="content">
 							<svg digraph graph="graph" class="fill-parent">
 								<defs>
 									<g ng-repeat="node in graphNodes" id="{{ node.useDef }}">
@@ -521,23 +525,23 @@
 						<div class="top right attached ui labels">
 							<a class="small compact squarish ui label" ng-class="{black: logger.showBannersFor.debug}"
 									ng-click="logger.showBannersFor.debug = !logger.showBannersFor.debug">
-								<i class="bug icon" ng-class="{disabled: !logger.showBannersFor.debug}"></i>
+								<i class="bug icon" ng-class="{black: !logger.showBannersFor.debug, disabled: !logger.showBannersFor.debug}"></i>
 							</a>
 							<a class="small compact squarish ui label" ng-class="{teal: logger.showBannersFor.info}"
 									ng-click="logger.showBannersFor.info = !logger.showBannersFor.info">
-								<i class="info letter icon" ng-class="{disabled: !logger.showBannersFor.info}"></i>
+								<i class="info letter icon" ng-class="{teal: !logger.showBannersFor.info, disabled: !logger.showBannersFor.info}"></i>
 							</a>
 							<a class="small compact squarish ui label" ng-class="{green: logger.showBannersFor.success}"
 									ng-click="logger.showBannersFor.success = !logger.showBannersFor.success">
-								<i class="checkmark icon" ng-class="{disabled: !logger.showBannersFor.success}"></i>
+								<i class="checkmark icon" ng-class="{green: !logger.showBannersFor.success, disabled: !logger.showBannersFor.success}"></i>
 							</a>
-							<a class="small compact squarish ui label" ng-class="{orange: logger.showBannersFor.warning}"
+							<a class="small compact squarish ui label" ng-class="{yellow: logger.showBannersFor.warning}"
 									ng-click="logger.showBannersFor.warning = !logger.showBannersFor.warning">
-								<i class="warning icon" ng-class="{disabled: !logger.showBannersFor.warning}"></i>
+								<i class="warning sign icon" ng-class="{yellow: !logger.showBannersFor.warning, disabled: !logger.showBannersFor.warning}"></i>
 							</a>
 							<a class="small compact squarish ui label" ng-class="{red: logger.showBannersFor.error}"
 									ng-click="logger.showBannersFor.error = !logger.showBannersFor.error">
-								<i class="attention icon" ng-class="{disabled: !logger.showBannersFor.error}"></i>
+								<i class="remove circle icon" ng-class="{red: !logger.showBannersFor.error, disabled: !logger.showBannersFor.error}"></i>
 							</a>
 						</div>
 
