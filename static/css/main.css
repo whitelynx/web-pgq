@@ -868,7 +868,6 @@ a.ui.label {
 	position: absolute;
 	top: 0;
 	z-index: 100;
-	overflow: hidden;
 	padding: 0 4px 4px 0;
 }
 .ui.dimmer .top.right.attached.ui.labels > .label {
@@ -876,8 +875,8 @@ a.ui.label {
 }
 
 .top.attached.ui.labels > .ui.label {
-	margin-top: -4px;
-	padding-top: 5px;
+	margin-top: -2px;
+	padding-top: 3px;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 }
