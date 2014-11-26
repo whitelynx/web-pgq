@@ -202,7 +202,7 @@
 											<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
 												ng-model="param.value">
 
-											<div class="mini dropdown icon ui label">
+											<div class="mini dropdown ui label">
 												{{ param.type }}
 												<i class="dropdown icon"></i>
 												<div class="menu">
@@ -478,6 +478,16 @@
 							<a class="small compact squarish green ui label" data-content="Zoom to fit"
 									ng-click="zoomFit()">
 								<i class="maximize icon"></i>
+							</a>
+							<a class="small compact teal dropdown ui label">
+								Lines:
+								<span class="detail">{{ lineWidthKey }}</span>
+								<i class="dropdown icon"></i>
+								<div class="menu">
+									<div class="item" ng-repeat="planKey in planKeys" ng-click="setLineWidthKey(planKey)">
+										{{ planKey }}
+									</div>
+								</div>
 							</a>
 						</div>
 

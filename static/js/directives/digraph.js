@@ -73,7 +73,7 @@ angular.module('webPGQ.directives')
                         bboxes[u] = this.getBBox();
 
                         var node = g.node(u);
-                        var metadata = node.metadata;
+                        var metadata = node.metadata || {};
 
                         var nestedDropdownSettings = {
                             on: 'hover',
@@ -104,7 +104,11 @@ angular.module('webPGQ.directives')
                                         var val = metadata[key];
                                         var firstLine, full;
 
-                                        if(Array.isArray(val))
+                                        if(val === undefined)
+                                        {
+                                            return '';
+                                        }
+                                        else if(Array.isArray(val))
                                         {
                                             switch(val.length)
                                             {
