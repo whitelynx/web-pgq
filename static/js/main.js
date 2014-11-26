@@ -721,9 +721,23 @@ angular.module('webPGQ')
                     {
                         console.log("$scope.explainQuery got results:", results);
 
-                        $scope.graph = results ? graph.fromPlan(results.rows[0][0]) : null;
+                        $scope.planKeys = _.union.apply(_,
+                            _.map(results.rows[0][0], function(plan)
+                            {
+                                return _.filter(_.keys(plan.Plan), function(key)
+                                {
+                                    return _.isNumber(plan.Plan[key]);
+                                });
+                            })
+                        );
 
-                        $scope.graphNodes = [];
+                        if(!_.contains($scope.planKeys, $scope.lineWidthKey))
+                        {
+                            $scope.lineWidthKey = _.first($scope.planKeys);
+                        } // end if
+
+                        $scope.graph = results ? graph.fromPlan(results.rows[0][0], $scope.lineWidthKey) : null;
+
                         if($scope.graph)
                         {
                             $scope.graphNodes = $scope.graph.nodes()
@@ -731,10 +745,22 @@ angular.module('webPGQ')
                                 {
                                     return $scope.graph.node(id);
                                 });
+                        }
+                        else
+                        {
+                            $scope.graphNodes = [];
                         } // end if
                     })
-                    .then($scope.showPlan);
+                    .then($scope.showPlan)
+                    .then(applyIfNecessary);
             }; // end $scope.explainQuery
+
+            $scope.setLineWidthKey = function(key)
+            {
+                $scope.lineWidthKey = key;
+                $scope.graph = graph.updateEdges($scope.lineWidthKey);
+                $scope.reRender();
+            }; // end $scope.setLineWidthKey
 
             // Query results //
             $scope.results = {rows: []};

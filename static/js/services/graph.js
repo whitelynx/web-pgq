@@ -3,9 +3,15 @@
 "use strict";
 
 angular.module('webPGQ.services')
-    .service('graph', ['dagreD3', function(dagreD3)
+    .service('graph', ['_', 'dagreD3', function(_, dagreD3)
     {
-        var maxTotalCost, lastNodeDefID = 0;
+        var edgeWidthKey, maxEdgeWidthValue;
+        var edgeLabelTemplate;
+        var lastNodeDefID = 0;
+        var graph, topNodeID, lastPlans;
+
+        var minEdgeWidth = 1, maxEdgeWidth = 40;
+        var edgeWidthRange = maxEdgeWidth - minEdgeWidth;
 
         var nodeTypeIcons = [
             'Aggregate',
@@ -30,6 +36,42 @@ angular.module('webPGQ.services')
 
         var initPlanRefRE = /\$\d+\b/g;
         var nodeRefRE = /\$\d+\b|\((CTE [^)]+|SubPlan \d+)\)/g;
+
+        function getMaxEdgeWidthValue(plan)
+        {
+            return Math.max.apply(Math,
+                [plan[edgeWidthKey] || 0]
+                    .concat(
+                        _.map(plan.Plans || [], getMaxEdgeWidthValue)
+                    )
+            );
+        } // end getMaxEdgeWidthValue
+
+        function updateEdge(parent, child, edge)
+        {
+            edge = edge || {};
+
+            edge.label = edgeLabelTemplate({
+                parent: parent,
+                child: child,
+                edgeWidthKey: edgeWidthKey
+            }) || '<UNDEFINED>';
+
+            // Calculate the edge size based on percentage of the maximum value of `edgeWidthKey`.
+            var edgePercent = maxEdgeWidthValue ? (child[edgeWidthKey] || 0) / maxEdgeWidthValue : 0;
+            var edgeSize = (edgePercent * edgeWidthRange) + minEdgeWidth;
+
+            edge.style = 'stroke-width: ' + edgeSize + 'px';
+
+            return edge;
+        } // end updateEdge
+
+        // Edge label templates, according to edgeWidthKey.
+        var defaultEdgeLabel = _.template("${child[edgeWidthKey]}");
+        var edgeLabels = {
+            'Startup Cost': _.template("${child['Startup Cost']}..${child['Total Cost']}"),
+            'Total Cost': _.template("${child['Startup Cost']}..${child['Total Cost']}"),
+        };
 
         function findReferences(node, key, val)
         {
@@ -61,10 +103,8 @@ angular.module('webPGQ.services')
         var nodeIDsByRef = {};
 
         var graphService = {
-            nodesFromPlan: function(graph, plan)
+            nodesFromPlan: function(plan)
             {
-                maxTotalCost = Math.max(maxTotalCost, plan['Total Cost']);
-
                 var metadata = {};
                 var thisNode = {references: []};
                 for(var key in plan)
@@ -124,38 +164,27 @@ angular.module('webPGQ.services')
                     nodeIDsByRef[thisNode.refName] = thisNodeID;
                 } // end if
 
-                (plan.Plans || [])
-                    .forEach(function(childPlan, idx)
-                    {
-                        var childInfo = graphService.nodesFromPlan(graph, childPlan);
+                _.forEach(plan.Plans || [], function(childPlan, idx)
+                {
+                    var childInfo = graphService.nodesFromPlan(childPlan);
 
-                        // Calculate an edge size between 1 and 40 pixels, based on percentage of the max total cost.
-                        var edgeSize = (childInfo['Total Cost'] / maxTotalCost * 39) + 1;
-
-                        graph.addEdge(null, childInfo.id, thisNodeID, {
-                            label: childInfo['Startup Cost'] + '..' + childInfo['Total Cost'],
-                            style: 'stroke-width: ' + edgeSize + 'px',
-                            weight: idx === 0 ? 1 : 0
-                        });
-                    });
+                    graph.addEdge(null, childInfo.id, thisNodeID,
+                        updateEdge(plan, childInfo.planNode, { weight: idx === 0 ? 1 : 0 })
+                    );
+                });
 
                 return {
                     id: thisNodeID,
-                    'Plan Rows': plan['Plan Rows'],
-                    'Plan Width': plan['Plan Width'],
-                    'Startup Cost': plan['Startup Cost'],
-                    'Total Cost': plan['Total Cost'],
+                    planNode: _.omit(plan, 'Plans')
                 };
             }, // end nodesFromPlan
 
-            fromPlan: function(plans)
+            fromPlan: function(plans, edgeWidthKey_)
             {
                 // Create a new directed graph
-                var graph = new dagreD3.Digraph();
+                graph = new dagreD3.Digraph();
                 graph.marginx = 4;
                 graph.marginy = 4;
-
-                maxTotalCost = 0;
 
                 if(typeof plans == 'string')
                 {
@@ -163,13 +192,71 @@ angular.module('webPGQ.services')
                     plans = JSON.parse(plans);
                 } // end if
 
+                lastPlans = plans;
+
+                edgeWidthKey = edgeWidthKey_;
+                edgeLabelTemplate = edgeLabels[edgeWidthKey] || defaultEdgeLabel;
+                maxEdgeWidthValue = Math.max.apply(Math,
+                    _.map(plans, function(plan) { return getMaxEdgeWidthValue(plan.Plan); })
+                );
+
+                var metadata = {};
+                metadata['Maximum ' + edgeWidthKey] = maxEdgeWidthValue;
+                topNodeID = graph.addNode(null, { label: 'Total', metadata: metadata });
+
                 plans.forEach(function(plan)
                 {
-                    graphService.nodesFromPlan(graph, plan.Plan);
+                    var childInfo = graphService.nodesFromPlan(plan.Plan);
+                    var childData = graph.node(childInfo.id);
+
+                    // Copy top-level plan metadata to the plan's node metadata.
+                    _.forOwn(plan, function(value, key)
+                    {
+                        if(key != 'Plan' && key[0] != '_')
+                        {
+                            if(childData.metadata[key])
+                            {
+                                childData.metadata['Plan ' + key] = value;
+                            }
+                            else
+                            {
+                                childData.metadata[key] = value;
+                            } // end if
+                        } // end if
+                    });
+
+                    graph.addEdge(null, childInfo.id, topNodeID,
+                        updateEdge({}, childInfo.planNode)
+                    );
                 });
 
                 return graph;
-            } // end graphFromPlan
+            }, // end fromPlan
+
+            updateEdges: function(edgeWidthKey_)
+            {
+                if(!graph)
+                {
+                    return;
+                } // end if
+
+                edgeWidthKey = edgeWidthKey_;
+                edgeLabelTemplate = edgeLabels[edgeWidthKey] || defaultEdgeLabel;
+                maxEdgeWidthValue = Math.max.apply(Math,
+                    _.map(lastPlans, function(plan) { return getMaxEdgeWidthValue(plan.Plan); })
+                );
+
+                graph.node(topNodeID).metadata['Maximum ' + edgeWidthKey] = maxEdgeWidthValue;
+
+                graph.eachEdge(function(id, u, v)
+                {
+                    var edge = graph.edge(id);
+
+                    updateEdge(graph.node(v).metadata, graph.node(u).metadata, edge);
+                });
+
+                return graph;
+            }, // end updateEdges
         }; // end graphService
 
         return graphService;
