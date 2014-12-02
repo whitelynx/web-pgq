@@ -474,18 +474,30 @@
 				<div id="resultsTabs" class="dimmable attached ui segment">
 
 					<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer">
-						<div class="top right attached ui labels">
+						<div class="top left attached ui labels">
 							<a class="small compact squarish green ui label" data-content="Zoom to fit"
 									ng-click="zoomFit()">
 								<i class="maximize icon"></i>
 							</a>
 							<a class="small compact teal dropdown ui label">
-								Lines:
+								<span>Lines:</span>
 								<span class="detail">{{ lineWidthKey }}</span>
+
 								<i class="dropdown icon"></i>
 								<div class="menu">
-									<div class="item" ng-repeat="planKey in planKeys" ng-click="setLineWidthKey(planKey)">
-										{{ planKey }}
+									<div class="item" ng-repeat="planKey in groupedPlanKeys"
+											ng-class="{active: lineWidthKey == planKey || contains(planKey.keys, lineWidthKey)}"
+											ng-click="setLineWidthKey(planKey)">
+										<i ng-if="planKey.keys" class="dropdown icon"></i>
+										<span>{{ planKey.title || planKey }}</span>
+
+										<div class="menu" ng-if="planKey.keys">
+											<div class="item" ng-repeat="groupedPlanKey in planKey.keys"
+													ng-class="{active: lineWidthKey == groupedPlanKey}"
+													ng-click="setLineWidthKey(groupedPlanKey)">
+												{{ groupedPlanKey }}
+											</div>
+										</div>
 									</div>
 								</div>
 							</a>
