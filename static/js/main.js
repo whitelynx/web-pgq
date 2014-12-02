@@ -709,6 +709,13 @@ angular.module('webPGQ')
                     .then($scope.showResults);
             }; // end $scope.runQuery
 
+            var planKeyREs = {
+                actual: /^Actual /,
+                buffer: /^Shared |^Local /,
+                io: /^Temp |^I\/O /,
+                planned: /^Plan | Cost$/
+            };
+
             $scope.explainQuery = function(analyze)
             {
                 var query = getActiveQuery();
@@ -731,10 +738,50 @@ angular.module('webPGQ')
                             })
                         );
 
-                        if(!_.contains($scope.planKeys, $scope.lineWidthKey))
+                        // Set the line width key to the previously selected one (or one of the fallbacks) according to
+                        // which one appears in $scope.planKeys.
+                        var lineWidthKeyFallbacks = [
+                            $scope.lineWidthKey,
+                            'Actual Total Time',
+                            'Total Cost',
+                            _.first($scope.planKeys)
+                        ];
+                        $scope.lineWidthKey = _.find(lineWidthKeyFallbacks, function(key)
                         {
-                            $scope.lineWidthKey = _.first($scope.planKeys);
-                        } // end if
+                            return _.contains($scope.planKeys, key);
+                        });
+
+                        var keys = {
+                            planned: [],
+                            actual: [],
+                            buffer: [],
+                            io: [],
+                            ungrouped: []
+                        };
+
+                        _.forEach($scope.planKeys, function(key)
+                        {
+                            if(planKeyREs.actual.test(key)) { keys.actual.push(key); }
+                            else if(planKeyREs.buffer.test(key)) { keys.buffer.push(key); }
+                            else if(planKeyREs.io.test(key)) { keys.io.push(key); }
+                            else if(planKeyREs.planned.test(key)) { keys.planned.push(key); }
+                            else { keys.ungrouped.push(key); }
+                        });
+
+                        $scope.groupedPlanKeys = keys.ungrouped.concat(
+                            _.filter(
+                                [
+                                    { title: 'Planned', keys: keys.planned },
+                                    { title: 'Actual', keys: keys.actual },
+                                    { title: 'Buffers', keys: keys.buffer },
+                                    { title: 'I/O', keys: keys.io }
+                                ],
+                                function(group)
+                                {
+                                    return group.keys.length > 0;
+                                }
+                            )
+                        );
 
                         $scope.graph = results ? graph.fromPlan(results.rows[0][0], $scope.lineWidthKey) : null;
 
@@ -755,11 +802,17 @@ angular.module('webPGQ')
                     .then(applyIfNecessary);
             }; // end $scope.explainQuery
 
+            $scope.contains = _.contains;
+            $scope.isString = _.isString;
+
             $scope.setLineWidthKey = function(key)
             {
-                $scope.lineWidthKey = key;
-                $scope.graph = graph.updateEdges($scope.lineWidthKey);
-                $scope.reRender();
+                if(_.isString(key))
+                {
+                    $scope.lineWidthKey = key;
+                    $scope.graph = graph.updateEdges($scope.lineWidthKey);
+                    $scope.reRender();
+                } // end if
             }; // end $scope.setLineWidthKey
 
             // Query results //
@@ -978,8 +1031,6 @@ angular.module('webPGQ')
             // Query plan view controls //
             $scope.zoomFit = function() { $scope.$broadcast('ZoomFit'); };
             $scope.reRender = function() { $scope.$broadcast('Render'); };
-
-            $scope.isString = function(val) { return typeof val == 'string'; };
 
             var resultsContainer;
             var messagesContainer, messagesAtBottom = true, ignoreMessagesContainerScroll = false;
