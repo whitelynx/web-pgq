@@ -1018,6 +1018,9 @@ a.ui.label {
 	top: 1em;
 }
 
+/* FIX: Re-enable background color change on hover for active dropdown menu items. */
+.ui.dropdown .menu > .active.item:hover { background: rgba(0, 0, 0, 0.05); }
+
 /* FIX: Non-inverted popup menus inside inverted menus get the wrong colors on their items. */
 .ui.menu .item .popup.menu:not(.inverted) > .green.active.item,
 .ui.popup.green.menu:not(.inverted) > .active.item {
