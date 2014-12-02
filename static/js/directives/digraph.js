@@ -209,7 +209,9 @@ angular.module('webPGQ.directives')
                             }
                         };
 
-                        $(this).popup(popupSettings);
+                        var $this = $(this);
+                        $this.popup('remove');
+                        $this.popup(popupSettings);
                     });
 
                 addLabels(svg, g, 'Alias', {
@@ -257,7 +259,9 @@ angular.module('webPGQ.directives')
                             className: { popup: 'query-plan ui popup' },
                         };
 
-                        $(this).popup(popupSettings);
+                        var $this = $(this);
+                        $this.popup('remove');
+                        $this.popup(popupSettings);
                     }
                 });
 
