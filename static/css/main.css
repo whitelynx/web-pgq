@@ -730,6 +730,7 @@ svg .edgePath {
 }
 
 #messages-dimmer.ui.dimmer > .content > section > .ui.icon.message > .icon:not(.close) {
+	padding-top: 0.15em;
 	vertical-align: top;
 }
 
