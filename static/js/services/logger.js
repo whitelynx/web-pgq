@@ -14,9 +14,9 @@ angular.module('webPGQ.services')
         };
 
         var icons = {
-            sql: 'hdd',
+            sql: 'database',
             connection: 'sitemap',
-            web: 'globe'
+            web: 'world'
         };
 
         // Log messages
