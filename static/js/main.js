@@ -870,6 +870,12 @@ angular.module('webPGQ')
             $scope.contains = _.contains;
             $scope.isString = _.isString;
 
+            var multiLineStringRE = /\n./;
+            $scope.isMultiLineString = function(val)
+            {
+                return _.isString(val) && multiLineStringRE.test(val);
+            }; // end $scope.isMultiLineString
+
             $scope.setLineWidthKey = function(key)
             {
                 if(_.isString(key))
@@ -1193,6 +1199,8 @@ angular.module('webPGQ')
 
                 $window.setTimeout(function()
                 {
+                    $('.ui.accordion').accordion('refresh');
+
                     if(messagesContainer && $scope.resultsTab == 'Messages' && messagesAtBottom)
                     {
                         scrollMessagesToBottom();
@@ -1378,6 +1386,8 @@ angular.module('webPGQ')
                 $('[data-content], [data-html]').popup({ delay: 500 });
 
                 $('.ui.dropdown').dropdown();
+
+                $('.ui.accordion').accordion();
 
                 $scope.pageLoaded = true;
             });
