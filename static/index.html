@@ -572,17 +572,19 @@
 								<div class="fade slide animation small icon ui message" ng-class="banner.severity"
 										ng-repeat="(idx, banner) in logger.bannerMessages">
 									<i class="icon" ng-class="banner.icon"></i>
-									<div class="header">
-										{{ banner.header }}
+									<div class="content">
+										<div class="header">
+											{{ banner.header }}
+										</div>
+										<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
+										<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
+											<li ng-repeat="(key, val) in banner.detail">
+												<strong>{{ key }}:</strong>
+												<pre ng-if="!isString(val)"><code>{{ val|json }}</code></pre>
+												<pre ng-if="isString(val)"><code>{{ val }}</code></pre>
+											</li>
+										</ul>
 									</div>
-									<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
-									<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
-										<li ng-repeat="(key, val) in banner.detail">
-											<strong>{{ key }}:</strong>
-											<pre ng-if="!isString(val)"><code>{{ val|json }}</code></pre>
-											<pre ng-if="isString(val)"><code>{{ val }}</code></pre>
-										</li>
-									</ul>
 								</div>
 							</section>
 						</div>
