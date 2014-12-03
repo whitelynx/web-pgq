@@ -149,6 +149,8 @@ angular.module('webPGQ')
                     // Options
                     var session = editor.getSession();
 
+                    session.setUseWorker(true);
+
                     mainEditorScrollbars = elements.scrollbars;
 
                     mainEditorInfo = {
