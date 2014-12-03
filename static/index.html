@@ -578,10 +578,14 @@
 										</div>
 										<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
 										<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
-											<li ng-repeat="(key, val) in banner.detail">
-												<strong>{{ key }}:</strong>
-												<pre ng-if="!isString(val)"><code>{{ val|json }}</code></pre>
-												<pre ng-if="isString(val)"><code>{{ val }}</code></pre>
+											<li ng-repeat="(key, val) in banner.detail"
+													ng-class="{ui: isMultiLineString(val), accordion: isMultiLineString(val)}">
+
+												<strong class="title" ng-if="!isMultiLineString(val)">{{ key }}:</strong>
+												<strong class="title" ng-if="isMultiLineString(val)">{{ key }} &#x2026;</strong>
+
+												<pre class="content" ng-if="!isString(val)"><code>{{ val|json }}</code></pre>
+												<pre class="content" ng-if="isString(val)"><code>{{ val }}</code></pre>
 											</li>
 										</ul>
 									</div>
