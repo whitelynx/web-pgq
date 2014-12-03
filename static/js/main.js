@@ -1186,7 +1186,7 @@ angular.module('webPGQ')
                 scrollContainers.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
 
                 messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
-                messagesContainer.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
+                messagesContainer.perfectScrollbar({ suppressScrollX: false, includePadding: true, minScrollbarLength: 12 });
                 messagesContainer.scroll(function()
                 {
                     if($scope.resultsTab != 'Messages' || !ignoreMessagesContainerScroll)
