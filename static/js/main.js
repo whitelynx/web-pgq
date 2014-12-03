@@ -473,6 +473,19 @@ angular.module('webPGQ')
                 };
             } // end getActiveQuery
 
+            function highlightLastExecuted(isExplain)
+            {
+                var session = mainEditor.getSession();
+                if(lastExecutedMarkerID !== undefined)
+                {
+                    session.removeMarker(lastExecutedMarkerID);
+                } // end if
+                lastExecutedMarkerID = undefined;
+
+                var class_ = 'last-executed' + (isExplain ? ' explain' : '');
+                lastExecutedMarkerID = session.addMarker(lastExecutedRange, class_, 'last-executed');
+            } // end highlightLastExecuted
+
             // Options for EXPLAIN and EXPLAIN ANALYZE //
             $scope.explainOptions = sql.explainOptions;
             $scope.explainOptionDescriptions = sql.explainOptionDescriptions;
@@ -480,6 +493,7 @@ angular.module('webPGQ')
             // Running queries //
             var maxUpdateDelay = 200;
 
+            var lastExecutedRange, lastExecutedMarkerID, errorMarkerID, lastErrorLine;
             var lastRowCount = 0;
             var runSQLCallCount = 0;
             function runSQL(queryDef)
@@ -489,6 +503,18 @@ angular.module('webPGQ')
                     // Ignore calls to runSQL() while another query is running.
                     return;
                 } // end if
+
+                if(lastErrorLine !== undefined)
+                {
+                    mainEditor.getSession().removeGutterDecoration(lastErrorLine, 'error');
+                } // end if
+                lastErrorLine = undefined;
+
+                if(errorMarkerID !== undefined)
+                {
+                    mainEditor.getSession().removeMarker(errorMarkerID);
+                } // end if
+                errorMarkerID = undefined;
 
                 var runSQLCall = ++runSQLCallCount;
                 console.log("Starting runSQL call #" + runSQLCall);
@@ -529,10 +555,31 @@ angular.module('webPGQ')
 
                     if(error.position)
                     {
-                        var pos = mainEditor.getSession().getDocument().indexToPosition(
-                            error.position + queryDef.startIndex);
+                        var session = mainEditor.getSession();
+
+                        // Subtract 1 since PostgreSQL reports 1-based positions instead of 0-based.
+                        var index = parseInt(error.position, 10) - 1 + queryDef.startIndex;
+
+                        var pos = session.getDocument().indexToPosition(index, 0);
 
                         mainEditor.moveCursorToPosition(pos);
+                        mainEditor.clearSelection();
+
+                        var wordRange = session.getWordRange(pos.row, pos.column);
+
+                        var errorRange = mainEditor.selection.getRange().clone();
+                        errorRange.start = pos;
+                        errorRange.end = {row: pos.row, column: session.getLine(pos.row).length};
+
+                        session.addGutterDecoration(pos.row, 'error');
+                        lastErrorLine = pos.row;
+
+                        errorMarkerID = session.addMarker(wordRange, 'error', 'error', true);
+
+                        $window.setTimeout(function()
+                        {
+                            mainEditor.focus();
+                        }, 0);
                     } // end if
 
                     throw error;
@@ -688,6 +735,17 @@ angular.module('webPGQ')
             function getActiveQueryText()
             {
                 var selectionRange = mainEditor.getSelectionRange();
+
+                lastExecutedRange = selectionRange;
+                if(selectionRange.isEmpty())
+                {
+                    lastExecutedRange = lastExecutedRange.clone();
+
+                    var doc = mainEditor.getSession().getDocument();
+                    lastExecutedRange.start = doc.indexToPosition(0, 0);
+                    lastExecutedRange.end = doc.indexToPosition(0, doc.getLength());
+                } // end if
+
                 if(!selectionRange.isEmpty())
                 {
                     var session = mainEditor.getSession();
@@ -707,7 +765,10 @@ angular.module('webPGQ')
 
             $scope.runQuery = function()
             {
-                runSQL(getActiveQuery())
+                var query = getActiveQuery();
+                highlightLastExecuted();
+
+                runSQL(query)
                     .then($scope.showResults);
             }; // end $scope.runQuery
 
@@ -721,6 +782,8 @@ angular.module('webPGQ')
             $scope.explainQuery = function(analyze)
             {
                 var query = getActiveQuery();
+                highlightLastExecuted(true);
+
                 var explainLine = sql.formatExplain($scope.explainOptions, analyze);
                 query.text = explainLine + query.text;
                 query.startIndex -= explainLine.length;
