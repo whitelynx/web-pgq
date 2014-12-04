@@ -71,6 +71,8 @@ angular.module('webPGQ.services')
         var edgeLabels = {
             'Startup Cost': _.template("${child['Startup Cost']}..${child['Total Cost']}"),
             'Total Cost': _.template("${child['Startup Cost']}..${child['Total Cost']}"),
+            'Actual Startup Time': _.template("${child['Actual Startup Time']}..${child['Actual Total Time']}"),
+            'Actual Total Time': _.template("${child['Actual Startup Time']}..${child['Actual Total Time']}"),
         };
 
         function findReferences(node, key, val)
