@@ -458,7 +458,7 @@
 						Results
 					</a>
 					<a class="item" ng-class="{active: (resultsTab == 'Geometry')}" ng-click="showGeometry()">
-						<i class="map icon"></i>
+						<i class="map icon" ng-class="{loading: geometryLoading}"></i>
 						Geometry
 					</a>
 					<a class="item" ng-class="{active: (resultsTab == 'Query Plan')}" ng-click="showPlan()">
