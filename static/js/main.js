@@ -890,10 +890,10 @@ angular.module('webPGQ')
             $scope.results = {rows: []};
 
             // Geometry Map //
-            $scope.defaultLayers = {
-                '@#OpenStreetMap#@': { display: 'OpenStreetMap', source: { type: "OSM" }, active: true },
-                '@#Stamen Terrain#@': { display: 'Stamen Terrain', source: { type: "Stamen", layer: "terrain" } }
-            };
+            $scope.defaultLayers = [
+                { display: 'OpenStreetMap', source: { type: "OSM" }, active: true },
+                { display: 'Stamen Terrain', source: { type: "Stamen", layer: "terrain" } }
+            ];
             $scope.availableLayers = [];
             var currentColumnLayerNames = [];
 
@@ -902,17 +902,22 @@ angular.module('webPGQ')
                 olData.getLayers().then(function(layers)
                 {
                     $scope.availableLayers = [];
-                    _.forIn(layers, function(layer, name)
+                    layers.forEach(function(layer, index)
                     {
-                        extendLayer(layer, $scope.defaultLayers[name]);
+                        if($scope.defaultLayers[index])
+                        {
+                            extendLayer(layer, $scope.defaultLayers[index]);
 
-                        $scope.availableLayers.push(layer);
+                            $scope.availableLayers.push(layer);
+                        }
+                        else
+                        {
+                            console.log("Couldn't find default layer definition for layer", index);
+                        } // end if
                     });
 
                     olData.setLayers(layers);
 
-                    console.log("setLayers:", layers);
-                    console.log("Set availableLayers to:", $scope.availableLayers);
                     applyIfNecessary();
                 });
             }, 0);
@@ -1009,8 +1014,6 @@ angular.module('webPGQ')
                     },
                     set: function(active)
                     {
-                        console.log("this.setVisible:", active);
-                        console.log("...this.getVisible() was:", this.getVisible());
                         this.setVisible(active);
                     }
                 });
