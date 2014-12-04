@@ -1128,17 +1128,32 @@ angular.module('webPGQ')
 
             $scope.$watch('resultsTab', function(value, oldValue)
             {
-                // Update the query plan view if necessary whenever it becomes visible.
-                if(value == 'Query Plan')
+                switch(value)
                 {
-                    $scope.$broadcast('Update');
-                } // end if
+                    case 'Geometry':
+                        if(value != oldValue)
+                        {
+                            // Update OpenLayers map.
+                            olData.getMap().then(function(map)
+                            {
+                                map.updateSize();
+                            });
+                        } // end if
+                        break;
 
-                // Scroll to the bottom of the Messages tab.
-                if(value == 'Messages' && value != oldValue)
-                {
-                    scrollMessagesToBottom();
-                } // end if
+                    case 'Query Plan':
+                        // Update the query plan view if necessary whenever it becomes visible.
+                        $scope.$broadcast('Update');
+                        break;
+
+                    case 'Messages':
+                        if(value != oldValue)
+                        {
+                            // Scroll to the bottom of the Messages tab.
+                            scrollMessagesToBottom();
+                        } // end if
+                        break;
+                } // end switch
             }); // end 'resultsTab' watch
 
             // Logger (also provides banner messages) //
