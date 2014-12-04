@@ -1027,6 +1027,26 @@ angular.module('webPGQ')
 
                 // Since layers default to visible, we need to hide any that aren't marked as active.
                 layer.active = Boolean(layerDef.active);
+
+                layer.getSource().on('change', function()
+                {
+                    $scope.geometryLoading = false;
+                    $scope.geometryError = false;
+
+                    olData.getLayers().then(function(layers)
+                    {
+                        layers.forEach(function(layer)
+                        {
+                            switch(layer.getSourceState())
+                            {
+                                case 'loading': $scope.geometryLoading = true; break;
+                                case 'error': $scope.geometryError = true; break;
+                            } // end switch
+                        });
+
+                        applyIfNecessary();
+                    });
+                });
             } // end extendLayer
 
             function addLayers(layerDefs)
