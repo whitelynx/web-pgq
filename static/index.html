@@ -576,18 +576,21 @@
 										<div class="header">
 											{{ banner.header }}
 										</div>
-										<pre ng-if="banner.detail && banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
-										<ul class="list" ng-if="banner.detail && banner.detailType != 'string'">
-											<li ng-repeat="(key, val) in banner.detail"
-													ng-class="{ui: isMultiLineString(val), accordion: isMultiLineString(val)}">
+										<div class="ui accordion" ng-if="banner.detail">
+											<strong class="title"><i class="dropdown icon"></i>Details &#x2026;</strong>
+											<pre class="content" ng-if="banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
+											<ul class="content list" ng-if="banner.detailType != 'string'">
+												<li ng-repeat="(key, val) in banner.detail"
+														ng-class="{ui: isMultiLineString(val), accordion: isMultiLineString(val)}">
 
-												<strong class="title" ng-if="!isMultiLineString(val)">{{ key }}:</strong>
-												<strong class="title" ng-if="isMultiLineString(val)">{{ key }} &#x2026;</strong>
+													<strong ng-if="!isMultiLineString(val)">{{ key }}:</strong>
+													<strong class="title" ng-if="isMultiLineString(val)">{{ key }} &#x2026;</strong>
 
-												<pre class="content" ng-if="!isString(val)"><code>{{ val|json }}</code></pre>
-												<pre class="content" ng-if="isString(val)"><code>{{ val }}</code></pre>
-											</li>
-										</ul>
+													<pre ng-if="!isString(val)" ng-class="{content: isMultiLineString(val)}"><code>{{ val|json }}</code></pre>
+													<pre ng-if="isString(val)" ng-class="{content: isMultiLineString(val)}"><code>{{ val }}</code></pre>
+												</li>
+											</ul>
+										</div>
 									</div>
 								</div>
 							</section>
