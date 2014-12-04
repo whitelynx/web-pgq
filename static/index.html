@@ -390,7 +390,7 @@
 									<i class="left icon" ng-class="val.icon"></i>
 									{{ key }}
 									<div class="squarish ui label" ng-class="{teal: val.enabled}">
-										<i class="checkbox icon" ng-class="{disabled: !val.enabled, empty: !val.enabled, checked: val.enabled}"></i>
+										<i class="icon" ng-class="{disabled: !val.enabled, checkmark: val.enabled}"></i>
 									</div>
 								</a>
 							</div>
@@ -438,7 +438,7 @@
 									<i class="left icon" ng-class="val.icon"></i>
 									{{ key }}
 									<div class="squarish ui label" ng-class="{teal: val.enabled}">
-										<i class="checkbox icon" ng-class="{disabled: !val.enabled, empty: !val.enabled, checked: val.enabled}"></i>
+										<i class="icon" ng-class="{disabled: !val.enabled, checkmark: val.enabled}"></i>
 									</div>
 								</a>
 							</div>
@@ -514,28 +514,31 @@
 						</div>
 					</div>
 
-					<div ng-class="{visible: resultsTab == 'Geometry'}" id="geometry-map">
-						<div id="layers-button" class="green corner dropdown ui label">
-							<i class="map icon"></i>
+					<div id="geometry-map" ng-class="{visible: resultsTab == 'Geometry'}">
+						<div class="top left attached ui labels">
+							<div id="layers-button" class="green dropdown ui label">
+								Layers
+								<i class="dropdown icon"></i>
 
-							<div id="layers-dropdown" class="vertical menu">
-								<div class="header item">Layers</div>
+								<div id="layers-dropdown" class="small vertical menu">
+									<a class="item" ng-repeat="layer in availableLayers"
+											ng-click="eatEvent($event, toggleMapLayer, layer)"
+											ng-class="{active: layer.active, teal: layer.active}">
 
-								<a class="item" ng-repeat="layer in availableLayers" ng-click="eatEvent($event, toggleMapLayer, layer)"
-										ng-class="{active: layer.active, teal: layer.active}">
+										<div class="squarish check ui label" ng-class="{teal: val.enabled}">
+											<i class="icon" ng-class="{disabled: !layer.active, checkmark: layer.active}"></i>
+										</div>
 
-									<i class="left checkbox icon"
-											ng-class="{disabled: !layer.active, empty: !layer.active, checked: layer.active}"></i>
+										{{ layer.display || layer.name }}
+										<i class="color icon" ng-if="layer.htmlColor" ng-style="{'background-color': layer.htmlColor}"></i>
+										<em ng-if="layer.queryID">(query # {{layer.queryID}})</em>
 
-									{{ layer.display || layer.name }}
-									<i class="color icon" ng-if="layer.htmlColor" ng-style="{'background-color': layer.htmlColor}"></i>
-									<em ng-if="layer.queryID">(query # {{layer.queryID}})</em>
-
-									<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.hasExtent}"
-											title="Zoom to fit" ng-click="eatEvent($event, centerMapLayer, layer)">
-										<i class="left map icon"></i>
-									</div>
-								</a>
+										<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.hasExtent}"
+												title="Zoom to fit" ng-click="eatEvent($event, centerMapLayer, layer)">
+											<i class="left map icon"></i>
+										</div>
+									</a>
+								</div>
 							</div>
 						</div>
 
