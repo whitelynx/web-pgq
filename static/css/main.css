@@ -103,6 +103,7 @@ code, pre, .ace_editor, table td.code {
 	color: #888888;
 	text-align: right;
 	padding-right: 0.5em;
+	margin-top: 2px;
 }
 .split-panes > #topPane + .split-handler {
 	height: 1rem;
