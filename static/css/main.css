@@ -611,6 +611,13 @@ table td > pre:only-child, table td.ui.dropdown > pre.text, table td.ui.dropdown
 	background: #222222;
 }
 
+.dropdown.ui.label > .detail.fallback {
+	color: #91E0DD;
+	font-style: italic;
+}
+.dropdown.ui.label > .detail.fallback::before { content: "("; }
+.dropdown.ui.label > .detail.fallback::after { content: ")"; }
+
 .smallest.ui.table {
 	font-size: 0.7em;
 }
