@@ -282,7 +282,7 @@ angular.module('webPGQ')
                     {
                         delete $scope.connections[$scope.editingConnection.name];
                     } // end if
-                    $scope.connections[$scope.editingConnection.newName] = $scope.editingConnection;
+                    $scope.connections[$scope.editingConnection.newName] = $scope.editingConnection.info;
 
                     //$scope.editingConnection.isValid = false;
                     $scope.editingConnection.newName = '';
