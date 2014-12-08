@@ -1096,6 +1096,9 @@ a.ui.label {
 	padding-right: 0.8em;
 }
 
+/* FIX: Don't add more extra space between the detail text and the dropdown icon. */
+.dropdown.ui.label > .detail + .dropdown.icon { margin-left: 0.5em; }
+
 /* FIX: Remove border radii on dimmers inside attached segments. */
 .ui.segment.attached > .ui.dimmer { border-radius: 0; }
 .ui.segment.bottom.attached > .ui.dimmer { border-radius: 0px 0px 5px 5px; }
