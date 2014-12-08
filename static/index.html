@@ -255,9 +255,11 @@
 						<div class="menu">
 							<div class="item" ng-repeat="(name, conn) in connections" ng-click="connectDB(name)"
 									title="{{ conn.masked|json }}">
-								<div class="right compact tiny teal vertical animated ui button" ng-click="editConnection(name, $event)">
-									<div class="hidden content">Edit</div>
-									<div class="visible content"><i class="edit sign icon"></i></div>
+								<div class="right compact mini red icon ui button" title="Remove connection" ng-click="showRemoveConnection(name, $event)">
+									<i class="remove icon"></i>
+								</div>
+								<div class="right compact mini teal icon ui button" title="Edit connection" ng-click="editConnection(name, $event)">
+									<i class="write icon"></i>
 								</div>
 								{{ name }}
 							</div>
@@ -276,6 +278,31 @@
 					<div class="item" ng-show="dbConnecting">
 						<i class="spinner loading icon"></i>
 						<span class="hide on mobile">Connecting to {{ currentConnection }}...</span>
+					</div>
+
+					<div id="removeConnectionModal" class="ui basic modal">
+						<div class="header">Remove connection</div>
+						<div class="content">
+							<div class="image">
+								<i class="red trash icon"></i>
+							</div>
+							<div class="description">
+								<p>Are you sure you want to <strong>permanently delete</strong> the connection
+									{{ connectionToRemove|json }}?</p>
+							</div>
+						</div>
+						<div class="actions">
+							<div class="two fluid ui inverted buttons">
+								<div class="ui red basic inverted button" ng-click="removeConnection()">
+									<i class="checkmark icon"></i>
+									Yes, <strong>delete</strong> it.
+								</div>
+								<div class="ui blue basic inverted button">
+									<i class="remove icon"></i>
+									No, keep it!
+								</div>
+							</div>
+						</div>
 					</div>
 
 					<div id="editConnectionDimmer" class="ui page dimmer">

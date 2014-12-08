@@ -217,7 +217,8 @@ angular.module('webPGQ')
                 info: new sql.ConnectionInfo()
             };
 
-            var editConnectionDimmer;
+            var editConnectionDimmer, removeConnectionModal;
+
             function showEditConnection()
             {
                 if(editConnectionDimmer)
@@ -231,6 +232,34 @@ angular.module('webPGQ')
                 $scope.editingConnection.isNew = true;
                 showEditConnection();
             }; // end $scope.addConnection
+
+            $scope.showRemoveConnection = function(connectionName, event)
+            {
+                if(event)
+                {
+                    event.stopPropagation();
+                } // end if
+
+                $scope.connectionToRemove = connectionName;
+                applyIfNecessary();
+
+                $window.setTimeout(function()
+                {
+                    removeConnectionModal.modal('show');
+                }, 0);
+            }; // end $scope.removeConnection
+
+            $scope.removeConnection = function(event)
+            {
+                if(event)
+                {
+                    event.stopPropagation();
+                } // end if
+
+                delete $scope.connections[$scope.connectionToRemove];
+                delete $scope.connectionToRemove;
+                applyIfNecessary();
+            }; // end $scope.removeConnection
 
             $scope.editConnection = function(connectionName, event)
             {
@@ -1321,6 +1350,8 @@ angular.module('webPGQ')
                 $window.setTimeout(updateScrollbars, 500);
 
                 editConnectionDimmer = $('#editConnectionDimmer');
+                removeConnectionModal = $('#removeConnectionModal');
+                removeConnectionModal.modal({closable: false});
 
                 var editConnectionValidationSettings = {
                     inline: true,
