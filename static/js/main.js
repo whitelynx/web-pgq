@@ -806,7 +806,7 @@ angular.module('webPGQ')
                         // Set the line width key to the previously selected one (or one of the fallbacks) according to
                         // which one appears in $scope.planKeys.
                         var lineWidthKeyFallbacks = [
-                            $scope.lineWidthKey,
+                            $scope.selectedLineWidthKey,
                             'Actual Total Time',
                             'Total Cost',
                             _.first($scope.planKeys)
@@ -880,6 +880,7 @@ angular.module('webPGQ')
             {
                 if(_.isString(key))
                 {
+                    $scope.selectedLineWidthKey = key;
                     $scope.lineWidthKey = key;
                     $scope.graph = graph.updateEdges($scope.lineWidthKey);
                     $scope.reRender();

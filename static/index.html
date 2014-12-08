@@ -481,19 +481,19 @@
 							</a>
 							<a class="small compact teal dropdown ui label">
 								<span>Line width:</span>
-								<span class="detail">{{ lineWidthKey }}</span>
+								<span class="detail" ng-class="{fallback: lineWidthKey != selectedLineWidthKey}">{{ lineWidthKey }}</span>
 
 								<i class="dropdown icon"></i>
 								<div class="menu">
 									<div class="item" ng-repeat="planKey in groupedPlanKeys"
-											ng-class="{active: lineWidthKey == planKey || contains(planKey.keys, lineWidthKey)}"
+											ng-class="{active: selectedLineWidthKey == planKey || contains(planKey.keys, selectedLineWidthKey)}"
 											ng-click="setLineWidthKey(planKey)">
 										<i ng-if="planKey.keys" class="dropdown icon"></i>
 										<span>{{ planKey.title || planKey }}</span>
 
 										<div class="menu" ng-if="planKey.keys">
 											<div class="item" ng-repeat="groupedPlanKey in planKey.keys"
-													ng-class="{active: lineWidthKey == groupedPlanKey}"
+													ng-class="{active: selectedLineWidthKey == groupedPlanKey}"
 													ng-click="setLineWidthKey(groupedPlanKey)">
 												{{ groupedPlanKey }}
 											</div>
