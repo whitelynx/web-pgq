@@ -1118,6 +1118,12 @@ a.ui.label {
 	padding-right: 0.8em;
 }
 
+/* FIX: Don't leave so much space next to right-floated buttons in dropdown menus. */
+.right.icon.ui.button:first-child { margin-right: -0.75rem; }
+
+/* FIX: Don't smash adjacent buttons together in dropdown menus. */
+.right.icon.ui.button + .right.icon.ui.button { margin-right: 0.5em; }
+
 /* FIX: Don't add more extra space between the detail text and the dropdown icon. */
 .dropdown.ui.label > .detail + .dropdown.icon { margin-left: 0.5em; }
 
