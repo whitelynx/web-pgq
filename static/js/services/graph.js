@@ -66,13 +66,27 @@ angular.module('webPGQ.services')
             return edge;
         } // end updateEdge
 
+        var tmplDisplayRE = /\$\{child\['([^']*)'\]\}/g;
+        function tmplDisplayReplacement(match, field)
+        {
+            return '[' + field + ']';
+        } // end tmplDisplayReplacement
+
+        function labelTmpl(tmplString)
+        {
+            var tmpl = _.template(tmplString);
+            tmpl.template = tmplString;
+            tmpl.display = tmplString.replace(tmplDisplayRE, tmplDisplayReplacement);
+            return tmpl;
+        } // end labelTmpl
+
         // Edge label templates, according to edgeWidthKey.
         var defaultEdgeLabel = _.template("${child[edgeWidthKey]}");
         var edgeLabels = {
-            'Startup Cost': _.template("${child['Startup Cost']}..${child['Total Cost']}"),
-            'Total Cost': _.template("${child['Startup Cost']}..${child['Total Cost']}"),
-            'Actual Startup Time': _.template("${child['Actual Startup Time']}..${child['Actual Total Time']}"),
-            'Actual Total Time': _.template("${child['Actual Startup Time']}..${child['Actual Total Time']}"),
+            'Startup Cost': labelTmpl("${child['Startup Cost']}..${child['Total Cost']}"),
+            'Total Cost': labelTmpl("${child['Startup Cost']}..${child['Total Cost']}"),
+            'Actual Startup Time': labelTmpl("${child['Actual Startup Time']}..${child['Actual Total Time']}"),
+            'Actual Total Time': labelTmpl("${child['Actual Startup Time']}..${child['Actual Total Time']}"),
         };
 
         function findReferences(node, key, val)
@@ -198,6 +212,8 @@ angular.module('webPGQ.services')
 
                 edgeWidthKey = edgeWidthKey_;
                 edgeLabelTemplate = edgeLabels[edgeWidthKey] || defaultEdgeLabel;
+                graph.edgeLabelLegend = edgeLabelTemplate.display;
+
                 maxEdgeWidthValue = Math.max.apply(Math,
                     _.map(plans, function(plan) { return getMaxEdgeWidthValue(plan.Plan); })
                 );
@@ -244,6 +260,8 @@ angular.module('webPGQ.services')
 
                 edgeWidthKey = edgeWidthKey_;
                 edgeLabelTemplate = edgeLabels[edgeWidthKey] || defaultEdgeLabel;
+                graph.edgeLabelLegend = edgeLabelTemplate.display;
+
                 maxEdgeWidthValue = Math.max.apply(Math,
                     _.map(lastPlans, function(plan) { return getMaxEdgeWidthValue(plan.Plan); })
                 );
