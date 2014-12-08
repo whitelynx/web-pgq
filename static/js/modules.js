@@ -7,7 +7,6 @@
 
 angular.module('jQuery', []).factory('$', function($window) { return $window.$.noConflict(true); });
 
-// Not currently used:
 angular.module('lodash', []).factory('_', function($window) { return $window._.noConflict(); });
 
 angular.module('unisocket', []).factory('unisocket', function($window) { var u = $window.unisocket; delete $window.unisocket; return u; });
