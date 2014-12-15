@@ -40,7 +40,7 @@ angular.module('webPGQ.directives')
             var layout = dagreD3.layout()
                 .nodeSep(50)
                 .rankSep(50)
-                .rankDir("RL");
+                .rankDir("LR");
 
             var zoom = d3.behavior.zoom();
 
