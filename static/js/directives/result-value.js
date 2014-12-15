@@ -19,6 +19,7 @@ angular.module('webPGQ.directives')
         };
 
         var firstLineRE = /^([^\n]*)\n/;
+        var firstLineMaxLength = 100;
 
         var geomFieldNameRE = /geo|shape|wk[bt]|[gk]ml|svg|x3d/i;
 
@@ -59,9 +60,9 @@ angular.module('webPGQ.directives')
                             firstLine = match[1];
                         } // end if
 
-                        if(firstLine && firstLine.length > 50)
+                        if(firstLine && firstLine.length > firstLineMaxLength)
                         {
-                            firstLine = firstLine.slice(0, 50) + '\u2026';
+                            firstLine = firstLine.slice(0, firstLineMaxLength) + '\u2026';
                         } // end if
                         break;
                     default:
