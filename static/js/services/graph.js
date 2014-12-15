@@ -16,6 +16,8 @@ angular.module('webPGQ.services')
         var nodeTypeIcons = [
             'Aggregate',
             'Append',
+            'Bitmap Heap Scan',
+            'Bitmap Index Scan',
             'Function Scan',
             'Hash Anti Join',
             'Hash Join',
