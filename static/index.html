@@ -605,6 +605,10 @@
 								<div class="fade slide animation small icon ui message" ng-class="banner.severity"
 										ng-repeat="(idx, banner) in logger.bannerMessages">
 									<i class="icon" ng-class="banner.icon"></i>
+									<div class="mini floating ui label">
+										{{ banner.time | date:"h:mm a" }}
+										<div class="detail">{{ banner.time | date:"M/d/y" }}</div>
+									</div>
 									<div class="content">
 										<div class="header">
 											{{ banner.header }}
