@@ -1228,10 +1228,13 @@ angular.module('webPGQ')
             }
             if(initialURLParams.fileName) { $scope.query.fileName = initialURLParams.fileName; }
 
+            var setPermalinkDelay = 500;
+            var setPermalinkTimerID;
 
             function setPermalink()
             {
                 console.log("setPermalink() called.");
+                setPermalinkTimerID = undefined;
                 return $location
                     .search({
                         query: $scope.query.text || null,
@@ -1242,7 +1245,14 @@ angular.module('webPGQ')
                     .replace();
             } // end setPermalink
 
-            var setPermalinkThrottled = _.throttle(setPermalink, 100);
+            function setPermalinkThrottled()
+            {
+                if(setPermalinkTimerID)
+                {
+                    $window.clearTimeout(setPermalinkTimerID);
+                } // end if
+                setPermalinkTimerID = $window.setTimeout(setPermalink, setPermalinkDelay);
+            } // end setPermalinkThrottled
 
             $scope.$watchCollection('query', setPermalinkThrottled);
             $scope.$watchCollection('query.params', setPermalinkThrottled);
