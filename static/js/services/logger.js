@@ -35,6 +35,7 @@ angular.module('webPGQ.services')
                 message = {header: header, detail: detail};
             } // end if
 
+            message.time = new Date();
             message.severity = severity;
             message.category = category;
             message.icon = icons[category];
