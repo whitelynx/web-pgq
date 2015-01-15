@@ -15,9 +15,6 @@ var session = require('cookie-session');
 var socket = require('./lib/socket');
 
 
-// For debugging!
-logging.defaultConsoleHandler.level = 'TRACE';
-
 var logger = logging.loggerFor(module);
 
 
