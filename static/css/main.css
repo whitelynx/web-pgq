@@ -852,11 +852,18 @@ svg .edgePath {
 	border-radius: 5px 5px 0 0;
 }
 
-/*
-#paramsGrid .column > .ui.input input {
-	padding: 0.125em 0.25em;
+#paramsGrid .ui.grid > .row > .column {
+	margin: 0;
+	padding: 0 0.4rem;
 }
-*/
+
+#paramsGrid .ui.grid > .row > .column:first-child {
+	text-align: right;
+}
+
+#paramsGrid .column > .ui.input input {
+	padding: 0.4em 0.339305em !important;
+}
 
 #paramsGrid .column .ui.left.labeled.icon.button {
 	padding-left: 2.3em !important;
