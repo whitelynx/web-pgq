@@ -1471,6 +1471,9 @@ angular.module('webPGQ')
 
                 $('.ui.accordion').accordion();
 
-                $scope.pageLoaded = true;
+                $timeout(function()
+                {
+                    $scope.pageLoaded = true;
+                });
             });
         }]);
