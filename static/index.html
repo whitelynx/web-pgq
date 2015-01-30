@@ -189,14 +189,16 @@
 
 						<h3 class="ui header">Parameters</h3>
 
-						<div id="paramsGrid" class="top attached inverted ui segment">
+						<div id="paramsGridHeading" class="top attached inverted tertiary ui segment">
+							<div class="heading middle aligned ui grid">
+								<div class="two wide column">#</div>
+								<div class="twelve wide column">Value / Type</div>
+							</div>
+						</div>
+						<div id="paramsGrid" class="attached inverted ui segment">
 							<div class="middle aligned ui grid">
-								<div class="heading row">
-									<div class="two wide column">#</div>
-									<div class="twelve wide column">Value / Type</div>
-								</div>
 								<div class="row" ng-cloak ng-repeat="param in query.params track by $index">
-									<div class="two wide column"><code>${{ $index + 1 }}</code></div>
+									<div class="right aligned two wide column"><code>${{ $index + 1 }}</code></div>
 									<div class="right aligned twelve wide column">
 										<div class="fluid mini ui input"
 												ng-class="{right: param.type != 'null', labeled: param.type != 'null'}">
