@@ -197,13 +197,15 @@
 								</div>
 								<div class="row" ng-cloak ng-repeat="param in query.params track by $index">
 									<div class="two wide column"><code>${{ $index + 1 }}</code></div>
-									<div class="twelve wide column">
-										<div class="fluid mini right labeled ui input">
-											<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
-												ng-model="param.value">
+									<div class="right aligned twelve wide column">
+										<div class="fluid mini ui input"
+												ng-class="{right: param.type != 'null', labeled: param.type != 'null'}">
 
-											<div class="mini dropdown ui label">
-												{{ param.type }}
+											<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
+												class="fade" ng-model="param.value" ng-if="param.type != 'null'">
+
+											<div class="small upward dropdown ui label" ng-class="{fluid: param.type == 'null'}">
+												{{ displayQueryParamType(param.type) }}
 												<i class="dropdown icon"></i>
 												<div class="menu">
 													<div class="item" ng-click="param.type = 'text'">Text</div>
@@ -213,8 +215,10 @@
 											</div>
 										</div>
 									</div>
-									<div class="two wide column" ng-click="removeQueryParam($index)">
-										<i class="close ui icon"></i>
+									<div class="two wide column">
+										<div class="compact mini red icon ui button" ng-click="removeQueryParam($index)">
+											<i class="close ui icon"></i>
+										</div>
 									</div>
 								</div>
 							</div>
