@@ -449,6 +449,8 @@ angular.module('webPGQ')
                             return parseInt(param.value, 10);
                         case 'text':
                             return param.value;
+                        case 'null':
+                            return null;
                         default:
                             throw new Error("Unrecognized param type " + JSON.stringify(param.type));
                     } // end switch
