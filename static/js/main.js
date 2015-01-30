@@ -421,7 +421,7 @@ angular.module('webPGQ')
                 console.log("Adding new query param...");
                 queueDigest(function()
                 {
-                    $scope.query.params.push({value: '', type: 'text'});
+                    $scope.query.params.push({value: '', type: 'null'});
                 }, maxUpdateDelay)
                 .then(function()
                 {
