@@ -814,9 +814,24 @@ angular.module('webPGQ')
                 var query = getActiveQuery();
                 highlightLastExecuted();
 
-                runSQL(query)
+                runSQL({
+                    queries: [query],
+                    rollback: false
+                })
                     .then($scope.showResults);
             }; // end $scope.runQuery
+
+            $scope.testQuery = function()
+            {
+                var query = getActiveQuery();
+                highlightLastExecuted();
+
+                runSQL({
+                    queries: [query],
+                    rollback: true
+                })
+                    .then($scope.showResults);
+            }; // end $scope.testQuery
 
             var planKeyREs = {
                 actual: /^Actual /,
@@ -834,7 +849,10 @@ angular.module('webPGQ')
                 query.text = explainLine + query.text;
                 query.startIndex -= explainLine.length;
 
-                runSQL(query)
+                runSQL({
+                    queries: [query],
+                    rollback: true
+                })
                     .then(function(results)
                     {
                         console.log("$scope.explainQuery got results:", results);
@@ -1453,6 +1471,14 @@ angular.module('webPGQ')
                     } // end if
                 } // end execRun
 
+                function execTest(event)
+                {
+                    if(!event.ctrlKey && !event.metaKey)
+                    {
+                        $scope.testQuery();
+                    } // end if
+                } // end execTest
+
                 function execAnalyze(event)
                 {
                     if(!event.ctrlKey && !event.metaKey)
@@ -1462,6 +1488,7 @@ angular.module('webPGQ')
                 } // end execAnalyze
 
                 keybinding.bindKey('F5', {preventDefault: true}, execRun);
+                keybinding.bindKey('Shift+F5', {preventDefault: true}, execTest);
                 keybinding.bindKey('F7', {preventDefault: true}, execAnalyze);
                 keybinding.bindKey('Shift+F7', {preventDefault: true}, execAnalyze);
 
