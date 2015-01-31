@@ -398,6 +398,11 @@
 								<i class="play icon"></i>
 								Run
 							</a>
+							<a class="teal labeled icon ui button" ng-click="testQuery()"
+									ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>Shift+F5</b>">
+								<i class="lab icon"></i>
+								Test
+							</a>
 						</div>
 
 						<div class="horizontally fitted borderless item compact ui buttons">
