@@ -133,6 +133,8 @@
 		<script src="js/directives/open-file.js"></script>
 		<script src="js/directives/save-file.js"></script>
 
+		<script src="js/filters/capitalize.js"></script>
+
 		<script src="js/services/await.js"></script>
 		<script src="js/services/promise.js"></script>
 		<script src="js/services/queue-digest.js"></script>
@@ -682,6 +684,9 @@
 						</div>
 						<div class="small compact ui label" ng-if="results && results.affectedRowCount">
 							<span>Affected:</span> <div class="detail">{{ results.affectedRowCount }}</div>
+						</div>
+						<div class="small compact ui label" ng-if="results && results.status">
+							{{ results.status|capitalizeWords }}
 						</div>
 						<div class="small compact ui label" ng-if="results && results.totalTimeMS">
 							<div class="detail">{{ results.totalTimeMS }}</div> <span>ms</span>
