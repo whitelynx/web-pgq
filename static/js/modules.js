@@ -23,6 +23,7 @@ angular.module('ol', []).factory('ol', function($window) { return $window.ol; })
 //// Application Modules ////
 
 angular.module('webPGQ', ['jQuery', 'ui.ace', 'hljs', 'lodash', 'ol', 'ngAnimate', 'ngCookies', 'openlayers-directive',
-    'bgDirectives', 'webPGQ.directives', 'webPGQ.services']);
+    'bgDirectives', 'webPGQ.directives', 'webPGQ.filters', 'webPGQ.services']);
 angular.module('webPGQ.services', ['unisocket', 'd3', 'dagreD3', 'rt.eventemitter']);
 angular.module('webPGQ.directives', ['hljs', 'webPGQ.services']);
+angular.module('webPGQ.filters', []);
