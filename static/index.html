@@ -191,17 +191,17 @@
 
 						<h3 class="ui header">Parameters</h3>
 
-						<div id="paramsGridHeading" class="top attached inverted tertiary ui segment">
-							<div class="heading middle aligned ui grid">
-								<div class="two wide column">#</div>
-								<div class="twelve wide column">Value / Type</div>
-							</div>
-						</div>
-						<div id="paramsGrid" class="attached inverted ui segment">
-							<div class="middle aligned ui grid">
-								<div class="row" ng-cloak ng-repeat="param in query.params track by $index">
-									<div class="right aligned two wide column"><code>${{ $index + 1 }}</code></div>
-									<div class="right aligned twelve wide column">
+						<table id="paramsGrid" class="top attached inverted ui segment">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th colspan="2">Value / Type</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-cloak ng-repeat="param in query.params track by $index">
+									<td class="right aligned"><code>${{ $index + 1 }}</code></div>
+									<td class="right aligned">
 										<div class="fluid mini ui input"
 												ng-class="{right: param.type != 'null', labeled: param.type != 'null'}">
 
@@ -218,15 +218,15 @@
 												</div>
 											</div>
 										</div>
-									</div>
-									<div class="two wide column">
+									</td>
+									<td>
 										<div class="compact mini red icon ui button" ng-click="removeQueryParam($index)">
 											<i class="close ui icon"></i>
 										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 						<div class="bottom attached mini teal labeled icon ui button" ng-click="addQueryParam()">
 							<i class="add icon"></i>
 							Add parameter
