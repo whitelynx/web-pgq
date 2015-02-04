@@ -251,23 +251,14 @@ code, pre, .ace_editor, table td.code {
 	position: absolute;
 	top: 0;
 	bottom: 0;
-	right: -100%;
-	width: 100%;
 	height: auto;
-	margin: 0;
-	overflow: hidden;
+	margin-top: 0;
 	border-radius: 5px 0 0 5px;
 	z-index: 800;
-	-webkit-transition: left 0.5s, right 0.5s;
-	transition: left 0.5s, right 0.5s;
 }
 
 #querySidebar.active {
 	right: 0;
-}
-
-#querySidebar > h3 {
-	margin-left: 1em;
 }
 
 #querySidebar .launch.button.wrapper {
@@ -327,11 +318,8 @@ code, pre, .ace_editor, table td.code {
 	#querySidebar,
 	#querySidebar.active {
 		right: 0;
+		width: auto;
 		border-radius: 0;
-	}
-
-	#querySidebar > h3 {
-		margin-left: 0;
 	}
 
 	#querySidebar .launch.button.wrapper .launch.icon.ui.button { display: none; }
