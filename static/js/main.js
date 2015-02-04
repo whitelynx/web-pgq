@@ -1368,7 +1368,7 @@ angular.module('webPGQ')
                         } // end if
                     });
 
-                scrollContainers = $('#querySidebar');
+                scrollContainers = $('#paramsSection');
                 scrollContainers.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
 
                 messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
