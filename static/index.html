@@ -158,8 +158,8 @@
 
 		<bg-splitter orientation="horizontal">
 			<bg-pane min-size="128" id="topPane">
-				<div id="editorArea">
-					<div id="editor" class="inverted ui segment">
+				<bg-splitter id="editorArea" pos="75%" orientation="vertical">
+					<bg-pane id="editor" min-size="128" class="inverted ui segment">
 						<div ui-ace="mainEditorConfig" ng-model="query.text"></div>
 						<div class="hiding bottom right attached ui labels">
 							<div class="small compact ui label" ng-if="editor.overwrite">
@@ -173,10 +173,10 @@
 								<span>column</span> <div class="detail">{{ editor.pos.column }}</div>
 							</div>
 						</div>
-					</div>
+					</bg-pane>
 
-					<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
-						<div class="compact tiny 3 fluid ui buttons">
+					<bg-pane id="querySidebar" min-size="286" ng-class="{active: showQuerySidebar}">
+						<div class="compact tiny 3 attached ui buttons">
 							<div class="orange labeled icon ui button" ng-click="newFile()">
 								<i class="file icon"></i>
 								New
@@ -187,56 +187,58 @@
 							<open-file on-open="fileLoaded(file, content)"></open-file>
 						</div>
 
-						<table id="paramsGrid">
-							<caption>Parameters:</caption>
-							<thead>
-								<tr>
-									<th>#</th>
-									<th colspan="2">Value / Type</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-cloak ng-repeat="param in query.params track by $index">
-									<td class="right aligned"><code>${{ $index + 1 }}</code></td>
-									<td class="right aligned">
-										<div class="fluid mini ui input"
-												ng-class="{right: param.type != 'null', labeled: param.type != 'null'}">
+						<div id="paramsSection" class="secondary attached inverted ui segment">
+							<table id="paramsGrid">
+								<caption>Parameters:</caption>
+								<thead>
+									<tr>
+										<th>#</th>
+										<th colspan="2">Value / Type</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-cloak ng-repeat="param in query.params track by $index">
+										<td class="right aligned"><code>${{ $index + 1 }}</code></td>
+										<td class="right aligned">
+											<div class="fluid mini ui input"
+													ng-class="{right: param.type != 'null', labeled: param.type != 'null'}">
 
-											<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
-												class="fade" ng-model="param.value" ng-if="param.type != 'null'">
+												<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
+													class="fade" ng-model="param.value" ng-if="param.type != 'null'">
 
-											<div class="small upward dropdown ui label" ng-class="{fluid: param.type == 'null'}">
-												{{ displayQueryParamType(param.type) }}
-												<i class="dropdown icon"></i>
-												<div class="menu">
-													<div class="item" ng-click="param.type = 'text'">Text</div>
-													<div class="item" ng-click="param.type = 'integer'">Integer</div>
-													<div class="item" ng-click="param.type = 'null'">NULL</div>
+												<div class="small upward dropdown ui label" ng-class="{fluid: param.type == 'null'}">
+													{{ displayQueryParamType(param.type) }}
+													<i class="dropdown icon"></i>
+													<div class="menu">
+														<div class="item" ng-click="param.type = 'text'">Text</div>
+														<div class="item" ng-click="param.type = 'integer'">Integer</div>
+														<div class="item" ng-click="param.type = 'null'">NULL</div>
+													</div>
 												</div>
 											</div>
-										</div>
-									</td>
-									<td>
-										<div class="compact mini red icon ui button" ng-click="removeQueryParam($index)">
-											<i class="close ui icon"></i>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div class="bottom attached mini teal labeled icon ui button" ng-click="addQueryParam()">
-							<i class="add icon"></i>
-							Add parameter
-						</div>
+										</td>
+										<td>
+											<div class="compact mini red icon ui button" ng-click="removeQueryParam($index)">
+												<i class="close ui icon"></i>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="bottom attached mini teal labeled icon ui button" ng-click="addQueryParam()">
+								<i class="add icon"></i>
+								Add parameter
+							</div>
 
-						<div class="launch button wrapper">
-							<div class="small black icon launch ui button" ng-click="showQuerySidebar = !showQuerySidebar">
-								<!--i class="menu icon"></i-->
-								<i class="list layout icon"></i>
+							<div class="launch button wrapper">
+								<div class="small black icon launch ui button" ng-click="showQuerySidebar = !showQuerySidebar">
+									<!--i class="menu icon"></i-->
+									<i class="list layout icon"></i>
+								</div>
 							</div>
 						</div>
-					</div>
-				</div>
+					</bg-pane>
+				</bg-splitter>
 
 				<div id="mainMenu" class="transparent small inverted attached compact main ui menu">
 					<div class="header item">
