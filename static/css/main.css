@@ -850,6 +850,14 @@ svg .edgePath {
 	padding-bottom: 0.25em;
 }
 
+#paramsSection {
+	position: absolute;
+	top: 1.885714292em; bottom: 0;
+	left: 0; right: 0;
+	height: auto;
+	overflow: hidden;
+}
+
 #paramsGrid {
 	padding: 0;
 	overflow: hidden;
