@@ -70,6 +70,7 @@ code, pre, .ace_editor, table td.code {
 	-webkit-align-items: flex-start;
 	-ms-flex-align: start;
 	align-items: flex-start;
+	z-index: 9;
 }
 
 #editorArea {
@@ -133,10 +134,10 @@ code, pre, .ace_editor, table td.code {
 }
 
 .split-panes.vertical > :not(.split-handler):not(:last-child) {
-	margin-right: 0.5rem;
+	padding-right: 0.5rem;
 }
 .split-panes.vertical > :not(.split-handler):not(:first-child) {
-	margin-left: 0.5rem;
+	padding-left: 0.5rem;
 }
 .split-panes.vertical > * + .split-handler {
 	width: 1rem;
@@ -179,7 +180,6 @@ code, pre, .ace_editor, table td.code {
 	margin-bottom: 0;
 	border-top: none;
 	border-radius: 0;
-	z-index: 100;
 	-webkit-transition: left 0.5s, right 0.5s;
 	transition: left 0.5s, right 0.5s;
 }
@@ -188,9 +188,15 @@ code, pre, .ace_editor, table td.code {
 	top: 0;
 	bottom: 0;
 	left: 0;
-	right: 0;
+	right: 0.5rem;
 	width: auto;
 	height: auto;
+}
+
+.split-panes.vertical > #editor + .split-handler {
+	background: #bbbbbb;
+	border-left: 1px solid #eee;
+	border-right: 1px solid #aaa;
 }
 
 /***********************************
@@ -253,8 +259,9 @@ code, pre, .ace_editor, table td.code {
 	bottom: 0;
 	height: auto;
 	margin-top: 0;
+	margin-left: -1px;
 	border-radius: 5px 0 0 5px;
-	z-index: 800;
+	z-index: 8;
 }
 
 #querySidebar.active {
@@ -853,8 +860,9 @@ svg .edgePath {
 #paramsSection {
 	position: absolute;
 	top: 1.885714292em; bottom: 0;
-	left: 0; right: 0;
+	left: 0.5em; right: 0;
 	height: auto;
+	margin: 0;
 	overflow: hidden;
 }
 
