@@ -176,12 +176,10 @@
 					</div>
 
 					<div id="querySidebar" class="secondary inverted ui segment" ng-class="{active: showQuerySidebar}">
-						<div class="compact tiny compact ui buttons">
-							<div class="black vertical animated ui button" ng-click="newFile()">
-								<div class="hidden content">New</div>
-								<div class="visible content">
-									<i class="file icon"></i>
-								</div>
+						<div class="compact tiny 3 fluid ui buttons">
+							<div class="orange labeled icon ui button" ng-click="newFile()">
+								<i class="file icon"></i>
+								New
 							</div>
 
 							<save-file ng-model="query.text" file-name="query.fileName"></save-file>
