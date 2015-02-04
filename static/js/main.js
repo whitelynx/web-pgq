@@ -1336,24 +1336,19 @@ angular.module('webPGQ')
 
             $(function()
             {
-                var splitterPos = $('#topPane').height();
+                var mainSplitterPos = $('#topPane').height();
+                var sidebarSplitterPos = $('#editor').width();
                 $($window)
                     // Update scrollbars on resize.
                     .resize(updateScrollbars)
                     // If the position of the splitter has changed, update scrollbars, OpenLayers, Ace, etc.
                     .bind('mouseup', function ()
                     {
-                        var curPos = $('#topPane').height();
-                        if(curPos != splitterPos)
+                        var curMainSplitterPos = $('#topPane').height();
+                        var curSidebarSplitterPos = $('#editor').width();
+
+                        if(curMainSplitterPos != mainSplitterPos)
                         {
-                            splitterPos = curPos;
-
-                            // Update any Ace editors.
-                            allEditors.forEach(function(editor)
-                            {
-                                editor.resize();
-                            });
-
                             // Update OpenLayers map.
                             olData.getMap().then(function(map)
                             {
@@ -1362,10 +1357,22 @@ angular.module('webPGQ')
 
                             // Re-render the query plan view. (or queue a re-render for the next time it's shown)
                             $scope.$broadcast('Resize');
+                        } // end if
+
+                        if(curMainSplitterPos != mainSplitterPos || curSidebarSplitterPos != sidebarSplitterPos)
+                        {
+                            // Update any Ace editors.
+                            allEditors.forEach(function(editor)
+                            {
+                                editor.resize();
+                            });
 
                             // Update scrollbars.
                             updateScrollbars();
                         } // end if
+
+                        mainSplitterPos = curMainSplitterPos;
+                        sidebarSplitterPos = curSidebarSplitterPos;
                     });
 
                 scrollContainers = $('#paramsSection');
