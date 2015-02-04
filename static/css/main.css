@@ -299,9 +299,7 @@ code, pre, .ace_editor, table td.code {
 	top: 100%;
 	left: 0%;
 	border-top: 0em solid transparent;
-	border-right-width: 0.5em;
-	border-right-color: #444444;
-	border-right-style: solid;
+	border-right: 0.5em solid #444444;
 	border-bottom: 0.5em solid transparent;
 	border-left: 0em solid transparent;
 	width: 0em;
