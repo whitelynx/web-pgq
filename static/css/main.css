@@ -868,6 +868,7 @@ td > .ui.button:last-child {
 
 #paramsGrid td > .ui.input input {
 	padding: 0.4em 0.339305em !important;
+	font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
 }
 #paramsGrid td > .ui.input > .dropdown {
 	text-align: right;
