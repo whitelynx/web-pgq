@@ -830,49 +830,47 @@ svg .edgePath {
 	padding-bottom: 0.25em;
 }
 
-#paramsGridHeading {
-	padding: 0.25rem 0;
-}
-
-#paramsGridHeading .ui.grid {
-	font-weight: bold;
-	margin: 0;
-}
-
-#paramsGridHeading .ui.grid > .column {
-	margin: 0;
-	padding: 0 0.4rem;
-}
-
 #paramsGrid {
 	padding: 0;
+	overflow: hidden;
 }
 
-#paramsGrid .ui.grid {
+#paramsGrid > thead {
+	background: -webkit-linear-gradient(rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%);
+	background: linear-gradient(rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%);
+}
+
+#paramsGrid > thead > tr > th {
+	padding: 0.25rem 0.4rem 0.25rem 0;
+}
+
+#paramsGrid > tbody > tr > td {
+	padding: 0 0.4rem 0.5rem 0;
+}
+
+#paramsGrid > tbody > tr:first-child td {
+	padding-top: 0.5rem;
+}
+
+#paramsGrid > thead > tr > th:first-child,
+#paramsGrid > tbody > tr > td:first-child {
+	padding-left: 0.4rem;
+}
+
+#paramsGrid > thead > tr > th:first-child,
+#paramsGrid > tbody > tr > td {
+	text-align: right;
+}
+
+td > .ui.button:last-child {
 	margin: 0;
 }
 
-#paramsGrid .ui.grid > .row {
-	margin: 0;
-	padding: 0.25rem 0;
-}
-
-#paramsGrid .ui.grid > .row > .column {
-	margin: 0;
-	padding: 0 0.4rem;
-}
-
-#paramsGrid .column > .ui.input input {
+#paramsGrid td > .ui.input input {
 	padding: 0.4em 0.339305em !important;
 }
-
-#paramsGrid .column .ui.left.labeled.icon.button {
-	padding-left: 2.3em !important;
-	padding-right: 0.7em !important;
-}
-#paramsGrid .column .ui.right.labeled.icon.button {
-	padding-left: 0.7em !important;
-	padding-right: 2.3em !important;
+#paramsGrid td > .ui.input > .dropdown {
+	text-align: right;
 }
 
 .item .ui.right.button {
