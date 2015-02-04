@@ -860,16 +860,34 @@ svg .edgePath {
 
 #paramsGrid {
 	padding: 0;
-	overflow: hidden;
+	margin: 0 -1px;
+	width: -webkit-calc(100% + 2px);
+	width: calc(100% + 2px);
 }
 
-#paramsGrid > thead {
-	background: -webkit-linear-gradient(rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%);
-	background: linear-gradient(rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%);
+#paramsGrid > caption {
+	font-weight: bold;
+	font-size: 1.28rem;
+	text-align: left;
 }
 
 #paramsGrid > thead > tr > th {
+	background: -webkit-linear-gradient(rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%);
+	background: linear-gradient(rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.5) 100%);
 	padding: 0.25rem 0.4rem 0.25rem 0;
+	box-shadow: inset 0 1px 0 #555555;
+}
+#paramsGrid > thead > tr > th:first-child {
+	border-top-left-radius: 0.2857rem;
+	box-shadow: inset 1px 1px 0 #555555;
+}
+#paramsGrid > thead > tr > th:last-child {
+	border-top-right-radius: 0.2857rem;
+	box-shadow: inset -1px 1px 0 #555555;
+}
+
+#paramsGrid > tbody {
+	background-color: #1b1c1d;
 }
 
 #paramsGrid > tbody > tr > td {
@@ -883,6 +901,12 @@ svg .edgePath {
 #paramsGrid > thead > tr > th:first-child,
 #paramsGrid > tbody > tr > td:first-child {
 	padding-left: 0.4rem;
+}
+#paramsGrid > tbody > tr > td:first-child {
+	box-shadow: inset 1px 0 0 #555555;
+}
+#paramsGrid > tbody > tr > td:last-child {
+	box-shadow: inset -1px 0 0 #555555;
 }
 
 #paramsGrid > thead > tr > th:first-child,
