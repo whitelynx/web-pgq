@@ -1,6 +1,4 @@
-<a class="green vertical animated ui button {{ class }}" ng-class="{loading: saving}" href download="{{ fileName }}">
-	<div class="hidden content">Save</div>
-	<div class="visible content">
-		<i class="save icon"></i>
-	</div>
+<a class="green labeled icon ui button" ng-class="class + (saving ? ' loading' : '')" href download="{{ fileName }}">
+	<i class="save icon"></i>
+	Save
 </a>
