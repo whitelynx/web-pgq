@@ -1150,6 +1150,7 @@ a.ui.label {
 .ui.hiding.bottom.attached.labels {
 	padding: 2em 0 0 2em;
 	pointer-events: none;
+	white-space: nowrap;
 }
 .ui.hiding.bottom.attached.labels .label {
 	position: relative;
