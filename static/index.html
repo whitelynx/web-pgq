@@ -647,34 +647,44 @@
 						</div>
 					</div>
 
-					<div id="noRowsLabel" ng-if="!query.running && results.rows.length == 0 && resultsTab == 'Results'"
-							class="fast fade animation red ribbon ui label">
-						No rows returned.
-					</div>
-
 					<div id="resultsContainer">
-						<table ng-if="results.rows.length > 0" class="fade animation compact sortable celled ui table">
-							<thead>
-								<tr>
-									<th ng-repeat="field in results.fields track by $index"
-										title="Data Type: {{ field.dataType }}">{{ field.name }}</th>
-								</tr>
-							</thead>
+						<div ng-repeat="resultSet in resultSets track by $index">
 
-							<tbody>
-								<!--tr ng-repeat="row in results.rows track by $index" class="fade animation">
-									<td ng-repeat="value in row track by $index"
-										result-value="value" result-field-type="results.fields[$index].dataType"
-										ace-config="commonEditorConfig">
-									</td>
-								</tr-->
-								<tr ng-repeat="row in results.rows track by $index">
-									<td ng-repeat="value in row track by $index"
-										result-value="value" result-field-type="results.fields[$index].dataType">
-									</td>
-								</tr>
-							</tbody>
-						</table>
+							<div id="noRowsLabel"
+									ng-if="!query.running && resultSet.rows.length == 0 && resultsTab == 'Results'"
+									class="fast fade animation red ribbon ui label">
+								No rows returned.
+							</div>
+
+							<table ng-if="resultSet.rows.length > 0"
+									class="fade animation compact collapsing celled ui table">
+
+								<caption class="ui header">
+									Result set {{ $index + 1 }}
+								</caption>
+
+								<thead>
+									<tr>
+										<th ng-repeat="field in resultSet.fields track by $index"
+											title="Data Type: {{ field.dataType }}">{{ field.name }}</th>
+									</tr>
+								</thead>
+
+								<tbody>
+									<!--tr ng-repeat="row in resultSet.rows track by $index" class="fade animation">
+										<td ng-repeat="value in row track by $index"
+											result-value="value" result-field-type="resultSet.fields[$index].dataType"
+											ace-config="commonEditorConfig">
+										</td>
+									</tr-->
+									<tr ng-repeat="row in resultSet.rows track by $index">
+										<td ng-repeat="value in row track by $index"
+											result-value="value" result-field-type="resultSet.fields[$index].dataType">
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 
 					<div class="hiding bottom right attached ui labels" ng-class="{black: resultsTab == 'Messages'}">
