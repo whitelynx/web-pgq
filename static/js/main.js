@@ -565,7 +565,8 @@ angular.module('webPGQ')
                 var runSQLCall = ++runSQLCallCount;
                 console.log("Starting runSQL call #" + runSQLCall);
 
-                var results = {rows: [], noticeMessages: []};
+                var resultSets = [];
+                var currentResultSet;
                 var firstResultRow = true;
                 var geoJSONColumns = [];
 
@@ -576,14 +577,14 @@ angular.module('webPGQ')
 
                 function updatePending()
                 {
-                    if(results.rows.length != lastRowCount)
+                    if(currentResultSet && currentResultSet.rows.length != lastRowCount)
                     {
                         $window.setTimeout(updateScrollbars, 0);
 
-                        lastRowCount = results.rows.length;
+                        lastRowCount = currentResultSet.rows.length;
                     } // end if
 
-                    $scope.results = results;
+                    $scope.resultSets = resultSets;
 
                     if(firstResultRow && lastRowCount > 0)
                     {
@@ -633,7 +634,7 @@ angular.module('webPGQ')
 
                 function onNotice(noticeMessage)
                 {
-                    results.noticeMessages.push(noticeMessage);
+                    currentResultSet.noticeMessages.push(noticeMessage);
 
                     queueUpdate();
                 } // end onNotice
@@ -643,9 +644,13 @@ angular.module('webPGQ')
                     return (haystack.indexOf(needle) != -1);
                 } // end contains
 
-                function onFields(fields)
+                function onFields(resultSetNum, fields)
                 {
-                    results.fields = fields;
+                    console.log("Starting result set", resultSetNum);
+                    currentResultSet = {rows: [], noticeMessages: [], num: resultSetNum};
+                    resultSets.push(currentResultSet);
+
+                    currentResultSet.fields = fields;
 
                     console.log("Got fields:", fields);
                     var geomFieldLayerNames = [];
@@ -693,9 +698,9 @@ angular.module('webPGQ')
                     queueUpdate();
                 } // end onFields
 
-                function onRow(row)
+                function onRow(resultSetNum, row)
                 {
-                    results.rows.push(row);
+                    currentResultSet.rows.push(row);
 
                     geoJSONColumns.forEach(function(column)
                     {
@@ -746,11 +751,11 @@ angular.module('webPGQ')
                     {
                         if(key != 'rows')
                         {
-                            results[key] = response[key];
+                            currentResultSet[key] = response[key];
                         } // end if
                     } // end for
 
-                    console.log("runSQL call #" + runSQLCall + ": Complete response:", results);
+                    console.log("runSQL call #" + runSQLCall + ": Complete response:", currentResultSet);
 
                     removeLayers(currentColumnLayerNames, true);
                     addLayers(geoJSONColumns);
@@ -762,7 +767,7 @@ angular.module('webPGQ')
                     $scope.query.running = false;
                     queueUpdate(0);
 
-                    return results;
+                    return currentResultSet;
                 } // end onEnd
 
                 $scope.query.running = true;
@@ -952,7 +957,7 @@ angular.module('webPGQ')
             }; // end $scope.setLineWidthKey
 
             // Query results //
-            $scope.results = {rows: []};
+            $scope.resultSets = {rows: []};
 
             // Geometry Map //
             $scope.defaultLayers = [
