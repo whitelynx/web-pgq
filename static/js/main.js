@@ -474,13 +474,15 @@ angular.module('webPGQ')
 
             var queryParamRE = /\$(\d+)/g;
             var commentOrStringRE = /\/\*.*?(?:\n.*?)*?\*\/|--.*$|\$([a-zA-Z_]\w*)?\$.*?\$\1\$|(['"]).*?\2/g;
-            function getActiveQuery()
+            var statementSeparatorRE = /\w*;+\w*/g;
+            var whitespaceOnlyRE = /^\w*$/g;
+            function getActiveQueries()
             {
                 var activeTextAndStartPos = getActiveQueryText();
                 var activeText = activeTextAndStartPos.text, startIndex = activeTextAndStartPos.startIndex;
                 var queryParams = getQueryParams();
 
-                var referencedParams = [];
+                var queryTextParts = [], referencedParams = [];
 
                 function processParamsIn(substr)
                 {
@@ -498,26 +500,72 @@ angular.module('webPGQ')
                     });
                 } // end processParamsIn
 
-                var activeTextParts = [], lastMatchEnd = 0, match;
+                var queries = [];
+                var lastStmtEnd = 0, lastMatchEnd = 0, match;
+
+                function pushQuery()
+                {
+                    // We just reached the end of a statement; add it to the queries array, and clear our buffers.
+                    var queryText = queryTextParts.join('');
+                    if(whitespaceOnlyRE.test(queryText))
+                    {
+                        // This query chunk only contains whitespace; skip it.
+                        return;
+                    } // end if
+
+                    queries.push({
+                        text: queryText,
+                        values: referencedParams.map(function(paramIdx)
+                        {
+                            return queryParams[paramIdx - 1];
+                        }),
+                        startIndex: startIndex
+                    });
+                    console.log("Just pushed query:", queries[queries.length - 1]);
+
+                    queryTextParts = [];
+                    referencedParams = [];
+                    startIndex = activeTextAndStartPos.startIndex + lastStmtEnd;
+                } // end pushQuery
+
+                function processNextQueryChunk(chunk)
+                {
+                    chunk = processParamsIn(chunk);
+
+                    var lastStmtSepEnd = 0, stmtSepMatch;
+                    while((stmtSepMatch = statementSeparatorRE.exec(chunk)) !== null)
+                    {
+                        queryTextParts.push(chunk.slice(lastStmtSepEnd, stmtSepMatch.index));
+
+                        // Track the end index of the last statement separator in the current chunk.
+                        lastStmtSepEnd = statementSeparatorRE.lastIndex;
+
+                        // Track the end index of the last statement in the current active text.
+                        lastStmtEnd = lastMatchEnd + lastStmtSepEnd;
+
+                        // Push the query that we just finished processing.
+                        pushQuery();
+                    } // end while
+                } // end processNextQueryChunk
+
                 while((match = commentOrStringRE.exec(activeText)) !== null)
                 {
-                    activeTextParts.push(processParamsIn(activeText.slice(lastMatchEnd, match.index)));
-                    activeTextParts.push(match[0]);
+                    // Process the next chunk of query text.
+                    processNextQueryChunk(activeText.slice(lastMatchEnd, match.index));
+
+                    // Just push the comment or string, without processing its contents.
+                    queryTextParts.push(match[0]);
+
+                    // Track the end of the last match.
                     lastMatchEnd = commentOrStringRE.lastIndex;
                 } // end while
-                activeTextParts.push(processParamsIn(activeText.slice(lastMatchEnd)));
 
-                activeText = activeTextParts.join('');
+                // Process the last chunk of query text.
+                processNextQueryChunk(activeText.slice(lastMatchEnd));
+                pushQuery();
 
-                return {
-                    text: activeText,
-                    values: referencedParams.map(function(paramIdx)
-                    {
-                        return queryParams[paramIdx - 1];
-                    }),
-                    startIndex: startIndex
-                };
-            } // end getActiveQuery
+                return queries;
+            } // end getActiveQueries
 
             function highlightLastExecuted(isExplain)
             {
@@ -747,15 +795,14 @@ angular.module('webPGQ')
                     queryPromise.removeListener('fields', onFields);
                     queryPromise.removeListener('row', onRow);
 
-                    for(var key in response)
+                    _.forEach(response.queryResults, function(results, idx)
                     {
-                        if(key != 'rows')
-                        {
-                            currentResultSet[key] = response[key];
-                        } // end if
-                    } // end for
+                        _.assign(resultSets[idx], results);
+                    });
 
-                    console.log("runSQL call #" + runSQLCall + ": Complete response:", currentResultSet);
+                    _.assign(resultSets, _.omit(response, 'rows', 'queryResults'));
+
+                    console.log("runSQL call #" + runSQLCall + ": Complete response:", resultSets);
 
                     removeLayers(currentColumnLayerNames, true);
                     addLayers(geoJSONColumns);
@@ -767,7 +814,7 @@ angular.module('webPGQ')
                     $scope.query.running = false;
                     queueUpdate(0);
 
-                    return currentResultSet;
+                    return resultSets;
                 } // end onEnd
 
                 $scope.query.running = true;
@@ -816,11 +863,11 @@ angular.module('webPGQ')
 
             $scope.runQuery = function()
             {
-                var query = getActiveQuery();
+                var queries = getActiveQueries();
                 highlightLastExecuted();
 
                 runSQL({
-                    queries: [query],
+                    queries: queries,
                     rollback: false
                 })
                     .then($scope.showResults);
@@ -828,11 +875,11 @@ angular.module('webPGQ')
 
             $scope.testQuery = function()
             {
-                var query = getActiveQuery();
+                var queries = getActiveQueries();
                 highlightLastExecuted();
 
                 runSQL({
-                    queries: [query],
+                    queries: queries,
                     rollback: true
                 })
                     .then($scope.showResults);
@@ -847,15 +894,19 @@ angular.module('webPGQ')
 
             $scope.explainQuery = function(analyze)
             {
-                var query = getActiveQuery();
+                var queries = getActiveQueries();
                 highlightLastExecuted(true);
 
                 var explainLine = sql.formatExplain($scope.explainOptions, analyze);
-                query.text = explainLine + query.text;
-                query.startIndex -= explainLine.length;
+
+                _.forEach(queries, function(query)
+                {
+                    query.text = explainLine + query.text;
+                    query.startIndex -= explainLine.length;
+                });
 
                 runSQL({
-                    queries: [query],
+                    queries: queries,
                     rollback: true
                 })
                     .then(function(results)
@@ -1196,8 +1247,9 @@ angular.module('webPGQ')
             $scope.zoomFit = function() { $scope.$broadcast('ZoomFit'); };
             $scope.reRender = function() { $scope.$broadcast('Render'); };
 
-            var resultsContainer;
-            var messagesContainer, messagesAtBottom = true, ignoreMessagesContainerScroll = false;
+            var paramsContainer, resultsContainer, messagesContainer;
+
+            var messagesAtBottom = true, ignoreMessagesContainerScroll = false;
 
             function scrollResultsToTop()
             {
@@ -1244,6 +1296,8 @@ angular.module('webPGQ')
                         } // end if
                         break;
                 } // end switch
+
+                $scope.$broadcast('ResultsTabChanged');
             }); // end 'resultsTab' watch
 
             // Logger (also provides banner messages) //
@@ -1332,11 +1386,12 @@ angular.module('webPGQ')
                 }, 0);
             });
 
-            var scrollContainers;
             function updateScrollbars()
             {
                 mainEditorScrollbars.perfectScrollbar('update');
-                scrollContainers.perfectScrollbar('update');
+                paramsContainer.perfectScrollbar('update');
+                resultsContainer.perfectScrollbar('update');
+                messagesContainer.perfectScrollbar('update');
             } // end updateScrollbars
 
             $(function()
@@ -1380,8 +1435,8 @@ angular.module('webPGQ')
                         sidebarSplitterPos = curSidebarSplitterPos;
                     });
 
-                scrollContainers = $('#paramsSection');
-                scrollContainers.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
+                paramsContainer = $('#paramsSection');
+                paramsContainer.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
 
                 messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
                 messagesContainer.perfectScrollbar({ suppressScrollX: false, includePadding: true, minScrollbarLength: 12 });
@@ -1399,9 +1454,7 @@ angular.module('webPGQ')
                 });
 
                 resultsContainer = $('#resultsContainer');
-                resultsContainer.perfectScrollbar({ includePadding: true, minScrollbarLength: 12 });
-
-                scrollContainers = scrollContainers.add(messagesContainer).add(resultsContainer);
+                resultsContainer.perfectScrollbar({ includePadding: false, minScrollbarLength: 12 });
 
                 // Update scrollbars 500 milliseconds after page load.
                 $window.setTimeout(updateScrollbars, 500);
