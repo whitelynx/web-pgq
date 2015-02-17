@@ -721,45 +721,6 @@ svg .edgePath {
 	position: absolute;
 	top: 0.25em; bottom: 0;
 	left: 0; right: 0;
-	display: -ms-flexbox;
-	display: -webkit-flex;
-	display: flex;
-	-webkit-flex-direction: column;
-	-ms-flex-direction: column;
-	flex-direction: column;
-	-webkit-flex-wrap: nowrap;
-	-ms-flex-wrap: nowrap;
-	flex-wrap: nowrap;
-	-webkit-justify-content: flex-start;
-	-ms-flex-pack: start;
-	justify-content: flex-start;
-	-webkit-align-content: flex-start;
-	-ms-flex-line-pack: start;
-	align-content: flex-start;
-	-webkit-align-items: flex-start;
-	-ms-flex-align: start;
-	align-items: flex-start;
-	border-top: none;
-}
-
-#resultsArea > :nth-child(1) {
-	position: relative;
-	-webkit-flex: 0 1 auto;
-	-ms-flex: 0 1 auto;
-	flex: 0 1 auto;
-	-webkit-align-self: stretch;
-	-ms-flex-item-align: stretch;
-	align-self: stretch;
-}
-
-#resultsArea > :nth-child(2) {
-	position: relative;
-	-webkit-flex: 1 1 auto;
-	-ms-flex: 1 1 auto;
-	flex: 1 1 auto;
-	-webkit-align-self: stretch;
-	-ms-flex-item-align: stretch;
-	align-self: stretch;
 }
 
 #plan-diagram-dimmer.ui.dimmer > .content,
@@ -978,7 +939,11 @@ td > .ui.button:last-child {
 }
 
 #resultsTabs {
-	height: 50%;
+	position: absolute;
+	top: 2.3rem;
+	bottom: 0;
+	left: 0; right: 0;
+	height: auto;
 	z-index: 0;
 	border-bottom: none;
 }
@@ -1050,10 +1015,8 @@ a.ui.label {
 	-webkit-tap-highlight-color: transparent;
 }
 
-/* Fixes 1px gap at bottom of screen. */
 #resultsTabs.attached.ui.segment {
-	top: 0;
-	margin-top: -1;
+	padding: 0;
 }
 
 #resultsContainer {
@@ -1062,18 +1025,62 @@ a.ui.label {
 	position: absolute;
 	top: 0; bottom: 0;
 	left: 0; right: 0;
-	padding: 1em 1em 1.5em;
+	padding: 0;
+}
+
+#resultsContainerScroll {
+	clear: both;
+	overflow: scroll;
+	position: absolute;
+	height: 100%;
+	top: 0; bottom: 0;
+	right: 0;
+	width: 10px;
+	visibility: hidden;
+	z-index: -100;
+}
+
+.resultSet {
+	margin-top: 1rem;
+}
+.resultSet:first-child {
+	margin-top: 0;
+}
+
+sticky {
+	position: static;
+}
+sticky.ui.header {
+	display: block;
+	margin: 0 -1px 0.5rem;
+	padding: 0.5rem 1px 0.25rem;
+	background: white;
+	z-index: 100;
+}
+sticky.fixed {
+	position: fixed;
+	right: 0;
+	left: 0;
+}
+sticky.fixed.ui.header {
+	margin: 0;
+	z-index: 0;
+}
+
+.sticky-placeholder {
+	display: block;
+	position: static;
+	visibility: hidden;
+	z-index: -100;
+}
+
+#resultsContainer > div.padding {
+	padding: 1rem;
 }
 
 #settings-button {
 	border-top-right-radius: 0.25em;
 	border-bottom-right-radius: 0.25em;
-}
-
-#noRowsLabel {
-	position: absolute;
-	top: 1rem;
-	left: -1rem;
 }
 
 #resultsTabs > div .top.right.attached.ui.labels {
