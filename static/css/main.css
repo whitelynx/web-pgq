@@ -895,6 +895,7 @@ td > .ui.button:last-child {
 	text-align: right;
 }
 
+.item .ui.right.buttons,
 .item .ui.right.button {
 	float: right;
 }
@@ -1143,8 +1144,27 @@ sticky.fixed.ui.header {
 .ui.dropdown .menu .item > .label,
 .ui.menu .item > .label {
 	padding: 0.3em;
+	margin-top: -0.25em;
+	margin-bottom: 0;
+}
+
+.ui.dropdown .menu .item > .ui.right.buttons,
+.ui.dropdown .menu .item > .right.label,
+.ui.menu .item > .right.label {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.65rem;
 	margin-top: 0;
 	margin-bottom: 0;
+	margin-right: 0;
+}
+
+.ui.dropdown .menu .two.button.item {
+	padding-right: 4.5em !important;
+}
+
+.ui.dropdown .menu .item > .ui.button {
+	margin-top: -0.5em;
 }
 
 .ui.popup.menu {
@@ -1216,6 +1236,9 @@ sticky.fixed.ui.header {
 .ui.label > .middle.detail {
 	margin-left: 0;
 }
+
+/* FIX: Don't set font size to 0em in dropdown menus! */
+.ui.menu:not(.vertical) .dropdown .menu { font-size: 1rem; }
 
 /* FIX: Don't leave so much space next to right-floated buttons in dropdown menus. */
 .right.icon.ui.button:first-child { margin-right: -0.75rem; }
