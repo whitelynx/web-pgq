@@ -246,7 +246,7 @@ angular.module('webPGQ.services')
                     });
 
                     graph.addEdge(null, childInfo.id, topNodeID,
-                        updateEdge({}, childInfo.planNode, { weight: idx === 0 ? 1 : 0, style: 'stroke: #bbb' })
+                        updateEdge({}, childInfo.planNode, { weight: idx === 0 ? 1 : 0, style: 'stroke: #bbb; stroke-dasharray: 2%' })
                     );
                 });
 
