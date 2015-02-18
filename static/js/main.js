@@ -795,9 +795,17 @@ angular.module('webPGQ')
                     queryPromise.removeListener('fields', onFields);
                     queryPromise.removeListener('row', onRow);
 
+                    resultSets.status = response.status;
+                    resultSets.totalTimeMS = response.totalTimeMS;
+                    resultSets.totalRows = 0;
+                    resultSets.totalRowsAffected = 0;
+
                     _.forEach(response.queryResults, function(results, idx)
                     {
                         _.assign(resultSets[idx], results);
+
+                        resultSets.totalRows += results.rowCount;
+                        resultSets.totalRowsAffected += results.affectedRowCount;
                     });
 
                     _.assign(resultSets, _.omit(response, 'rows', 'queryResults'));
