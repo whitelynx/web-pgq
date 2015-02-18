@@ -49,6 +49,9 @@ angular.module('webPGQ.directives')
                 stickyFixedElems.push(element);
                 context.data('stickyFixedElems', stickyFixedElems);
 
+                // If we are currently set as the context's stickyOpacityElem, unset it.
+                unsetStickyOpacityElem();
+
                 isFixed = true;
             } // end makeFixed
 
@@ -122,17 +125,46 @@ angular.module('webPGQ.directives')
                             var opacity = (placeholderOffset.top - contextOffset.top) / lastStickyFixedElem.outerHeight();
 
                             lastStickyFixedElem.css({ opacity: opacity });
-                        }
-                        else
-                        {
-                            var stickyOpacityElem = context.data('stickyOpacityElem');
-                            if(stickyOpacityElem === element)
-                            {
-                            } // end if
+
+                            context.data('stickyOpacityElem', element);
+
+                            // Don't remove us as the stickyOpacityElem; return instead.
+                            return;
                         } // end if
                     } // end if
                 } // end if
+
+                // If we are currently set as the context's stickyOpacityElem, unset it. (if we should be the current
+                // stickyOpacityElem, we should have returned above)
+                unsetStickyOpacityElem();
             });
+
+            // If we are currently set as the context's stickyOpacityElem, unset it and schedule opacity update if needed.
+            function unsetStickyOpacityElem()
+            {
+                var stickyOpacityElem = context.data('stickyOpacityElem');
+                if(stickyOpacityElem === element)
+                {
+                    context.removeData('stickyOpacityElem');
+
+                    if(!context.data('stickyOpacityUpdateScheduled'))
+                    {
+                        window.requestAnimationFrame(updateFixedElemOpacity);
+                        context.data('stickyOpacityUpdateScheduled', true);
+                    } // end if
+                } // end if
+            } // end unsetStickyOpacityElem
+
+            function updateFixedElemOpacity()
+            {
+                context.removeData('stickyOpacityUpdateScheduled');
+
+                if(!context.data('stickyOpacityElem'))
+                {
+                    var stickyFixedElems = context.data('stickyFixedElems') || [];
+                    stickyFixedElems[stickyFixedElems.length - 1].css({ opacity: 1 });
+                } // end if
+            } // end updateFixedElemOpacity
         } // end link
 
         return {
