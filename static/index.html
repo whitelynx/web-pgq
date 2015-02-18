@@ -164,14 +164,14 @@
 						<div ui-ace="mainEditorConfig" ng-model="query.text"></div>
 						<div class="hiding bottom right attached ui labels">
 							<div class="small compact ui label" ng-if="editor.overwrite">
-								<div class="detail">OVR</div>
+								<div class="middle detail">OVR</div>
 							</div>
 							<div class="small compact ui label">
-								<span>row</span> <div class="detail">{{ editor.pos.row }}</div>
-								/ <div class="detail">{{ editor.rows }}</div>
+								row <div class="detail">{{ editor.pos.row }}</div>
+								/ <div class="middle detail">{{ editor.rows }}</div>
 							</div>
 							<div class="small compact ui label">
-								<span>column</span> <div class="detail">{{ editor.pos.column }}</div>
+								column <div class="detail">{{ editor.pos.column }}</div>
 							</div>
 						</div>
 					</bg-pane>
@@ -655,17 +655,16 @@
 								<sticky context="#resultsContainer" scrollContext="#resultsContainer" class="small dividing ui header">
 									Result Set {{ $index + 1 }} / {{ resultSets.length }}
 
-									<div class="small compact ui label">
-										<span>Rows:</span> <div class="detail">{{ resultSet.rowCount || 0 }}</div>
-									</div>
-									<div class="small compact ui label" ng-if="resultSet && resultSet.affectedRowCount">
-										<span>Affected:</span> <div class="detail">{{ resultSet.affectedRowCount }}</div>
-									</div>
-									<div class="small compact ui label" ng-if="resultSet && resultSet.status">
-										{{ resultSet.status|capitalizeWords }}
-									</div>
-									<div class="small compact ui label" ng-if="resultSet && resultSet.totalTimeMS">
-										<div class="detail">{{ resultSet.totalTimeMS }}</div> <span>ms</span>
+									<div class="tiny right floated ui header">
+										<div class="small compact ui label">
+											Rows <div class="detail">{{ resultSet.rowCount || 0 }}</div>
+										</div>
+										<div class="small compact ui label" ng-if="resultSet && resultSet.affectedRowCount">
+											Affected <div class="detail">{{ resultSet.affectedRowCount }}</div>
+										</div>
+										<div class="small compact ui label" ng-if="resultSet && resultSet.totalTimeMS">
+											<div class="left detail">{{ resultSet.totalTimeMS }}</div> <span>ms</span>
+										</div>
 									</div>
 								</sticky>
 
@@ -703,17 +702,17 @@
 					</div>
 
 					<div class="hiding bottom right attached ui labels" ng-class="{black: resultsTab == 'Messages'}">
+						<div class="small compact ui label" ng-if="resultSets && resultSets.status">
+							{{ resultSets.status|capitalizeWords }}
+						</div>
 						<div class="small compact ui label">
-							<span>Rows:</span> <div class="detail">{{ results.rowCount || 0 }}</div>
+							Total Rows <div class="detail">{{ resultSets.totalRows || 0 }}</div>
 						</div>
-						<div class="small compact ui label" ng-if="results && results.affectedRowCount">
-							<span>Affected:</span> <div class="detail">{{ results.affectedRowCount }}</div>
+						<div class="small compact ui label" ng-if="resultSets && resultSets.totalRowsAffected">
+							Total Affected <div class="detail">{{ resultSets.totalRowsAffected }}</div>
 						</div>
-						<div class="small compact ui label" ng-if="results && results.status">
-							{{ results.status|capitalizeWords }}
-						</div>
-						<div class="small compact ui label" ng-if="results && results.totalTimeMS">
-							<div class="detail">{{ results.totalTimeMS }}</div> <span>ms</span>
+						<div class="small compact ui label" ng-if="resultSets && resultSets.totalTimeMS">
+							<div class="left detail">{{ resultSets.totalTimeMS }}</div> ms
 						</div>
 					</div>
 				</div>
