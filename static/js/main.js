@@ -473,9 +473,9 @@ angular.module('webPGQ')
             } // end getQueryParams
 
             var queryParamRE = /\$(\d+)/g;
-            var commentOrStringRE = /\/\*.*?(?:\n.*?)*?\*\/|--.*$|\$([a-zA-Z_]\w*)?\$.*?\$\1\$|(['"]).*?\2/g;
+            var commentOrStringRE = /--.*$|\/\*.*?(?:\n.*?)*?\*\/|\$([a-zA-Z_]\w*)?\$.*?\$\1\$|(['"]).*?\2/g;
             var statementSeparatorRE = /\s*;+\s*/g;
-            var whitespaceOnlyRE = /^\s*$/g;
+            var whitespaceOrCommentOnlyRE = /^\s*(?:(?:--.*$|\/\*.*?(?:\n.*?)*?\*\/)\s*)*$/g;
             function getActiveQueries()
             {
                 var activeTextAndStartPos = getActiveQueryText();
@@ -507,7 +507,7 @@ angular.module('webPGQ')
                 {
                     // We just reached the end of a statement; add it to the queries array, and clear our buffers.
                     var queryText = queryTextParts.join('');
-                    if(whitespaceOnlyRE.test(queryText))
+                    if(whitespaceOrCommentOnlyRE.test(queryText))
                     {
                         // This query chunk only contains whitespace; skip it.
                         return;
