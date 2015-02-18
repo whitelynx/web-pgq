@@ -694,10 +694,10 @@ angular.module('webPGQ')
                     return (haystack.indexOf(needle) != -1);
                 } // end contains
 
-                function onFields(resultSetNum, fields)
+                function onFields(statementNum, fields)
                 {
-                    console.log("Starting result set", resultSetNum);
-                    currentResultSet = {rows: [], noticeMessages: [], num: resultSetNum};
+                    console.log("Starting result set", statementNum);
+                    currentResultSet = {rows: [], noticeMessages: [], num: statementNum};
                     resultSets.push(currentResultSet);
 
                     currentResultSet.fields = fields;
@@ -748,7 +748,7 @@ angular.module('webPGQ')
                     queueUpdate();
                 } // end onFields
 
-                function onRow(resultSetNum, row)
+                function onRow(statementNum, row)
                 {
                     currentResultSet.rows.push(row);
 
