@@ -474,8 +474,8 @@ angular.module('webPGQ')
 
             var queryParamRE = /\$(\d+)/g;
             var commentOrStringRE = /\/\*.*?(?:\n.*?)*?\*\/|--.*$|\$([a-zA-Z_]\w*)?\$.*?\$\1\$|(['"]).*?\2/g;
-            var statementSeparatorRE = /\w*;+\w*/g;
-            var whitespaceOnlyRE = /^\w*$/g;
+            var statementSeparatorRE = /\s*;+\s*/g;
+            var whitespaceOnlyRE = /^\s*$/g;
             function getActiveQueries()
             {
                 var activeTextAndStartPos = getActiveQueryText();
