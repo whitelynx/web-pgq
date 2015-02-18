@@ -24,8 +24,12 @@ angular.module('webPGQ.directives')
                 var elementOffset = element.offset();
 
                 placeholder
-                    .width(element.outerWidth())
-                    .height(element.outerHeight());
+                    .css({
+                        width: element.outerWidth(),
+                        height: element.outerHeight(),
+                        'margin-top': element.css('margin-top'),
+                        'margin-bottom': element.css('margin-bottom')
+                    });
 
                 element
                     .css({
@@ -34,6 +38,16 @@ angular.module('webPGQ.directives')
                         right: elementOffset.left
                     })
                     .addClass('fixed');
+
+                var stickyFixedElems = context.data('stickyFixedElems') || [];
+
+                if(stickyFixedElems.length > 0)
+                {
+                    stickyFixedElems[stickyFixedElems.length - 1].css({ opacity: 0 });
+                } // end if
+
+                stickyFixedElems.push(element);
+                context.data('stickyFixedElems', stickyFixedElems);
 
                 isFixed = true;
             } // end makeFixed
@@ -44,12 +58,28 @@ angular.module('webPGQ.directives')
 
                 var placeholderOffset = placeholder.offset();
 
+                var stickyFixedElems = context.data('stickyFixedElems') || [];
+
+                var thisElemIdx = stickyFixedElems.indexOf(element);
+                if(thisElemIdx != -1)
+                {
+                    stickyFixedElems.splice(thisElemIdx, 1); // Remove this element from the stack.
+                    context.data('stickyFixedElems', stickyFixedElems);
+
+                    element.css({ opacity: '' });
+
+                    if(thisElemIdx == stickyFixedElems.length && thisElemIdx > 0)
+                    {
+                        stickyFixedElems[thisElemIdx - 1].css({ opacity: '' });
+                    } // end if
+                } // end if
+
                 element
                     .css({ top: placeholderOffset.top, left: placeholderOffset.left, right: '' })
                     .removeClass('fixed');
 
                 placeholder
-                    .height(0);
+                    .css({ height: 0, 'margin-top': 0, 'margin-bottom': 0 });
 
                 isFixed = false;
             } // end makeStatic
@@ -79,6 +109,28 @@ angular.module('webPGQ.directives')
                 else
                 {
                     makeStatic();
+
+                    var stickyFixedElems = context.data('stickyFixedElems') || [];
+
+                    if(stickyFixedElems.length > 0)
+                    {
+                        var lastStickyFixedElem = stickyFixedElems[stickyFixedElems.length - 1];
+                        var stickyElemBottom = contextOffset.top + lastStickyFixedElem.outerHeight();
+
+                        if(placeholderOffset.top < stickyElemBottom)
+                        {
+                            var opacity = (placeholderOffset.top - contextOffset.top) / lastStickyFixedElem.outerHeight();
+
+                            lastStickyFixedElem.css({ opacity: opacity });
+                        }
+                        else
+                        {
+                            var stickyOpacityElem = context.data('stickyOpacityElem');
+                            if(stickyOpacityElem === element)
+                            {
+                            } // end if
+                        } // end if
+                    } // end if
                 } // end if
             });
         } // end link
