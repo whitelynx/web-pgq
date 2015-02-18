@@ -546,6 +546,8 @@ angular.module('webPGQ')
                         // Push the query that we just finished processing.
                         pushQuery();
                     } // end while
+
+                    queryTextParts.push(chunk.slice(lastStmtSepEnd));
                 } // end processNextQueryChunk
 
                 while((match = commentOrStringRE.exec(activeText)) !== null)
