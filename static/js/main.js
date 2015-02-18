@@ -921,8 +921,22 @@ angular.module('webPGQ')
                     {
                         console.log("$scope.explainQuery got results:", results);
 
+                        var plans = _.reduce(results, function(accum, resultSet)
+                        {
+                            var rsPlans = resultSet.rows[0][0];
+
+                            // PostgreSQL < 9.2 returns JSON plans as strings.
+                            if(_.isString(rsPlans))
+                            {
+                                rsPlans = JSON.parse(rsPlans);
+                            } // end if
+
+                            return accum.concat(rsPlans);
+                        }, []);
+                        console.log("$scope.explainQuery: plans =", plans);
+
                         $scope.planKeys = _.union.apply(_,
-                            _.map(results.rows[0][0], function(plan)
+                            _.map(plans, function(plan)
                             {
                                 return _.filter(_.keys(plan.Plan), function(key)
                                 {
@@ -976,7 +990,7 @@ angular.module('webPGQ')
                             )
                         );
 
-                        $scope.graph = results ? graph.fromPlan(results.rows[0][0], $scope.lineWidthKey) : null;
+                        $scope.graph = graph.fromPlan(plans, $scope.lineWidthKey);
 
                         if($scope.graph)
                         {
