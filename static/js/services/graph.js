@@ -63,7 +63,7 @@ angular.module('webPGQ.services')
             var edgePercent = maxEdgeWidthValue ? (child[edgeWidthKey] || 0) / maxEdgeWidthValue : 0;
             var edgeSize = (edgePercent * edgeWidthRange) + minEdgeWidth;
 
-            edge.style = 'stroke-width: ' + edgeSize + 'px';
+            edge.style = (edge.style ? edge.style + ';' : '') + 'stroke-width: ' + edgeSize + 'px';
 
             return edge;
         } // end updateEdge
@@ -224,7 +224,7 @@ angular.module('webPGQ.services')
                 metadata['Maximum ' + edgeWidthKey] = maxEdgeWidthValue;
                 topNodeID = graph.addNode(null, { label: 'Total', metadata: metadata });
 
-                plans.forEach(function(plan)
+                plans.forEach(function(plan, idx)
                 {
                     var childInfo = graphService.nodesFromPlan(plan.Plan);
                     var childData = graph.node(childInfo.id);
@@ -246,7 +246,7 @@ angular.module('webPGQ.services')
                     });
 
                     graph.addEdge(null, childInfo.id, topNodeID,
-                        updateEdge({}, childInfo.planNode)
+                        updateEdge({}, childInfo.planNode, { weight: idx === 0 ? 1 : 0, style: 'stroke: #bbb' })
                     );
                 });
 
