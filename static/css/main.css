@@ -1205,6 +1205,18 @@ sticky.fixed.ui.header {
 	padding-right: 0.8em;
 }
 
+/* Tweak margins on label details. */
+.ui.label > .detail {
+	margin-left: 0.5em;
+}
+.ui.label > .left.detail {
+	margin-left: 0;
+	margin-right: 0.5em;
+}
+.ui.label > .middle.detail {
+	margin-left: 0;
+}
+
 /* FIX: Don't leave so much space next to right-floated buttons in dropdown menus. */
 .right.icon.ui.button:first-child { margin-right: -0.75rem; }
 
@@ -1227,16 +1239,6 @@ sticky.fixed.ui.header {
 /* FIX: Set the font family of input elements to use a font that actually supports antialiasing in Linux. */
 .ui.input input {
 	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
-}
-
-/* FIX: Remove left margin from any detail that is the first child of a label. */
-.ui.label > .detail:first-child {
-	margin-left: 0;
-}
-
-/* FIX: Add right margin from any detail that is not the last child of a label. */
-.ui.label > .detail:not(:last-child) {
-	margin-right: 0.5em;
 }
 
 /* FIX: Remove right margin and transparency from any icon that is the only child of a label. */
