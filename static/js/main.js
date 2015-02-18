@@ -1215,7 +1215,7 @@ angular.module('webPGQ')
                             } // end if
                         });
 
-                        $scope.availableLayers = _.values(layers);
+                        $scope.availableLayers = layers.array_.slice(0);
                         olData.setLayers(layers);
 
                         console.log("setLayers:", layers);
@@ -1247,7 +1247,7 @@ angular.module('webPGQ')
                             } // end if
                         });
 
-                        $scope.availableLayers = _.values(layers);
+                        $scope.availableLayers = layers.array_.slice(0);
                         olData.setLayers(layers);
 
                         console.log("setLayers:", layers);
