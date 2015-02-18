@@ -721,6 +721,9 @@
 							{{ resultSets.status|capitalizeWords }}
 						</div>
 						<div class="small compact ui label">
+							Statements <div class="detail">{{ resultSets.length || 0 }}</div>
+						</div>
+						<div class="small compact ui label">
 							Total Rows <div class="detail">{{ resultSets.totalRows || 0 }}</div>
 						</div>
 						<div class="small compact ui label" ng-if="resultSets && resultSets.totalRowsAffected">
