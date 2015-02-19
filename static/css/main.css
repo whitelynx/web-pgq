@@ -978,15 +978,16 @@ td > .ui.button:last-child {
 	width: 20rem; /*WTF??*/
 }
 #layers-dropdown.menu > .item {
-	padding-right: 5em !important;
+	padding-right: 4.75em !important;
 }
 #layers-dropdown.menu > .item > .squarish.ui.label {
 	position: absolute;
 	top: 0.85em;
-	right: 1em;
+	right: 1.25em;
+	margin-right: 0;
 }
 #layers-dropdown.menu > .item > .squarish.check.ui.label {
-	right: 3em;
+	right: 3.25em;
 }
 #layers-dropdown.ui.menu .icon {
 	font-size: 1em;
@@ -996,11 +997,18 @@ td > .ui.button:last-child {
 }
 
 .color.icon,
-.ui.label .color.icon {
+.ui.dropdown .menu > .item > .color.icon {
 	display: inline-block;
 	width: 1.22em;
 	height: 1.22em;
 	border: 1px solid #000;
+	margin-right: 0.25em;
+}
+
+.ui.dropdown .menu > .item > .color.icon,
+.ui.menu > .item > .color.icon {
+	margin-top: 0;
+	margin-bottom: -0.25em;
 }
 
 #resultsTabs > .ui.bottom.right.attached.label {
@@ -1176,7 +1184,7 @@ sticky.fixed.ui.header::before {
 }
 
 .ui.dropdown .menu .two.button.item {
-	padding-right: 4.5em !important;
+	padding-right: 4.75em !important;
 }
 
 .ui.dropdown .menu .item > .ui.button {
