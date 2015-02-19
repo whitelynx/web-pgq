@@ -584,13 +584,13 @@
 											ng-click="eatEvent($event, toggleMapLayer, layer)"
 											ng-class="{active: layer.active, teal: layer.active}">
 
-										<div class="squarish check ui label" ng-class="{teal: val.enabled}">
-											<i class="icon" ng-class="{disabled: !layer.active, checkmark: layer.active}"></i>
-										</div>
-
 										<i class="color icon" ng-if="layer.htmlColor" ng-style="{'background-color': layer.htmlColor}"></i>
 										{{ layer.display || layer.name }}
 										<em ng-if="layer.queryID">(query # {{layer.queryID}})</em>
+
+										<div class="squarish check ui label" ng-class="{teal: val.enabled}">
+											<i class="icon" ng-class="{disabled: !layer.active, checkmark: layer.active}"></i>
+										</div>
 
 										<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.hasExtent}"
 												title="Zoom to fit" ng-click="eatEvent($event, centerMapLayer, layer)">
