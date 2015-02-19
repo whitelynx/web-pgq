@@ -1067,12 +1067,28 @@ sticky.fixed {
 sticky.fixed.ui.header {
 	margin: 0;
 }
+sticky.fixed.ui.header::before {
+	content: " ";
+	position: absolute;
+	top: 0;
+	bottom: -1px;
+	left: -1em;
+	right: -1em;
+	z-index: -1;
+	background: white;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
 
 .sticky-placeholder {
 	display: block;
 	position: static;
 	visibility: hidden;
 	z-index: -100;
+}
+
+.sticky-container > .ps-scrollbar-x-rail,
+.sticky-container > .ps-scrollbar-y-rail {
+	z-index: 101;
 }
 
 #resultsContainer > div.padding {
