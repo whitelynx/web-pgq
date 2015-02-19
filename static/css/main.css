@@ -1050,7 +1050,7 @@ a.ui.label {
 }
 
 sticky {
-	position: static;
+	position: relative;
 }
 sticky.ui.header {
 	display: block;

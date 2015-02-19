@@ -59,8 +59,6 @@ angular.module('webPGQ.directives')
             {
                 if(!isFixed) { return; }
 
-                var placeholderOffset = placeholder.offset();
-
                 var stickyFixedElems = context.data('stickyFixedElems') || [];
 
                 var thisElemIdx = stickyFixedElems.indexOf(element);
@@ -78,7 +76,7 @@ angular.module('webPGQ.directives')
                 } // end if
 
                 element
-                    .css({ top: placeholderOffset.top, left: placeholderOffset.left, right: '' })
+                    .css({ top: 0, left: 0, right: '' })
                     .removeClass('fixed');
 
                 placeholder
@@ -112,6 +110,8 @@ angular.module('webPGQ.directives')
                 else
                 {
                     makeStatic();
+
+                    element.css({ left: context.scrollLeft() });
 
                     var stickyFixedElems = context.data('stickyFixedElems') || [];
 
@@ -171,7 +171,6 @@ angular.module('webPGQ.directives')
             restrict: 'E',
             scope: {
                 context: '@',
-                scrollContext: '@',
                 pushing: '='
             },
             link: link
