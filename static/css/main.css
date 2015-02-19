@@ -1066,7 +1066,6 @@ sticky.fixed {
 }
 sticky.fixed.ui.header {
 	margin: 0;
-	z-index: 0;
 }
 
 .sticky-placeholder {
