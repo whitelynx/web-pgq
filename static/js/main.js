@@ -427,7 +427,6 @@ angular.module('webPGQ')
                 {
                     $timeout(function()
                     {
-                        console.log("Query param(s) added, digest done.");
                         $('.ui.dropdown').dropdown();
                         $("#queryParam_" + $scope.query.params.length).focus();
                     }, 0, false);
@@ -521,7 +520,6 @@ angular.module('webPGQ')
                         }),
                         startIndex: startIndex
                     });
-                    console.log("Just pushed query:", queries[queries.length - 1]);
 
                     queryTextParts = [];
                     referencedParams = [];
@@ -613,7 +611,6 @@ angular.module('webPGQ')
                 errorMarkerID = undefined;
 
                 var runSQLCall = ++runSQLCallCount;
-                console.log("Starting runSQL call #" + runSQLCall);
 
                 var resultSets = [];
                 var currentResultSet;
@@ -696,13 +693,11 @@ angular.module('webPGQ')
 
                 function onFields(statementNum, fields)
                 {
-                    console.log("Starting result set", statementNum);
                     currentResultSet = {rows: [], noticeMessages: [], num: statementNum};
                     resultSets.push(currentResultSet);
 
                     currentResultSet.fields = fields;
 
-                    console.log("Got fields:", fields);
                     var geomFieldLayerNames = [];
                     fields.forEach(function(field, idx)
                     {
@@ -791,8 +786,6 @@ angular.module('webPGQ')
 
                 function onEnd(response)
                 {
-                    console.log("runSQL call #" + runSQLCall + ": Done:", response);
-
                     sql.removeListener('notice', onNotice);
                     queryPromise.removeListener('fields', onFields);
                     queryPromise.removeListener('row', onRow);
@@ -812,14 +805,10 @@ angular.module('webPGQ')
 
                     _.assign(resultSets, _.omit(response, 'rows', 'queryResults'));
 
-                    console.log("runSQL call #" + runSQLCall + ": Complete response:", resultSets);
-
                     removeLayers(currentColumnLayerNames, true);
                     addLayers(geoJSONColumns);
 
                     currentColumnLayerNames = _.pluck(geoJSONColumns, 'name');
-                    console.log("Set currentColumnLayerNames to:", currentColumnLayerNames);
-                    console.log("...from geoJSONColumns:", geoJSONColumns);
 
                     $scope.query.running = false;
                     queueUpdate(0);
@@ -921,8 +910,6 @@ angular.module('webPGQ')
                 })
                     .then(function(results)
                     {
-                        console.log("$scope.explainQuery got results:", results);
-
                         var plans = _.reduce(results, function(accum, resultSet)
                         {
                             var rsPlans = resultSet.rows[0][0];
@@ -935,7 +922,6 @@ angular.module('webPGQ')
 
                             return accum.concat(rsPlans);
                         }, []);
-                        console.log("$scope.explainQuery: plans =", plans);
 
                         $scope.planKeys = _.union.apply(_,
                             _.map(plans, function(plan)
@@ -1057,7 +1043,7 @@ angular.module('webPGQ')
                         }
                         else
                         {
-                            console.log("Couldn't find default layer definition for layer", index);
+                            console.warn("Couldn't find default layer definition for layer", index);
                         } // end if
                     });
 
@@ -1140,8 +1126,6 @@ angular.module('webPGQ')
             $scope.toggleMapLayer = function(layer)
             {
                 layer.active = !layer.active;
-
-                console.log("Toggled map layer:", layer);
             }; // end $scope.toggleMapLayer
 
             function extendLayer(layer, layerDef)
@@ -1196,7 +1180,6 @@ angular.module('webPGQ')
 
             function addLayers(layerDefs)
             {
-                console.log("addLayers: arguments =", arguments);
                 olData.getMap().then(function(map)
                 {
                     olData.getLayers().then(function(layers)
@@ -1218,8 +1201,6 @@ angular.module('webPGQ')
                         $scope.availableLayers = layers.array_.slice(0);
                         olData.setLayers(layers);
 
-                        console.log("setLayers:", layers);
-                        console.log("Set availableLayers to:", $scope.availableLayers);
                         applyIfNecessary();
                     });
                 });
@@ -1227,7 +1208,6 @@ angular.module('webPGQ')
 
             function removeLayers(layerNames, onlyIfHidden)
             {
-                console.log("removeLayers: arguments =", arguments);
                 olData.getMap().then(function(map)
                 {
                     olData.getLayers().then(function(layers)
@@ -1250,8 +1230,6 @@ angular.module('webPGQ')
                         $scope.availableLayers = layers.array_.slice(0);
                         olData.setLayers(layers);
 
-                        console.log("setLayers:", layers);
-                        console.log("Set availableLayers to:", $scope.availableLayers);
                         applyIfNecessary();
                     });
                 });
