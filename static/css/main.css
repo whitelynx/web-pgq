@@ -995,7 +995,8 @@ td > .ui.button:last-child {
 	opacity: 1;
 }
 
-.color.icon {
+.color.icon,
+.ui.label .color.icon {
 	display: inline-block;
 	width: 1.22em;
 	height: 1.22em;

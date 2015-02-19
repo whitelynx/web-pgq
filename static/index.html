@@ -588,8 +588,8 @@
 											<i class="icon" ng-class="{disabled: !layer.active, checkmark: layer.active}"></i>
 										</div>
 
-										{{ layer.display || layer.name }}
 										<i class="color icon" ng-if="layer.htmlColor" ng-style="{'background-color': layer.htmlColor}"></i>
+										{{ layer.display || layer.name }}
 										<em ng-if="layer.queryID">(query # {{layer.queryID}})</em>
 
 										<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.hasExtent}"
