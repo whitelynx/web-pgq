@@ -14,6 +14,7 @@ angular.module('webPGQ.directives')
                 .insertBefore(element);
 
             var context = $(scope.context);
+            context.addClass('sticky-container');
             var isFixed = false;
 
             function makeFixed()
