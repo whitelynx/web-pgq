@@ -1025,33 +1025,8 @@ angular.module('webPGQ')
                 { display: 'OpenStreetMap', source: { type: "OSM" }, active: true },
                 { display: 'Stamen Terrain', source: { type: "Stamen", layer: "terrain" } }
             ];
-            $scope.availableLayers = [];
+            $scope.availableLayers = $scope.defaultLayers.slice();
             var currentColumnLayerNames = [];
-
-            $window.setTimeout(function()
-            {
-                olData.getLayers().then(function(layers)
-                {
-                    $scope.availableLayers = [];
-                    layers.forEach(function(layer, index)
-                    {
-                        if($scope.defaultLayers[index])
-                        {
-                            extendLayer(layer, $scope.defaultLayers[index]);
-
-                            $scope.availableLayers.push(layer);
-                        }
-                        else
-                        {
-                            console.warn("Couldn't find default layer definition for layer", index);
-                        } // end if
-                    });
-
-                    olData.setLayers(layers);
-
-                    applyIfNecessary();
-                });
-            }, 0);
 
             function colorArrayAlpha(colorArr, a) { return 'rgba(' + colorArr.concat(a).join(',') + ')'; }
 
@@ -1104,135 +1079,69 @@ angular.module('webPGQ')
             {
                 if(nextFunc)
                 {
-                    nextFunc.apply(this, _.rest(arguments, 2));
+                    nextFunc.apply(this, _.slice(arguments, 2));
                 } // end if
 
                 event.stopPropagation();
             }; // end $scope.eatEvent
 
-            $scope.centerMapLayer = function(layer)
+            var addLayers;
+            olData.getMap().then(function(map)
             {
-                if(layer.hasExtent)
-                {
-                    olData.getMap().then(function(map)
-                    {
-                        var source = layer.getSource();
-                        var extent = source.getExtent();
-                        map.getView().fitExtent(extent, map.getSize());
-                    });
-                } // end if
-            }; // end $scope.centerMapLayer
-
-            $scope.toggleMapLayer = function(layer)
-            {
-                layer.active = !layer.active;
-            }; // end $scope.toggleMapLayer
-
-            function extendLayer(layer, layerDef)
-            {
-                layer.name = layerDef.name;
-                layer.display = layerDef.display;
-                layer.color = layerDef.color;
-                layer.htmlColor = layerDef.htmlColor;
-                layer.queryID = layerDef.queryID;
-
-                Object.defineProperty(layer, 'active', {
-                    get: function()
-                    {
-                        return this.getVisible();
-                    },
-                    set: function(active)
-                    {
-                        this.setVisible(active);
-                    }
+                var select = new ol.interaction.Select({
+                    condition: ol.events.condition.mouseMove
                 });
+                map.addInteraction(select);
 
-                Object.defineProperty(layer, 'hasExtent', {
-                    get: function()
-                    {
-                        return typeof this.getSource().getExtent == 'function';
-                    }
-                });
-
-                // Since layers default to visible, we need to hide any that aren't marked as active.
-                layer.active = Boolean(layerDef.active);
-
-                layer.getSource().on('change', function()
+                addLayers = function(layerDefs)
                 {
-                    $scope.geometryLoading = false;
-                    $scope.geometryError = false;
-
-                    olData.getLayers().then(function(layers)
+                    _.forEach(layerDefs, function(layerDef)
                     {
-                        layers.forEach(function(layer)
+                        var layer;
+
+                        layerDef.toggle = function()
                         {
-                            switch(layer.getSourceState())
-                            {
-                                case 'loading': $scope.geometryLoading = true; break;
-                                case 'error': $scope.geometryError = true; break;
-                            } // end switch
-                        });
+                            layerDef.active = !layerDef.active;
+                        }; // end layerDef.toggle
 
-                        applyIfNecessary();
-                    });
-                });
-            } // end extendLayer
-
-            function addLayers(layerDefs)
-            {
-                olData.getMap().then(function(map)
-                {
-                    olData.getLayers().then(function(layers)
-                    {
-                        var mapProjection = layers[_.first(_.keys(layers))].projection;
-
-                        _.forEach(layerDefs, function(layerDef)
+                        layerDef.center = function()
                         {
-                            var layer = olHelpers.createLayer(layerDef, mapProjection);
-                            if(olHelpers.isDefined(layer))
+                            var source = layer.getSource();
+                            if(source.getExtent)
                             {
-                                extendLayer(layer, layerDef);
-
-                                layers[layerDef.name] = layer;
-                                map.addLayer(layer);
+                                var extent = source.getExtent();
+                                map.getView().fitExtent(extent, map.getSize());
                             } // end if
-                        });
+                        }; // end layerDef.center
 
-                        $scope.availableLayers = layers.array_.slice(0);
-                        olData.setLayers(layers);
+                        $scope.availableLayers.push(layerDef);
 
-                        applyIfNecessary();
+                        var layerCollection = map.getLayers();
+                        layerCollection.on('add', onAdd);
+                        function onAdd(ev)
+                        {
+                            if(!ev.element.__def)
+                            {
+                                layer = ev.element;
+
+                                layer.__def = layerDef;
+                                layerCollection.un('add', onAdd);
+                            } // end if
+                        } // end onAdd
                     });
-                });
-            } // end addLayers
+
+                    applyIfNecessary();
+                }; // end addLayers
+            });
 
             function removeLayers(layerNames, onlyIfHidden)
             {
-                olData.getMap().then(function(map)
+                $scope.availableLayers = _.reject($scope.availableLayers, function(layer)
                 {
-                    olData.getLayers().then(function(layers)
-                    {
-                        _.forEach(layerNames, function(layerName)
-                        {
-                            if(olHelpers.isDefined(layers[layerName]))
-                            {
-                                if(onlyIfHidden && layers[layerName].getVisible())
-                                {
-                                    // This layer is currently shown, and `onlyIfHidden` is set; don't remove this one.
-                                    return;
-                                } // end if
-
-                                map.removeLayer(layers[layerName]);
-                                delete layers[layerName];
-                            } // end if
-                        });
-
-                        $scope.availableLayers = layers.array_.slice(0);
-                        olData.setLayers(layers);
-
-                        applyIfNecessary();
-                    });
+                    return _.includes(layerNames, layer.name) && (!onlyIfHidden || !layer.active);
                 });
+
+                applyIfNecessary();
             } // end removeLayers
 
             $scope.geomMapCenter = { lon: 0, lat: 0, zoom: 2 };
