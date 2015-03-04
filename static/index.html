@@ -88,6 +88,8 @@
 
 		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.js"></script>
 
+		<!--link rel="stylesheet" href="css/vendor/ol.css">
+		<script src="js/vendor/ol-debug.js"></script-->
 		<link rel="stylesheet" href="openlayers3/build/ol.css">
 		<script src="openlayers3/build/ol.js"></script>
 		<script src="angular-openlayers-directive/dist/angular-openlayers-directive.js"></script>
@@ -604,7 +606,8 @@
 							</div>
 						</div>
 
-						<openlayers layers="defaultLayers" center="geomMapCenter">
+						<openlayers center="geomMapCenter">
+							<ol-layer ol-layer-properties="layer" ng-repeat="layer in availableLayers|filter:{active:true}"></ol-layer>
 						</openlayers>
 					</div>
 
