@@ -1,0 +1,41 @@
+<div class="top left attached ui labels">
+	<a class="small compact squarish green ui label" data-content="Zoom to fit"
+			ng-click="zoomFit()">
+		<i class="maximize icon"></i>
+	</a>
+	<a class="small compact teal dropdown ui label">
+		<span>Line width:</span>
+		<span class="detail" ng-class="{fallback: lineWidthKey != selectedLineWidthKey}">{{ lineWidthKey }}</span>
+
+		<i class="dropdown icon"></i>
+		<div class="menu">
+			<div class="item" ng-repeat="planKey in groupedPlanKeys"
+					ng-class="{active: selectedLineWidthKey == planKey || contains(planKey.keys, selectedLineWidthKey)}"
+					ng-click="setLineWidthKey(planKey)">
+				<i ng-if="planKey.keys" class="dropdown icon"></i>
+				<span>{{ planKey.title || planKey }}</span>
+
+				<div class="menu" ng-if="planKey.keys">
+					<div class="item" ng-repeat="groupedPlanKey in planKey.keys"
+							ng-class="{active: selectedLineWidthKey == groupedPlanKey}"
+							ng-click="setLineWidthKey(groupedPlanKey)">
+						{{ groupedPlanKey }}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<span ng-show="graph.edgeLabelLegend" class="edgeLabelLegend fade animation">Labels:
+				<em>{{ graph.edgeLabelLegend }}</em></span>
+	</a>
+</div>
+
+<div class="content">
+	<svg digraph graph="graph" class="fill-parent">
+		<defs>
+			<g ng-repeat="node in graphNodes" id="{{ node.useDef }}">
+				<image xlink:href="{{ node.iconURL }}" x="-32" y="-32" width="64px" height="64px"></image>
+			</g>
+		</defs>
+	</svg>
+</div>

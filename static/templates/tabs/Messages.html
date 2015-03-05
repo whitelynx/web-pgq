@@ -1,0 +1,55 @@
+<div class="top right attached ui labels">
+	<a class="small compact squarish ui label" ng-class="{black: logger.showBannersFor.debug}"
+			ng-click="logger.showBannersFor.debug = !logger.showBannersFor.debug">
+		<i class="bug icon" ng-class="{black: !logger.showBannersFor.debug, disabled: !logger.showBannersFor.debug}"></i>
+	</a>
+	<a class="small compact squarish ui label" ng-class="{teal: logger.showBannersFor.info}"
+			ng-click="logger.showBannersFor.info = !logger.showBannersFor.info">
+		<i class="info letter icon" ng-class="{teal: !logger.showBannersFor.info, disabled: !logger.showBannersFor.info}"></i>
+	</a>
+	<a class="small compact squarish ui label" ng-class="{green: logger.showBannersFor.success}"
+			ng-click="logger.showBannersFor.success = !logger.showBannersFor.success">
+		<i class="checkmark icon" ng-class="{green: !logger.showBannersFor.success, disabled: !logger.showBannersFor.success}"></i>
+	</a>
+	<a class="small compact squarish ui label" ng-class="{yellow: logger.showBannersFor.warning}"
+			ng-click="logger.showBannersFor.warning = !logger.showBannersFor.warning">
+		<i class="warning sign icon" ng-class="{yellow: !logger.showBannersFor.warning, disabled: !logger.showBannersFor.warning}"></i>
+	</a>
+	<a class="small compact squarish ui label" ng-class="{red: logger.showBannersFor.error}"
+			ng-click="logger.showBannersFor.error = !logger.showBannersFor.error">
+		<i class="remove circle icon" ng-class="{red: !logger.showBannersFor.error, disabled: !logger.showBannersFor.error}"></i>
+	</a>
+</div>
+
+<div class="left aligned inverted content">
+	<section>
+		<div class="fade slide animation small icon ui message" ng-class="banner.severity"
+				ng-repeat="(idx, banner) in logger.bannerMessages">
+			<i class="icon" ng-class="banner.icon"></i>
+			<div class="mini floating ui label">
+				{{ banner.time | date:"h:mm a" }}
+				<div class="detail">{{ banner.time | date:"M/d/y" }}</div>
+			</div>
+			<div class="content">
+				<div class="header">
+					{{ banner.header }}
+				</div>
+				<div class="ui accordion" ng-if="banner.detail">
+					<strong class="title"><i class="dropdown icon"></i>Details &#x2026;</strong>
+					<pre class="content" ng-if="banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
+					<ul class="content list" ng-if="banner.detailType != 'string'">
+						<li ng-repeat="(key, val) in banner.detail"
+								ng-class="{ui: isMultiLineString(val), accordion: isMultiLineString(val)}">
+
+							<strong ng-if="!isMultiLineString(val)">{{ key }}:</strong>
+							<strong class="title" ng-if="isMultiLineString(val)">{{ key }} &#x2026;</strong>
+
+							<pre ng-if="!isString(val)" ng-class="{content: isMultiLineString(val)}"><code>{{ val|json }}</code></pre>
+							<pre ng-if="isString(val)" ng-class="{content: isMultiLineString(val)}"><code>{{ val }}</code></pre>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
