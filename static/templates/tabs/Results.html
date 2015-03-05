@@ -1,0 +1,50 @@
+<div class="padding">
+	<div ng-repeat="resultSet in resultSets track by $index" class="resultSet">
+
+		<sticky context="#resultsContainer" scrollContext="#resultsContainer" class="small dividing ui header">
+			Result Set {{ $index + 1 }} / {{ resultSets.length }}
+
+			<div class="tiny right floated ui header">
+				<div class="small compact ui label">
+					Rows <div class="detail">{{ resultSet.rowCount || 0 }}</div>
+				</div>
+				<div class="small compact ui label" ng-if="resultSet && resultSet.affectedRowCount">
+					Affected <div class="detail">{{ resultSet.affectedRowCount }}</div>
+				</div>
+				<div class="small compact ui label" ng-if="resultSet && resultSet.totalTimeMS">
+					<div class="left detail">{{ resultSet.totalTimeMS }}</div> <span>ms</span>
+				</div>
+			</div>
+		</sticky>
+
+		<div ng-if="!query.running && resultSet.rows.length == 0 && resultsTab == 'Results'"
+				class="fast fade animation red ribbon ui label">
+			No rows returned.
+		</div>
+
+		<table ng-if="resultSet.rows.length > 0"
+				class="fade animation compact collapsing celled bottom attached ui table">
+
+			<thead>
+				<tr>
+					<th ng-repeat="field in resultSet.fields track by $index"
+						title="Data Type: {{ field.dataType }}">{{ field.name }}</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<!--tr ng-repeat="row in resultSet.rows track by $index" class="fade animation">
+					<td ng-repeat="value in row track by $index"
+						result-value="value" result-field-type="resultSet.fields[$index].dataType"
+						ace-config="commonEditorConfig">
+					</td>
+				</tr-->
+				<tr ng-repeat="row in resultSet.rows track by $index">
+					<td ng-repeat="value in row track by $index"
+						result-value="value" result-field-type="resultSet.fields[$index].dataType">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
