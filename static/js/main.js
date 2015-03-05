@@ -1306,8 +1306,6 @@ angular.module('webPGQ')
 
                 $window.setTimeout(function()
                 {
-                    $('.ui.accordion').accordion('refresh');
-
                     if(messagesContainer && $scope.resultsTab == 'Messages' && messagesAtBottom)
                     {
                         scrollMessagesToBottom();
@@ -1506,8 +1504,6 @@ angular.module('webPGQ')
                     });
 
                 $('[data-content], [data-html]').popup({ delay: 500 });
-
-                $('.ui.accordion').accordion();
 
                 $timeout(function()
                 {
