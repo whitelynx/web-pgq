@@ -1000,11 +1000,35 @@ angular.module('webPGQ')
             $scope.contains = _.contains;
             $scope.isString = _.isString;
 
-            var multiLineStringRE = /\n./;
-            $scope.isMultiLineString = function(val)
+            $scope.typeOf = function(val)
             {
-                return _.isString(val) && multiLineStringRE.test(val);
-            }; // end $scope.isMultiLineString
+                if(_.isNull(val))
+                {
+                    return 'null';
+                }
+                else if(_.isArray(val))
+                {
+                    return 'array';
+                }
+                else
+                {
+                    return typeof val;
+                } // end if
+            }; // end $scope.typeOf
+
+            var multiLineStringRE = /\n./;
+            $scope.isMultiLine = function(val)
+            {
+                if(_.isString(val))
+                {
+                    return multiLineStringRE.test(val);
+                }
+                else
+                {
+                    return (_.isArray(val) && val.length > 0) ||
+                        (_.isPlainObject(val) && _.keys(val).length > 0);
+                } // end if
+            }; // end $scope.isMultiLine
 
             $scope.setLineWidthKey = function(key)
             {
