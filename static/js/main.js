@@ -1481,11 +1481,7 @@ angular.module('webPGQ')
                         transition: 'slide down'
                     });
 
-                $('#layers-button').dropdown();
-
                 $('[data-content], [data-html]').popup({ delay: 500 });
-
-                $('.ui.dropdown').dropdown();
 
                 $('.ui.accordion').accordion();
 
