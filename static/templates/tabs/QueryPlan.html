@@ -3,7 +3,7 @@
 			ng-click="zoomFit()">
 		<i class="maximize icon"></i>
 	</a>
-	<a class="small compact teal dropdown ui label">
+	<dropdown class="clickable small compact teal ui label">
 		<span>Line width:</span>
 		<span class="detail" ng-class="{fallback: lineWidthKey != selectedLineWidthKey}">{{ lineWidthKey }}</span>
 
@@ -27,7 +27,7 @@
 
 		<span ng-show="graph.edgeLabelLegend" class="edgeLabelLegend fade animation">Labels:
 				<em>{{ graph.edgeLabelLegend }}</em></span>
-	</a>
+	</dropdown>
 </div>
 
 <div class="content">

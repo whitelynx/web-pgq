@@ -28,7 +28,7 @@
 						<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
 							class="fade" ng-model="param.value" ng-if="param.type != 'null'">
 
-						<div class="small upward dropdown ui label" ng-class="{fluid: param.type == 'null'}">
+						<dropdown class="small upward ui label" ng-class="{fluid: param.type == 'null'}">
 							{{ displayQueryParamType(param.type) }}
 							<i class="dropdown icon"></i>
 							<div class="menu">
@@ -36,7 +36,7 @@
 								<div class="item" ng-click="param.type = 'integer'">Integer</div>
 								<div class="item" ng-click="param.type = 'null'">NULL</div>
 							</div>
-						</div>
+						</dropdown>
 					</div>
 				</td>
 				<td>

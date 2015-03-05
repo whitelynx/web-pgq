@@ -2,7 +2,7 @@
 	<i class="database icon"></i>
 	<b class="hide on mobile">web-pgq</b>
 </div>
-<div class="ui upward dropdown item" ng-class="{disabled: !connected || query.running}">
+<dropdown class="item upward" ng-class="{disabled: !connected || query.running}">
 	<span ng-if="!currentConnection" class="value placeholder">Connect to...</span>
 
 	<span ng-cloak ng-if="currentConnection" class="value"
@@ -40,7 +40,7 @@
 			Add new connection...
 		</div>
 	</div>
-</div>
+</dropdown>
 <div class="item" ng-show="connecting" ng-click="connectSocket()"
 		data-content="Click to force reconnect.">
 	<i class="spinner loading icon"></i>
@@ -183,7 +183,7 @@
 	</div>
 
 	<div class="borderless item compact ui buttons">
-		<div class="ui upward dropdown orange icon ui button">
+		<dropdown class="upward orange icon ui button">
 			<i class="settings icon"></i>
 
 			<div class="menu">
@@ -202,7 +202,7 @@
 					</div>
 				</a>
 			</div>
-		</div>
+		</dropdown>
 	</div>
 </div>
 
