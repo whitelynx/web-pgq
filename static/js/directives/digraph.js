@@ -475,10 +475,12 @@ angular.module('webPGQ.directives')
                 } // end if
             }); // end 'Update' handler
 
-            scope.$on('Resize', function()
+            function broadcastRender()
             {
                 scope.$broadcast('Render');
-            }); // end 'Resize' handler
+            } // end broadcastRender
+            scope.$on('windowResized', broadcastRender);
+            scope.$on('bgSplitter.resizeFinished', broadcastRender);
 
             scope.$on('Render', function()
             {
