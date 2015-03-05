@@ -1115,9 +1115,39 @@ angular.module('webPGQ')
             olData.getMap().then(function(map)
             {
                 var select = new ol.interaction.Select({
-                    condition: ol.events.condition.mouseMove
+                    condition: ol.events.condition.mouseMove,
+                    multi: true,
+                    /*
+                    style: {
+                        fill: { color: [255, 255, 255, 0.2] }
+                    }
+                    */
                 });
                 map.addInteraction(select);
+
+                $scope.selectedFeatures = [];
+
+                var selectedFeatureCollection = select.getFeatures();
+
+                selectedFeatureCollection.on('add', function(ev)
+                {
+                    $scope.selectedFeatures.push(ev.element);
+                });
+
+                selectedFeatureCollection.on('remove', function(ev)
+                {
+                    var featureIdx = $scope.selectedFeatures.indexOf(ev.element);
+                    if(featureIdx == -1)
+                    {
+                        console.warn("Removed feature is not present in $scope.selectedFeatures!", ev.element);
+                        console.log("$scope.selectedFeatures:", $scope.selectedFeatures);
+                    }
+                    else
+                    {
+                        // Remove the feature.
+                        $scope.selectedFeatures.splice(featureIdx, 1);
+                    } // end if
+                });
 
                 addLayers = function(layerDefs)
                 {
