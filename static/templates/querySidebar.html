@@ -1,0 +1,61 @@
+<div class="compact tiny 3 attached ui buttons">
+	<div class="orange labeled icon ui button" ng-click="newFile()">
+		<i class="file icon"></i>
+		New
+	</div>
+
+	<save-file ng-model="query.text" file-name="query.fileName"></save-file>
+
+	<open-file on-open="fileLoaded(file, content)"></open-file>
+</div>
+
+<div id="paramsSection" class="secondary attached inverted ui segment">
+	<table id="paramsGrid">
+		<caption>Parameters:</caption>
+		<thead>
+			<tr>
+				<th>#</th>
+				<th colspan="2">Value / Type</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-cloak ng-repeat="param in query.params track by $index">
+				<td class="right aligned"><code>${{ $index + 1 }}</code></td>
+				<td class="right aligned">
+					<div class="fluid mini ui input"
+							ng-class="{right: param.type != 'null', labeled: param.type != 'null'}">
+
+						<input type="text" placeholder="Value" id="queryParam_{{ $index + 1 }}"
+							class="fade" ng-model="param.value" ng-if="param.type != 'null'">
+
+						<div class="small upward dropdown ui label" ng-class="{fluid: param.type == 'null'}">
+							{{ displayQueryParamType(param.type) }}
+							<i class="dropdown icon"></i>
+							<div class="menu">
+								<div class="item" ng-click="param.type = 'text'">Text</div>
+								<div class="item" ng-click="param.type = 'integer'">Integer</div>
+								<div class="item" ng-click="param.type = 'null'">NULL</div>
+							</div>
+						</div>
+					</div>
+				</td>
+				<td>
+					<div class="compact mini red icon ui button" ng-click="removeQueryParam($index)">
+						<i class="close ui icon"></i>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="bottom attached mini teal labeled icon ui button" ng-click="addQueryParam()">
+		<i class="add icon"></i>
+		Add parameter
+	</div>
+
+	<div class="launch button wrapper">
+		<div class="small black icon launch ui button" ng-click="showQuerySidebar = !showQuerySidebar">
+			<!--i class="menu icon"></i-->
+			<i class="list layout icon"></i>
+		</div>
+	</div>
+</div>
