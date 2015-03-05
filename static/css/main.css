@@ -183,7 +183,7 @@ code, pre, .ace_editor, table td.code {
 	-webkit-transition: left 0.5s, right 0.5s;
 	transition: left 0.5s, right 0.5s;
 }
-#editor > .ace_editor {
+#editor > div > .ace_editor {
 	position: absolute;
 	top: 0;
 	bottom: 0;
