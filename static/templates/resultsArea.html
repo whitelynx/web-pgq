@@ -26,9 +26,11 @@
 		ng-include="'templates/tabs/Geometry.html'"></div>
 
 	<div class="ui dimmer" ng-class="{active: (resultsTab == 'Messages')}" id="messages-dimmer"
+		scrollable="{ suppressScrollX: false, includePadding: true }"
 		ng-include="'templates/tabs/Messages.html'"></div>
 
 	<div id="resultsContainer"
+		scrollable="{ includePadding: false }"
 		ng-include="'templates/tabs/Results.html'"></div>
 
 	<div class="hiding bottom right attached ui labels" ng-class="{black: resultsTab == 'Messages'}">
