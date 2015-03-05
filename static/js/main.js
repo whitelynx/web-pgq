@@ -77,6 +77,8 @@ angular.module('webPGQ')
                 logger.error("Error connecting to web-pgq server!", error, 'connection');
             });
 
+            $scope.scrollableDefaults = { minScrollbarLength: 12 };
+
             $scope.tabSize = 4;
             $scope.softTabs = true;
 
@@ -626,7 +628,7 @@ angular.module('webPGQ')
                 {
                     if(currentResultSet && currentResultSet.rows.length != lastRowCount)
                     {
-                        $window.setTimeout(updateScrollbars, 0);
+                        $('#resultsContainer').scope().$emit('contentResized');
 
                         lastRowCount = currentResultSet.rows.length;
                     } // end if
@@ -1182,7 +1184,7 @@ angular.module('webPGQ')
             $scope.zoomFit = function() { $scope.$broadcast('ZoomFit'); };
             $scope.reRender = function() { $scope.$broadcast('Render'); };
 
-            var paramsContainer, resultsContainer, messagesContainer;
+            var messagesContainer;
 
             var messagesAtBottom = true, ignoreMessagesContainerScroll = false;
 
@@ -1190,7 +1192,7 @@ angular.module('webPGQ')
             {
                 $window.setTimeout(function()
                 {
-                    resultsContainer.scrollTop(0);
+                    $('#resultsContainer').scrollTop(0);
                 }, 0);
             } // end scrollResultsToTop
 
@@ -1309,88 +1311,19 @@ angular.module('webPGQ')
                     if(messagesContainer && $scope.resultsTab == 'Messages' && messagesAtBottom)
                     {
                         scrollMessagesToBottom();
-                    }
-                    else
-                    {
-                        updateScrollbars();
                     } // end if
 
                     ignoreMessagesContainerScroll = false;
                 }, 0);
             });
 
-            function updateScrollbars()
-            {
-                mainEditorScrollbars.perfectScrollbar('update');
-                paramsContainer.perfectScrollbar('update');
-                resultsContainer.perfectScrollbar('update');
-                messagesContainer.perfectScrollbar('update');
-            } // end updateScrollbars
-
             $(function()
             {
-                var mainSplitterPos = $('#topPane').height();
-                var sidebarSplitterPos = $('#editor').width();
-                $($window)
-                    // Update scrollbars on resize.
-                    .resize(updateScrollbars)
-                    // If the position of the splitter has changed, update scrollbars, OpenLayers, Ace, etc.
-                    .bind('mouseup', function ()
-                    {
-                        var curMainSplitterPos = $('#topPane').height();
-                        var curSidebarSplitterPos = $('#editor').width();
-
-                        if(curMainSplitterPos != mainSplitterPos)
-                        {
-                            // Update OpenLayers map.
-                            olData.getMap().then(function(map)
-                            {
-                                map.updateSize();
-                            });
-
-                            // Re-render the query plan view. (or queue a re-render for the next time it's shown)
-                            $scope.$broadcast('Resize');
-                        } // end if
-
-                        if(curMainSplitterPos != mainSplitterPos || curSidebarSplitterPos != sidebarSplitterPos)
-                        {
-                            // Update any Ace editors.
-                            allEditors.forEach(function(editor)
-                            {
-                                editor.resize();
-                            });
-
-                            // Update scrollbars.
-                            updateScrollbars();
-                        } // end if
-
-                        mainSplitterPos = curMainSplitterPos;
-                        sidebarSplitterPos = curSidebarSplitterPos;
-                    });
-
-                paramsContainer = $('#paramsSection');
-                paramsContainer.perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
-
-                messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
-                messagesContainer.perfectScrollbar({ suppressScrollX: false, includePadding: true, minScrollbarLength: 12 });
-                messagesContainer.scroll(function()
+                // Update scrollbars and sizes on window resize.
+                $($window).resize(function()
                 {
-                    if($scope.resultsTab != 'Messages' || !ignoreMessagesContainerScroll)
-                    {
-                        messagesAtBottom = false;
-                        if(messagesContainer.scrollTop() >=
-                            (messagesContainer.prop('scrollHeight') - messagesContainer.height()))
-                        {
-                            messagesAtBottom = true;
-                        } // end if
-                    } // end if
+                    $scope.$broadcast('windowResized');
                 });
-
-                resultsContainer = $('#resultsContainer');
-                resultsContainer.perfectScrollbar({ includePadding: false, minScrollbarLength: 12 });
-
-                // Update scrollbars 500 milliseconds after page load.
-                $window.setTimeout(updateScrollbars, 500);
 
                 editConnectionDimmer = $('#editConnectionDimmer');
                 removeConnectionModal = $('#removeConnectionModal');
@@ -1508,6 +1441,42 @@ angular.module('webPGQ')
                 $timeout(function()
                 {
                     $scope.pageLoaded = true;
+
+                    //TODO: Move these to directives!
+                    function resizeGeometryMap()
+                    {
+                        // Update OpenLayers map.
+                        olData.getMap().then(function(map)
+                        {
+                            map.updateSize();
+                        });
+                    } // end resizeGeometryMap
+                    var resultsTabsScope = $('#resultsTabs').scope();
+                    resultsTabsScope.$on('windowResized', resizeGeometryMap);
+                    resultsTabsScope.$on('bgSplitter.resizeFinished', resizeGeometryMap);
+
+                    function editorResized()
+                    {
+                        mainEditor.resize();
+                        mainEditorScrollbars.perfectScrollbar('update');
+                    } // end editorResized
+                    var editorScope = $('#editor').scope();
+                    editorScope.$on('windowResized', editorResized);
+                    editorScope.$on('bgSplitter.resizeFinished', editorResized);
+
+                    messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
+                    messagesContainer.scroll(function()
+                    {
+                        if($scope.resultsTab != 'Messages' || !ignoreMessagesContainerScroll)
+                        {
+                            messagesAtBottom = false;
+                            if(messagesContainer.scrollTop() >=
+                                (messagesContainer.prop('scrollHeight') - messagesContainer.height()))
+                            {
+                                messagesAtBottom = true;
+                            } // end if
+                        } // end if
+                    });
                 });
             });
         }]);
