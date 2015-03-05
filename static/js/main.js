@@ -1079,7 +1079,7 @@ angular.module('webPGQ')
             {
                 if(nextFunc)
                 {
-                    nextFunc.apply(this, _.slice(arguments, 2));
+                    nextFunc.apply(this, _.drop(arguments, 2));
                 } // end if
 
                 event.stopPropagation();
