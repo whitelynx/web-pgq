@@ -965,7 +965,7 @@ td > .ui.button:last-child {
 	visibility: visible;
 	opacity: 1;
 }
-#geometry-map > .angular-openlayers-map {
+#geometry-map > map-view > .angular-openlayers-map {
 	position: absolute;
 	overflow: hidden;
 	top: 0; bottom: 0;
