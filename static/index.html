@@ -136,6 +136,7 @@
 		<script src="js/directives/accordion.js"></script>
 		<script src="js/directives/digraph.js"></script>
 		<script src="js/directives/dropdown.js"></script>
+		<script src="js/directives/editor.js"></script>
 		<script src="js/directives/result-value.js"></script>
 		<script src="js/directives/open-file.js"></script>
 		<script src="js/directives/save-file.js"></script>
@@ -170,7 +171,7 @@
 			<bg-pane min-size="128" id="topPane">
 				<bg-splitter id="editorArea" pos="75%" orientation="vertical">
 					<bg-pane id="editor" min-size="128" class="inverted ui segment">
-						<div ng-include="'templates/editor.html'"></div>
+						<editor options="mainEditorConfig" ng-model="query.text"></editor>
 					</bg-pane>
 
 					<bg-pane id="querySidebar" min-size="286" ng-class="{active: showQuerySidebar}">
