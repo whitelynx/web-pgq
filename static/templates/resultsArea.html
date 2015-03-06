@@ -33,7 +33,7 @@
 		scrollable="{ includePadding: false }"
 		ng-include="'templates/tabs/Results.html'"></div>
 
-	<div class="hiding bottom right attached ui labels" ng-class="{black: resultsTab == 'Messages'}">
+	<div class="overlaid hiding bottom right attached ui labels" ng-class="{black: resultsTab == 'Messages'}">
 		<div class="small compact ui label" ng-if="resultSets && resultSets.status">
 			{{ resultSets.status|capitalizeWords }}
 		</div>
