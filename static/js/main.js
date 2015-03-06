@@ -1384,18 +1384,6 @@ angular.module('webPGQ')
                     $scope.pageLoaded = true;
 
                     //TODO: Move these to directives!
-                    function resizeGeometryMap()
-                    {
-                        // Update OpenLayers map.
-                        olData.getMap().then(function(map)
-                        {
-                            map.updateSize();
-                        });
-                    } // end resizeGeometryMap
-                    var resultsTabsScope = $('#resultsTabs').scope();
-                    resultsTabsScope.$on('windowResized', resizeGeometryMap);
-                    resultsTabsScope.$on('bgSplitter.resizeFinished', resizeGeometryMap);
-
                     messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
                     messagesContainer.scroll(function()
                     {

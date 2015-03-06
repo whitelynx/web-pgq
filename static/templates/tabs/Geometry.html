@@ -25,6 +25,4 @@
 	</dropdown>
 </div>
 
-<openlayers center="geomMapCenter">
-	<ol-layer ol-layer-properties="layer" ng-repeat="layer in availableLayers|filter:{active:true}"></ol-layer>
-</openlayers>
+<map-view center="geomMapCenter" layers="availableLayers" filter="{active:true}"></map-view>
