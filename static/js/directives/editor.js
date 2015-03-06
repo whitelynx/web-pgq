@@ -80,7 +80,7 @@ angular.module('webPGQ.directives')
             return { editor: editorElem, scrollbars: scrollbars };
         } // end defaultOnLoad
 
-        function controller($scope)
+        var controller = ['$scope', function($scope)
         {
             $scope.editorConfig = _.defaults({}, $scope.options, defaultEditorConfig);
 
@@ -97,7 +97,7 @@ angular.module('webPGQ.directives')
             {
                 $scope.editorConfig.onLoad = defaultOnLoad.bind($scope);
             } // end if
-        } // end controller
+        }]; // end controller
 
         function link(scope, element, attrs, ngModel)
         {
@@ -117,12 +117,12 @@ angular.module('webPGQ.directives')
 
         return {
             restrict: 'E',
-            require: '?ngModel',
+            require: 'ngModel',
             scope: {
                 options: '='
             },
+            controller: controller,
             link: link,
-            controller: ['$scope', controller],
             templateUrl: '/js/directives/editor.html'
         };
     }]);
