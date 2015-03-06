@@ -996,6 +996,12 @@ td > .ui.button:last-child {
 	opacity: 1;
 }
 
+#selectedFeaturesPanel {
+	max-width: 25%;
+	max-height: 100%;
+	overflow: hidden;
+}
+
 .color.icon,
 .ui.dropdown .menu > .item > .color.icon {
 	display: inline-block;

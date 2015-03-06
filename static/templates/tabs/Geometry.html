@@ -25,4 +25,29 @@
 	</dropdown>
 </div>
 
+<div id="selectedFeaturesPanel" class="overlaid tiny top right attached ui labels" ng-if="selectedFeatures.length > 0"
+	scrollable="{ includePadding: true }">
+	<div class="ui label">
+		<div class="ui large header">Selected features</div>
+
+		<div class="ui link list">
+			<a class="item" ng-repeat="feature in selectedFeatures track by $index">
+				<div class="ui medium header">Row #{{ feature.rowNum }} from {{ feature.layerName }}:</div>
+
+				<table class="ui definition table">
+					<tbody>
+						<tr ng-repeat="(key, value) in feature.properties">
+							<td>{{ key }}</td>
+							<td>{{ value }}</td>
+						<td ng-repeat="value in row track by $index"
+							result-value="value">
+						</td>
+						</tr>
+					</tbody>
+				</table>
+			</a>
+		</div>
+	</div>
+</div>
+
 <map-view center="geomMapCenter" layers="availableLayers" filter="{active:true}"></map-view>
