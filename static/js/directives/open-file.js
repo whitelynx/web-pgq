@@ -7,6 +7,8 @@ angular.module('webPGQ.directives')
     {
         function link(scope, element)//, attrs)
         {
+            element.addClass("clickable teal labeled icon ui button");
+
             var input = element.find('input');
 
             input.click(function(event)
@@ -19,7 +21,7 @@ angular.module('webPGQ.directives')
                 var file = this.files[0];
                 console.log("Loading file:", file);
 
-                scope.$apply(function() { scope.loading = true; });
+                scope.$apply(function() { element.addClass("loading"); });
 
                 var reader = new FileReader();
 
@@ -29,7 +31,7 @@ angular.module('webPGQ.directives')
                     {
                         console.log("Loaded file " + file.name + ".");
                         scope.onOpen({file: file, content: ev.target.result});
-                        scope.loading = false;
+                        element.removeClass("loading");
                     });
                 }; // end reader.onload
 
@@ -40,12 +42,10 @@ angular.module('webPGQ.directives')
         } // end link
 
         return {
-            restrict: 'E',
+            restrict: 'A',
             scope: {
-                onOpen: '&',
-                class: '@'
+                onOpen: '&openFile'
             },
-            replace: true,
             link: link,
             templateUrl: '/js/directives/open-file.html'
         };

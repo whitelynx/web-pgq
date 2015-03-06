@@ -4,9 +4,9 @@
 		New
 	</div>
 
-	<save-file ng-model="query.text" file-name="query.fileName"></save-file>
+	<a save-file="query.fileName" ng-model="query.text"></a>
 
-	<open-file on-open="fileLoaded(file, content)"></open-file>
+	<a open-file="fileLoaded(file, content)"></a>
 </div>
 
 <div id="paramsSection" class="secondary attached inverted ui segment"

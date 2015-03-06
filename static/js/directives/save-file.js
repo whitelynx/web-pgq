@@ -5,23 +5,28 @@
 angular.module('webPGQ.directives')
     .directive('saveFile', function()
     {
-        function link(scope, element)//, attrs)
+        function link(scope, element, attrs, ngModel)
         {
+            element.addClass("green labeled icon ui button");
+
+            scope.$watch('fileName', function(fileName)
+            {
+                element.attr('download', fileName);
+            });
+
             element.mouseenter(function()//event)
             {
                 element.attr('href', 'data:application/x-sql;charset=utf-8;Content-Disposition:attachment,' +
-                    encodeURIComponent(scope.ngModel));
+                    encodeURIComponent(ngModel.$viewValue));
             });
         } // end link
 
         return {
-            restrict: 'E',
+            restrict: 'A',
+            require: '?ngModel',
             scope: {
-                ngModel: '=',
-                fileName: '=',
-                class: '@'
+                fileName: '=saveFile'
             },
-            replace: true,
             link: link,
             templateUrl: '/js/directives/save-file.html'
         };
