@@ -1,0 +1,14 @@
+<div ui-ace="editorConfig" ng-model="model"></div>
+
+<div class="hiding bottom right attached ui labels">
+	<div class="small compact ui label" ng-if="editorInfo.overwrite">
+		<div class="middle detail">OVR</div>
+	</div>
+	<div class="small compact ui label">
+		row <div class="detail">{{ editorInfo.pos.row }}</div>
+		/ <div class="middle detail">{{ editorInfo.rows }}</div>
+	</div>
+	<div class="small compact ui label">
+		column <div class="detail">{{ editorInfo.pos.column }}</div>
+	</div>
+</div>
