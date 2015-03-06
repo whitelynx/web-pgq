@@ -657,7 +657,7 @@ angular.module('webPGQ')
 
                 function onRow(statementNum, row)
                 {
-                    currentResultSet.rows.push(row);
+                    var rowNum = currentResultSet.rows.push(row);
 
                     geoJSONColumns.forEach(function(column)
                     {
@@ -689,6 +689,19 @@ angular.module('webPGQ')
                                 column.source.geojson.defaultProjection = feature.crs.properties.name;
                             } // end if
                         } // end if
+
+                        feature.properties = {
+                            layerName: column.name,
+                            rowNum: rowNum,
+                            layerStyle: column.style,
+                            properties: feature.properties || {}
+                        };
+                        currentResultSet.fields.forEach(function(field, idx)
+                        {
+                            if(idx === column.index) { return; }
+
+                            feature.properties.properties[field.name] = row[idx];
+                        });
 
                         column.source.geojson.object.features.push(feature);
                     });
@@ -1024,41 +1037,146 @@ angular.module('webPGQ')
             var addLayers;
             olData.getMap().then(function(map)
             {
+                map.addInteraction(new ol.interaction.MouseWheelZoom({ duration: 150 }));
+
+
+                var defaultSelectedStyle = new ol.style.Style({
+                    stroke: new ol.style.Stroke({ color: [127, 127, 127, 0.4], lineDash: [2, 2] }),
+                    fill: new ol.style.Fill({ color: [255, 255, 255, 0.2] })
+                });
+
+                function lightenColor(color)
+                {
+                    color = ol.color.asArray(color);
+
+                    return _.initial(color)
+                        .map(function(value)
+                        {
+                            return Math.round((value + value + 255) / 3);
+                        })
+                        .concat(_.last(color));
+                } // end lightenColor
+
                 var select = new ol.interaction.Select({
-                    condition: ol.events.condition.mouseMove,
                     toggleCondition: ol.events.condition.never,
                     multi: true,
-                    /*
-                    style: {
-                        fill: { color: [255, 255, 255, 0.2] }
+                    style: function(feature, resolution)
+                    {
+                        var featureStyle = feature.getStyle();
+                        if(_.isFunction(featureStyle))
+                        {
+                            featureStyle = featureStyle.call(feature, resolution);
+                        } // end if
+                        if(!featureStyle)
+                        {
+                            // Fall back to the layer style, and finally to the default.
+                            featureStyle = (feature.getProperties() || {}).layerStyle || {};
+                        } // end if
+
+                        var featureStroke, featureFill, featureGeometry, featureImage, featureText, featureZIndex;
+                        if(featureStyle.getStroke)
+                        {
+                            featureStroke = featureStyle.getStroke();
+                            featureStroke = {
+                                color: [255, 255, 255, 0.6],
+                                lineCap: featureStroke.getLineCap(),
+                                lineDash: [2, 2],
+                                lineJoin: featureStroke.getLineJoin(),
+                                miterLimit: featureStroke.getMiterLimit(),
+                                width: featureStroke.getWidth()
+                            };
+                            featureFill = {
+                                color: featureStyle.getFill().getColor()
+                            };
+                            featureGeometry = featureStyle.getGeometry();
+                            featureImage = featureStyle.getImage();
+                            featureText = featureStyle.getText();
+                            featureZIndex = featureStyle.getZIndex();
+                        }
+                        else
+                        {
+                            featureStroke = featureStyle.stroke;
+                            featureFill = featureStyle.fill;
+                            featureGeometry = featureStyle.geometry;
+                            featureImage = featureStyle.image;
+                            featureText = featureStyle.text;
+                            featureZIndex = featureStyle.zIndex;
+                        } // end if
+
+                        return [
+                            new ol.style.Style(_.defaults(
+                                {
+                                    stroke: featureStroke && new ol.style.Stroke({
+                                        color: lightenColor(featureStroke.color),
+                                        lineCap: featureStroke.lineCap,
+                                        lineDash: [2, 2],
+                                        lineJoin: featureStroke.lineJoin,
+                                        miterLimit: featureStroke.miterLimit,
+                                        width: featureStroke.width
+                                    }),
+                                    fill: featureFill && new ol.style.Fill({
+                                        color: lightenColor(featureFill.color)
+                                    }),
+                                    geometry: featureGeometry,
+                                    image: featureImage,
+                                    text: featureText,
+                                    zIndex: featureZIndex
+                                },
+                                defaultSelectedStyle
+                            ))
+                        ];
                     }
-                    */
                 });
                 map.addInteraction(select);
 
+                var selectedFeatures = [];
                 $scope.selectedFeatures = [];
 
                 var selectedFeatureCollection = select.getFeatures();
 
                 selectedFeatureCollection.on('add', function(ev)
                 {
-                    $scope.selectedFeatures.push(ev.element);
+                    console.log('Feature selected:', ev.element);
+                    console.log('Feature properties:', ev.element.getProperties());
+
+                    queueDigest(function()
+                    {
+                        var selFtIdx = selectedFeatures.push(ev.element);
+                        var scopeSelFtIdx = $scope.selectedFeatures.push(ev.element.getProperties());
+
+                        if(selFtIdx !== scopeSelFtIdx)
+                        {
+                            console.warn("Added feature got different index when added to selectedFeatures (",
+                                selFtIdx, ") than when added to $scope.selectedFeatures (", scopeSelFtIdx, ")!",
+                                ev.element);
+                        } // end if
+
+                        console.log('$scope.selectedFeatures:', $scope.selectedFeatures);
+                    }, maxUpdateDelay);
                 });
 
                 selectedFeatureCollection.on('remove', function(ev)
                 {
-                    var featureIdx = $scope.selectedFeatures.indexOf(ev.element);
-                    if(featureIdx == -1)
+                    console.log('Feature unselected:', ev.element);
+                    queueDigest(function()
                     {
-                        console.warn("Removed feature is not present in $scope.selectedFeatures!", ev.element);
-                        console.log("$scope.selectedFeatures:", $scope.selectedFeatures);
-                    }
-                    else
-                    {
-                        // Remove the feature.
-                        $scope.selectedFeatures.splice(featureIdx, 1);
-                    } // end if
+                        var featureIdx = selectedFeatures.indexOf(ev.element);
+                        if(featureIdx == -1)
+                        {
+                            console.warn("Removed feature is not present in $scope.selectedFeatures!", ev.element);
+                            console.log("$scope.selectedFeatures:", $scope.selectedFeatures);
+                        }
+                        else
+                        {
+                            // Remove the feature.
+                            selectedFeatures.splice(featureIdx, 1);
+                            $scope.selectedFeatures.splice(featureIdx, 1);
+                        } // end if
+                    }, maxUpdateDelay);
                 });
+
+
+                var layerCollection = map.getLayers();
 
                 addLayers = function(layerDefs)
                 {
@@ -1083,7 +1201,6 @@ angular.module('webPGQ')
 
                         $scope.availableLayers.push(layerDef);
 
-                        var layerCollection = map.getLayers();
                         layerCollection.on('add', onAdd);
                         function onAdd(ev)
                         {
