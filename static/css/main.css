@@ -183,7 +183,7 @@ code, pre, .ace_editor, table td.code {
 	-webkit-transition: left 0.5s, right 0.5s;
 	transition: left 0.5s, right 0.5s;
 }
-#editor > div > .ace_editor {
+editor > .ace_editor {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -202,11 +202,11 @@ code, pre, .ace_editor, table td.code {
 /***********************************
  ** Ace editor gutter decorations **/
 
-.ace_editor .ace_gutter-layer .ace_gutter-cell.error {
+editor > .ace_editor .ace_gutter-layer .ace_gutter-cell.error {
 	position: relative;
 }
 
-.ace_editor .ace_gutter-layer .ace_gutter-cell.error:before {
+editor > .ace_editor .ace_gutter-layer .ace_gutter-cell.error:before {
 	position: absolute;
 	left: 0.2em;
 	top: 0.2em;
@@ -230,19 +230,19 @@ code, pre, .ace_editor, table td.code {
 
 /*****************************
  ** Ace editor marker types **/
-.ace_editor.ace-idle-fingers .ace_marker-layer .ace_active-line {
+editor > .ace_editor.ace-idle-fingers .ace_marker-layer .ace_active-line {
 	background: rgba(128, 128, 128, 0.25);
 }
 
-.ace_editor .ace_marker-layer .last-executed {
+editor > .ace_editor .ace_marker-layer .last-executed {
 	position: absolute;
 	background: rgba(0, 181, 173, 0.2);
 }
-.ace_editor .ace_marker-layer .last-executed.explain {
+editor > .ace_editor .ace_marker-layer .last-executed.explain {
 	background: rgba(224, 123, 83, 0.2);
 }
 
-.ace_editor .ace_marker-layer .error {
+editor > .ace_editor .ace_marker-layer .error {
 	position: absolute;
 
 	/* Won't work until the CSS Text Decoration Level 3 module is implemented in more browsers! */
@@ -399,7 +399,7 @@ table td.hoverable.ui.dropdown > .ui.menu::after {
 	content: none;
 }
 
-table td.hoverable.ui.dropdown > .ui.menu > .ace_editor {
+table td.hoverable.ui.dropdown > .ui.menu > editor > .ace_editor {
 	position: absolute;
 	top: 0; bottom: 0;
 	left: 0; right: 0;
