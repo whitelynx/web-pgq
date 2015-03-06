@@ -79,104 +79,23 @@ angular.module('webPGQ')
 
             $scope.scrollableDefaults = { minScrollbarLength: 12 };
 
-            $scope.tabSize = 4;
-            $scope.softTabs = true;
 
-            var allEditors = [];
-
-            $scope.$watch('tabSize', function(value)
-            {
-                allEditors.forEach(function(editor)
-                {
-                    editor.getSession().setTabSize(value);
-                });
-            });
-            $scope.$watch('softTabs', function(value)
-            {
-                allEditors.forEach(function(editor)
-                {
-                    editor.getSession().setUseSoftTabs(value);
-                });
-            });
-
-
-            $scope.commonEditorConfig = {
-                theme: 'idle_fingers',
-                useWrapMode: true,
-                onLoad: function(editor)
-                {
-                    // Options
-                    var session = editor.getSession();
-                    session.setTabSize($scope.tabSize);
-                    session.setUseSoftTabs($scope.softTabs);
-
-                    var editorElem = $(editor.renderer.getContainerElement());
-                    var scrollbars = $('.ace_scrollbar', editorElem)
-                        .css('overflow', 'hidden');
-
-                    scrollbars.filter('.ace_scrollbar-v')
-                        .perfectScrollbar({ suppressScrollX: true, includePadding: true, minScrollbarLength: 12 });
-                    scrollbars.filter('.ace_scrollbar-h')
-                        .perfectScrollbar({ suppressScrollY: true, includePadding: true, minScrollbarLength: 12 });
-
-                    session.on('change', function()
-                    {
-                        scrollbars.perfectScrollbar('update');
-                    });
-
-                    editorElem.hover(
-                        function() { scrollbars.addClass('hover'); },
-                        function() { scrollbars.removeClass('hover'); }
-                    );
-
-                    allEditors.push(editor);
-                    editorElem.on('$destroy', function()
-                    {
-                        var editorIdx = allEditors.indexOf(editor);
-                        allEditors.splice(editorIdx, 1);
-                    }); // end '$destroy' handler
-
-                    return { editor: editorElem, scrollbars: scrollbars };
-                }
-            }; // end $scope.commonEditorConfig
-
-            var mainEditor, mainEditorInfo, mainEditorScrollbars;
+            var mainEditor;
             $scope.mainEditorConfig = angular.extend({}, $scope.commonEditorConfig, {
                 mode: 'pgsql',
                 onLoad: function(editor)
                 {
                     mainEditor = editor;
-                    var elements = $scope.commonEditorConfig.onLoad(editor);
 
                     // Options
                     var session = editor.getSession();
 
                     session.setUseWorker(true);
 
-                    mainEditorScrollbars = elements.scrollbars;
-
-                    mainEditorInfo = {
-                        rows: session.getDocument().getLength(),
-                        pos: editor.getCursorPosition(),
-                        overwrite: false
-                    };
-
-                    session.on('change', function()
+                    $window.setTimeout(function()
                     {
-                        mainEditorInfo.rows = session.getDocument().getLength();
-                        queueUpdateEditorInfo();
-                    });
-
-                    session.on('changeOverwrite', function()
-                    {
-                        mainEditorInfo.overwrite = session.getOverwrite();
-                        queueUpdateEditorInfo();
-                    });
-                    session.selection.on('changeCursor', function()
-                    {
-                        mainEditorInfo.pos = editor.getCursorPosition();
-                        queueUpdateEditorInfo();
-                    });
+                        mainEditor.focus();
+                    }, 0);
                 },
                 require: ['ace/ext/language_tools'],
                 advanced: {
@@ -186,15 +105,6 @@ angular.module('webPGQ')
                 }
             }); // end $scope.mainEditorConfig
 
-            function queueUpdateEditorInfo()
-            {
-                queueDigest(updateEditorInfo, 0);
-            } // end queueUpdateEditorInfo
-
-            function updateEditorInfo()
-            {
-                $scope.editor = mainEditorInfo;
-            } // end updateEditorInfo
 
             // Connections //
             $scope.connections = JSON.parse($cookies.connections || '{}');
@@ -1484,15 +1394,6 @@ angular.module('webPGQ')
                     var resultsTabsScope = $('#resultsTabs').scope();
                     resultsTabsScope.$on('windowResized', resizeGeometryMap);
                     resultsTabsScope.$on('bgSplitter.resizeFinished', resizeGeometryMap);
-
-                    function editorResized()
-                    {
-                        mainEditor.resize();
-                        mainEditorScrollbars.perfectScrollbar('update');
-                    } // end editorResized
-                    var editorScope = $('#editor').scope();
-                    editorScope.$on('windowResized', editorResized);
-                    editorScope.$on('bgSplitter.resizeFinished', editorResized);
 
                     messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
                     messagesContainer.scroll(function()
