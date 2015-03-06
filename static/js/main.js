@@ -1026,6 +1026,7 @@ angular.module('webPGQ')
             {
                 var select = new ol.interaction.Select({
                     condition: ol.events.condition.mouseMove,
+                    toggleCondition: ol.events.condition.never,
                     multi: true,
                     /*
                     style: {
