@@ -1143,30 +1143,58 @@ angular.module('webPGQ')
 
                 var selectedFeatureCollection = select.getFeatures();
 
+                function getFeatureSortKey(feature)
+                {
+                    var props = feature.getProperties();
+                    return (props.queryID << 8) + (props.index << 4) + props.rowNum;
+                } // end getFeatureSortKey
+
+                function reSortFeature(featureArray, feature)
+                {
+                    if(featureArray.getArray)
+                    {
+                        // featureArray is actually an ol.Collection; get its array.
+                        featureArray = featureArray.getArray();
+                    } // end if
+
+                    var featureIdx = _.findIndex(featureArray, feature);
+                    if(featureIdx != -1)
+                    {
+                        // Remove the feature from its current index.
+                        featureArray.splice(featureIdx, 1);
+                    } // end if
+
+                    // Find where the feature should be re-added.
+                    var newFeatureIdx = _.sortedIndex(featureArray, feature, getFeatureSortKey);
+
+                    // Insert the new feature at newFeatureIdx.
+                    featureArray.splice(newFeatureIdx, 0, feature);
+
+                    return newFeatureIdx;
+                } // end reSortFeature
+
                 selectedFeatureCollection.on('add', function(ev)
                 {
-                    console.log('Feature selected:', ev.element);
-                    console.log('Feature properties:', ev.element.getProperties());
+                    var newFeature = ev.element;
+
+                    var selectedFeatureArray = selectedFeatureCollection.getArray();
+                    var newFeatureIdx = reSortFeature(selectedFeatureArray, newFeature);
 
                     queueDigest(function()
                     {
-                        var selFtIdx = selectedFeatures.push(ev.element);
-                        var scopeSelFtIdx = $scope.selectedFeatures.push(ev.element.getProperties());
+                        selectedFeatures.splice(newFeatureIdx, 0, newFeature);
+                        $scope.selectedFeatures.splice(newFeatureIdx, 0, newFeature.getProperties());
 
-                        if(selFtIdx !== scopeSelFtIdx)
+                        if(selectedFeatures.length !== $scope.selectedFeatures.length)
                         {
-                            console.warn("Added feature got different index when added to selectedFeatures (",
-                                selFtIdx, ") than when added to $scope.selectedFeatures (", scopeSelFtIdx, ")!",
-                                ev.element);
+                            console.warn("Lengths differ between selectedFeatures (", selectedFeatures.length,
+                                ") and $scope.selectedFeatures (", $scope.selectedFeatures.length, ")!");
                         } // end if
-
-                        console.log('$scope.selectedFeatures:', $scope.selectedFeatures);
                     }, maxUpdateDelay);
                 });
 
                 selectedFeatureCollection.on('remove', function(ev)
                 {
-                    console.log('Feature unselected:', ev.element);
                     queueDigest(function()
                     {
                         var featureIdx = selectedFeatures.indexOf(ev.element);
