@@ -628,7 +628,7 @@ angular.module('webPGQ')
                                 layerName = initialLayerName + '#' + (++uniquenessCounter);
                             } // end while
 
-                            geoJSONColumns.push({
+                            var geoJSONLayer = {
                                 source: {
                                     type: 'GeoJSON',
                                     geojson: { object: { type: 'FeatureCollection', features: [] }, projection: 'EPSG:3857' }
@@ -648,7 +648,25 @@ angular.module('webPGQ')
                                     fill: { color: ol.color.asString(layerColor.concat(0.5)) },
                                     stroke: { color: ol.color.asString(layerColor.concat(1)), width: 2 }
                                 }
-                            });
+                            };
+
+                            field.geoJSONLayer = geoJSONLayer;
+                            field.showGeoJSONLayer = function()
+                            {
+                                geoJSONLayer.active = true;
+                                $scope.showGeometry();
+                                applyIfNecessary();
+
+                                $timeout(function()
+                                {
+                                    if(geoJSONLayer.center)
+                                    {
+                                        geoJSONLayer.center();
+                                    } // end if
+                                });
+                            }; // end field.showGeoJSONLayer
+
+                            geoJSONColumns.push(geoJSONLayer);
                         } // end if
                     });
 

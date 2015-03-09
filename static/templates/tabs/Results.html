@@ -28,7 +28,15 @@
 			<thead>
 				<tr>
 					<th ng-repeat="field in resultSet.fields track by $index"
-						title="Data Type: {{ field.dataType }}">{{ field.name }}</th>
+							title="Data Type: {{ field.dataType }}">
+						{{ field.name }}
+
+						<a class="tiny compact circular icon ui button" ng-if="field.geoJSONLayer"
+								ng-click="field.showGeoJSONLayer()"
+								ng-style="{'background-color': field.geoJSONLayer.htmlColor}">
+							<i class="map icon"></i>
+						</a>
+					</th>
 				</tr>
 			</thead>
 
