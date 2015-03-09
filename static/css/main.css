@@ -363,8 +363,8 @@ editor > .ace_editor .ace_marker-layer .error {
 
 .clickable { cursor: pointer; }
 
-.hoverable { cursor: help; }
-.hoverable:hover { fill: #00827c; }
+tspan.hoverable { cursor: help; }
+tspan.hoverable:hover { fill: #00827c; }
 
 table td.hoverable.ui.dropdown {
 	cursor: default;
@@ -997,10 +997,24 @@ td > .ui.button:last-child {
 }
 
 #selectedFeaturesPanel {
-	max-width: 25%;
+	width: 25%;
 	max-height: 100%;
 	overflow: hidden;
 }
+#selectedFeaturesPanel > .label {
+	width: 100%;
+}
+
+#selectedFeaturesPanel accordion.hoverable
+{
+	background-color: transparent;
+	border-radius: 0.3rem;
+	padding: 0.3em;
+	margin: 0 -0.3em;
+}
+#selectedFeaturesPanel accordion.hoverable:hover { background-color: rgba(255, 255, 255, 0.5); }
+
+#selectedFeaturesPanel accordion > .title { display: block; padding: 0; }
 
 .color.icon,
 .ui.dropdown .menu > .item > .color.icon {
