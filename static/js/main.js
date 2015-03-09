@@ -1057,8 +1057,12 @@ angular.module('webPGQ')
 
 
                 var defaultSelectedStyle = new ol.style.Style({
-                    stroke: new ol.style.Stroke({ color: [127, 127, 127, 0.4], lineDash: [2, 2] }),
-                    fill: new ol.style.Fill({ color: [255, 255, 255, 0.2] })
+                    stroke: new ol.style.Stroke({ color: [0, 0, 0, 0.3], lineDash: [2, 2] }),
+                    fill: new ol.style.Fill({ color: [255, 255, 255, 0.1] })
+                });
+                var hoverSelectedStyle = new ol.style.Style({
+                    stroke: new ol.style.Stroke({ color: [0, 0, 0, 0.6], lineDash: [2, 2] }),
+                    fill: new ol.style.Fill({ color: [255, 255, 255, 0.3] })
                 });
 
                 /*
@@ -1080,7 +1084,7 @@ angular.module('webPGQ')
                     color = ol.color.asArray(color);
 
                     return _.initial(color)
-                        .concat(_.last(color) * 0.5);
+                        .concat(_.last(color) * 0.25);
                 } // end makeColorTranslucent
 
                 var select = new ol.interaction.Select({
@@ -1130,26 +1134,23 @@ angular.module('webPGQ')
                         } // end if
 
                         return [
-                            new ol.style.Style(_.defaults(
-                                {
-                                    stroke: featureStroke && new ol.style.Stroke({
-                                        color: makeColorTranslucent(featureStroke.color),
-                                        lineCap: featureStroke.lineCap,
-                                        lineDash: [2, 2],
-                                        lineJoin: featureStroke.lineJoin,
-                                        miterLimit: featureStroke.miterLimit,
-                                        width: featureStroke.width
-                                    }),
-                                    fill: featureFill && new ol.style.Fill({
-                                        color: makeColorTranslucent(featureFill.color)
-                                    }),
-                                    geometry: featureGeometry,
-                                    image: featureImage,
-                                    text: featureText,
-                                    zIndex: featureZIndex
-                                },
-                                defaultSelectedStyle
-                            )),
+                            new ol.style.Style({
+                                stroke: featureStroke && new ol.style.Stroke({
+                                    color: makeColorTranslucent(featureStroke.color),
+                                    lineCap: featureStroke.lineCap,
+                                    lineDash: [2, 2],
+                                    lineJoin: featureStroke.lineJoin,
+                                    miterLimit: featureStroke.miterLimit,
+                                    width: featureStroke.width
+                                }),
+                                fill: featureFill && new ol.style.Fill({
+                                    color: makeColorTranslucent(featureFill.color)
+                                }),
+                                geometry: featureGeometry,
+                                image: featureImage,
+                                text: featureText,
+                                zIndex: featureZIndex
+                            }),
                             defaultSelectedStyle
                         ];
                     }
@@ -1163,45 +1164,64 @@ angular.module('webPGQ')
 
                 function getFeatureSortKey(feature)
                 {
-                    var props = feature.getProperties();
-                    return (props.queryID << 8) + (props.index << 4) + props.rowNum;
+                    return -(feature.getGeometry().getArea());
                 } // end getFeatureSortKey
 
-                function reSortFeature(featureArray, feature)
+                var highlightedFeature;
+
+                function highlightFeature()
                 {
-                    if(featureArray.getArray)
+                    /* jshint validthis:true */
+                    highlightedFeature = this;
+                    map.render();
+                } // end highlightFeature
+
+                function unhighlightFeature()
+                {
+                    /* jshint validthis:true */
+                    if(highlightedFeature === this)
                     {
-                        // featureArray is actually an ol.Collection; get its array.
-                        featureArray = featureArray.getArray();
+                        highlightedFeature = undefined;
                     } // end if
+                    map.render();
+                } // end unhighlightFeature
 
-                    var featureIdx = _.findIndex(featureArray, feature);
-                    if(featureIdx != -1)
+                map.on('postcompose', function(event)
+                {
+                    console.log('postcompose: event =', event);
+                    if(highlightedFeature)
                     {
-                        // Remove the feature from its current index.
-                        featureArray.splice(featureIdx, 1);
+                        console.log('highlightedFeature =', highlightedFeature);
+                        event.vectorContext.drawFeature(highlightedFeature, hoverSelectedStyle);
                     } // end if
-
-                    // Find where the feature should be re-added.
-                    var newFeatureIdx = _.sortedIndex(featureArray, feature, getFeatureSortKey);
-
-                    // Insert the new feature at newFeatureIdx.
-                    featureArray.splice(newFeatureIdx, 0, feature);
-
-                    return newFeatureIdx;
-                } // end reSortFeature
+                }); // end 'postcompose' handler
 
                 selectedFeatureCollection.on('add', function(ev)
                 {
-                    var newFeature = ev.element;
-
                     var selectedFeatureArray = selectedFeatureCollection.getArray();
-                    var newFeatureIdx = reSortFeature(selectedFeatureArray, newFeature);
+
+                    var newFeature = selectedFeatureArray.pop();
+                    if(newFeature !== ev.element)
+                    {
+                        console.warn("Got different feature from the end of selectedFeatures (", newFeature,
+                            ") than from the 'add' event! (", ev.element, ")");
+                    } // end if
+
+                    // Re-insert the new feature at the correct sorted location.
+                    var newFeatureIdx = _.sortedIndex(selectedFeatureArray, newFeature, getFeatureSortKey);
+
+                    selectedFeatureArray.splice(newFeatureIdx, 0, newFeature);
 
                     queueDigest(function()
                     {
                         selectedFeatures.splice(newFeatureIdx, 0, newFeature);
-                        $scope.selectedFeatures.splice(newFeatureIdx, 0, newFeature.getProperties());
+                        $scope.selectedFeatures.splice(newFeatureIdx, 0, _.defaults(
+                            {
+                                __highlight: highlightFeature.bind(newFeature),
+                                __unhighlight: unhighlightFeature.bind(newFeature)
+                            },
+                            newFeature.getProperties()
+                        ));
 
                         if(selectedFeatures.length !== $scope.selectedFeatures.length)
                         {

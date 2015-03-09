@@ -31,10 +31,14 @@
 		<div class="ui large header">Selected features</div>
 
 		<div class="ui link list">
-			<a class="item" ng-repeat="feature in selectedFeatures track by $index">
-				<div class="ui medium header">Row #{{ feature.rowNum }} from {{ feature.layerName }}:</div>
+			<accordion class="hoverable item" ng-repeat="feature in selectedFeatures track by $index"
+					ng-mouseenter="feature.__highlight()" ng-mouseleave="feature.__unhighlight()">
+				<strong class="title">
+					<i class="dropdown icon"></i>
+					Row #{{ feature.rowNum }} from {{ feature.layerName }} &#x2026;
+				</strong>
 
-				<table class="ui definition table">
+				<table class="content definition ui table">
 					<tbody>
 						<tr ng-repeat="(key, value) in feature.properties">
 							<td>{{ key }}</td>
@@ -42,7 +46,7 @@
 						</tr>
 					</tbody>
 				</table>
-			</a>
+			</accordion>
 		</div>
 	</div>
 </div>
