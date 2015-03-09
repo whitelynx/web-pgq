@@ -1043,6 +1043,7 @@ angular.module('webPGQ')
                     fill: new ol.style.Fill({ color: [255, 255, 255, 0.2] })
                 });
 
+                /*
                 function lightenColor(color)
                 {
                     color = ol.color.asArray(color);
@@ -1054,6 +1055,15 @@ angular.module('webPGQ')
                         })
                         .concat(_.last(color));
                 } // end lightenColor
+                */
+
+                function makeColorTranslucent(color)
+                {
+                    color = ol.color.asArray(color);
+
+                    return _.initial(color)
+                        .concat(_.last(color) * 0.5);
+                } // end makeColorTranslucent
 
                 var select = new ol.interaction.Select({
                     toggleCondition: ol.events.condition.never,
@@ -1105,7 +1115,7 @@ angular.module('webPGQ')
                             new ol.style.Style(_.defaults(
                                 {
                                     stroke: featureStroke && new ol.style.Stroke({
-                                        color: lightenColor(featureStroke.color),
+                                        color: makeColorTranslucent(featureStroke.color),
                                         lineCap: featureStroke.lineCap,
                                         lineDash: [2, 2],
                                         lineJoin: featureStroke.lineJoin,
@@ -1113,7 +1123,7 @@ angular.module('webPGQ')
                                         width: featureStroke.width
                                     }),
                                     fill: featureFill && new ol.style.Fill({
-                                        color: lightenColor(featureFill.color)
+                                        color: makeColorTranslucent(featureFill.color)
                                     }),
                                     geometry: featureGeometry,
                                     image: featureImage,
@@ -1121,7 +1131,8 @@ angular.module('webPGQ')
                                     zIndex: featureZIndex
                                 },
                                 defaultSelectedStyle
-                            ))
+                            )),
+                            defaultSelectedStyle
                         ];
                     }
                 });
