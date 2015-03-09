@@ -643,10 +643,10 @@ angular.module('webPGQ')
                                 queryID: queryDef.queryID,
 
                                 color: layerColor,
-                                htmlColor: colorArrayAlpha(layerColor, 1),
+                                htmlColor: ol.color.asString(layerColor.concat(1)),
                                 style: {
-                                    fill: { color: colorArrayAlpha(layerColor, 0.5) },
-                                    stroke: { color: colorArrayAlpha(layerColor, 1), width: 2 }
+                                    fill: { color: ol.color.asString(layerColor.concat(0.5)) },
+                                    stroke: { color: ol.color.asString(layerColor.concat(1)), width: 2 }
                                 }
                             });
                         } // end if
@@ -976,8 +976,6 @@ angular.module('webPGQ')
             ];
             $scope.availableLayers = $scope.defaultLayers.slice();
             var currentColumnLayerNames = [];
-
-            function colorArrayAlpha(colorArr, a) { return 'rgba(' + colorArr.concat(a).join(',') + ')'; }
 
             var layerColors = [
                 // The "Dark2" color scheme, from matplotlib (matplotlib license)
