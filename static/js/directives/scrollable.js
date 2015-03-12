@@ -11,7 +11,7 @@ angular.module('webPGQ.directives')
 
             scope.$on('windowResized', update);
             scope.$on('bgSplitter.resizeFinished', update);
-            scope.$on('contentResized', update);
+            scope.$parent.$on('contentResized', update);
 
             function update(ev)
             {
