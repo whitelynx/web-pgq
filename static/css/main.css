@@ -1343,6 +1343,11 @@ sticky.fixed.ui.header::before {
 	font-size: .875rem;
 }
 
+/* FIX: Buttons as the last item in dropdown menus don't have enough bottom margin. */
+.ui.dropdown .menu > .item > .button{
+	margin-bottom: -0.25em;
+}
+
 /* FIX: Re-enable background color change on hover for active dropdown menu items. */
 .ui.dropdown .menu > .active.item:hover { background: rgba(0, 0, 0, 0.05); }
 
