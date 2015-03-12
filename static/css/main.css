@@ -1338,6 +1338,11 @@ sticky.fixed.ui.header::before {
 	top: 1em;
 }
 
+/* FIX: 'small' class doesn't work on dropdown menus. */
+.ui.dropdown .small.menu > .item {
+	font-size: .875rem;
+}
+
 /* FIX: Re-enable background color change on hover for active dropdown menu items. */
 .ui.dropdown .menu > .active.item:hover { background: rgba(0, 0, 0, 0.05); }
 
