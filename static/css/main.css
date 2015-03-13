@@ -1353,42 +1353,36 @@ sticky.fixed.ui.header::before {
 
 /* FIX: Non-inverted popup or dropdown menus inside inverted menus get the wrong colors on their items. */
 .ui.menu .item .ui.dropdown .menu:not(.inverted) > .green.active.item,
-.ui.dropdown.green .menu:not(.inverted) > .active.item,
 .ui.menu .item .popup.menu:not(.inverted) > .green.active.item,
 .ui.popup.green.menu:not(.inverted) > .active.item {
 	border-color: #5BBD72 !important;
 	color: #5BBD72 !important;
 }
 .ui.menu .item .ui.dropdown .menu:not(.inverted) > .red.active.item,
-.ui.dropdown.red .menu:not(.inverted) > .active.item,
 .ui.menu .item .popup.menu:not(.inverted) > .red.active.item,
 .ui.popup.red.menu:not(.inverted) > .active.item {
 	border-color: #D95C5C !important;
 	color: #D95C5C !important;
 }
 .ui.menu .item .ui.dropdown .menu:not(.inverted) > .blue.active.item,
-.ui.dropdown.blue .menu:not(.inverted) > .active.item,
 .ui.menu .item .popup.menu:not(.inverted) > .blue.active.item,
 .ui.popup.blue.menu:not(.inverted) > .active.item {
 	border-color: #6ECFF5 !important;
 	color: #6ECFF5 !important;
 }
 .ui.menu .item .ui.dropdown .menu:not(.inverted) > .purple.active.item,
-.ui.dropdown.purple .menu:not(.inverted) > .active.item,
 .ui.menu .item .popup.menu:not(.inverted) > .purple.active.item,
 .ui.popup.purple.menu:not(.inverted) > .active.item {
 	border-color: #564F8A !important;
 	color: #564F8A !important;
 }
 .ui.menu .item .ui.dropdown .menu:not(.inverted) > .orange.active.item,
-.ui.dropdown.orange .menu:not(.inverted) > .active.item,
 .ui.menu .item .popup.menu:not(.inverted) > .orange.active.item,
 .ui.popup.orange.menu:not(.inverted) > .active.item {
 	border-color: #F05940 !important;
 	color: #F05940 !important;
 }
 .ui.menu .item .ui.dropdown .menu:not(.inverted) > .teal.active.item,
-.ui.dropdown.teal .menu:not(.inverted) > .active.item,
 .ui.menu .item .popup.menu:not(.inverted) > .teal.active.item,
 .ui.popup.teal.menu:not(.inverted) > .active.item {
 	border-color: #00B5AD !important;
