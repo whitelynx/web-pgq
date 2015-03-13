@@ -1,0 +1,15 @@
+<accordion ng-if="isMultiLine(value)">
+	<strong class="title"><i class="dropdown icon"></i>{{ key }}: !!!??? &#x2026;</strong>
+	<ul class="array content" ng-if="isArray(value)">
+		<li ng-repeat="v in value" inspect="v"
+			tooltip-html="<strong>Type:</strong> {{ typeOf(v) }}" tooltipPosition="left center"></li>
+	</ul>
+	<ul class="object content" ng-if="isPlainObject(value)">
+		<li ng-repeat="(k, v) in value" inspect="v" inspect-key="k"
+			tooltip-html="<strong>Type:</strong> {{ typeOf(v) }}" tooltipPosition="left center"></li>
+	</ul>
+	<pre class="content" ng-if="!isArray(value) && !isPlainObject(value)"><code>!!!??? {{ value|inspect }}</code></pre>
+</accordion>
+
+<strong ng-if="!isMultiLine(value)">{{ key }}:</strong>
+<pre ng-if="!isMultiLine(value)"><code>{{ value|inspect }}</code></pre>

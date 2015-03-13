@@ -7,17 +7,17 @@ angular.module('webPGQ.directives')
     {
         function link(scope)//, element, attrs)
         {
-            function resizeGeometryMap()
+            olData.getMap().then(function(map)
             {
-                // Update OpenLayers map.
-                olData.getMap().then(function(map)
+                function resizeGeometryMap()
                 {
+                    // Update OpenLayers map.
                     map.updateSize();
-                });
-            } // end resizeGeometryMap
+                } // end resizeGeometryMap
 
-            scope.$on('windowResized', resizeGeometryMap);
-            scope.$on('bgSplitter.resizeFinished', resizeGeometryMap);
+                scope.$on('windowResized', resizeGeometryMap);
+                scope.$on('bgSplitter.resizeFinished', resizeGeometryMap);
+            });
         } // end link
 
         return {

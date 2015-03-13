@@ -10,13 +10,13 @@
 
 				<i class="color icon" ng-if="layer.htmlColor" ng-style="{'background-color': layer.htmlColor}"></i>
 				{{ layer.display || layer.name }}
-				<em ng-if="layer.queryID">(query # {{layer.queryID}})</em>
+				<em ng-if="layer.queryID">(query #{{ layer.queryID }}, stmt #{{ layer.statementNum }})</em>
 
 				<div class="squarish check ui label" ng-class="{teal: val.enabled}">
 					<i class="icon" ng-class="{disabled: !layer.active, checkmark: layer.active}"></i>
 				</div>
 
-				<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.hasExtent}"
+				<div class="squarish teal clickable ui label" ng-class="{disabled: !layer.getExtent}"
 						title="Zoom to fit" ng-click="eatEvent($event, layer.center)">
 					<i class="left map icon"></i>
 				</div>

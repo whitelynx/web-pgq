@@ -21,7 +21,7 @@
 	</a>
 </div>
 
-<div class="left aligned inverted content">
+<div class="left aligned inverted content" scrollable="{ suppressScrollX: false, includePadding: true }">
 	<section>
 		<div class="fade slide animation small icon ui message" ng-class="banner.severity"
 				ng-repeat="(idx, banner) in logger.bannerMessages">
@@ -30,7 +30,7 @@
 				{{ banner.time | date:"h:mm a" }}
 				<div class="detail">{{ banner.time | date:"M/d/y" }}</div>
 			</div>
-			<div class="content" scrollable="{ suppressScrollX: false, includePadding: true }">
+			<div class="content">
 				<div class="header">
 					{{ banner.header }}
 				</div>
@@ -38,7 +38,9 @@
 					<strong class="title"><i class="dropdown icon"></i>Details &#x2026;</strong>
 					<pre class="content" ng-if="banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
 					<ul class="content list" ng-if="banner.detailType != 'string'">
-						<li ng-repeat="(key, val) in banner.detail" ng-title="'Type: ' + typeOf(val)" ng-switch="isMultiLine(val)">
+						<li ng-repeat="(key, val) in banner.detail" inspect="val" inspect-key="key"
+							tooltip-html="<strong>Type:</strong> {{ typeOf(val) }}" tooltipPosition="left center"></li>
+						<!--li ng-repeat="(key, val) in banner.detail" tooltip-html="<strong>Type:</strong> {{ typeOf(val) }}" ng-switch="isMultiLine(val)">
 							<accordion ng-switch-when="true">
 								<strong class="title"><i class="dropdown icon"></i>{{ key }} &#x2026;</strong>
 								<pre class="content"><code>{{ val|inspect }}</code></pre>
@@ -46,7 +48,9 @@
 
 							<strong ng-switch-when="false">{{ key }}:</strong>
 							<pre ng-switch-when="false"><code>{{ val|inspect }}</code></pre>
-						</li>
+						</li-->
+						<!--li ng-repeat="(key, val) in banner.detail" tooltip-html="<strong>Type:</strong> {{ typeOf(val) }}"
+							inspect="val" inspect-key="key"></li-->
 					</ul>
 				</accordion>
 			</div>
