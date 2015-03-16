@@ -7,24 +7,28 @@ angular.module('webPGQ.directives')
     {
         function link(scope, element)//, attrs)
         {
-            var userOnChange = (scope.accordionOptions || {}).onChange;
+            element.addClass('accordion');
 
-            element
-                .addClass('ui accordion')
-                .accordion(_.defaults(
-                    {
-                        onChange: function()
+            if(element.parents('.ui.accordion').length === 0)
+            {
+                element
+                    .addClass('ui')
+                    .accordion(_.defaults(
                         {
-                            scope.$emit('contentResized');
-
-                            if(userOnChange)
+                            onChange: function()
                             {
-                                return userOnChange.apply(this, arguments);
-                            } // end if
-                        }
-                    },
-                    scope.accordionOptions
-                ));
+                                scope.$emit('contentResized');
+
+                                if((scope.accordionOptions || {}).onChange)
+                                {
+                                    return (scope.accordionOptions || {}).onChange.apply(this, arguments);
+                                } // end if
+                            }
+                        },
+                        scope.accordionOptions,
+                        { exclusive: false } // By default, allow multiple sibling sections to be open at the same time.
+                    ));
+            } // end if
         } // end link
 
         return {
