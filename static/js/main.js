@@ -638,6 +638,7 @@ angular.module('webPGQ')
                                 display: field.name +
                                     (uniquenessCounter > 1 ? ' #' + uniquenessCounter : ''),
                                 queryID: queryDef.queryID,
+                                statementNum: statementNum,
 
                                 color: layerColor,
                                 htmlColor: ol.color.asString(layerColor.concat(1)),
