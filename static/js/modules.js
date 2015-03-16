@@ -25,5 +25,5 @@ angular.module('ol', []).factory('ol', function($window) { return $window.ol; })
 angular.module('webPGQ', ['jQuery', 'hljs', 'lodash', 'ol', 'ngAnimate', 'ngCookies', 'openlayers-directive',
     'bgDirectives', 'webPGQ.directives', 'webPGQ.filters', 'webPGQ.services']);
 angular.module('webPGQ.services', ['unisocket', 'd3', 'dagreD3', 'rt.eventemitter']);
-angular.module('webPGQ.directives', ['ui.ace', 'hljs', 'webPGQ.services']);
+angular.module('webPGQ.directives', ['ui.ace', 'hljs', 'RecursionHelper', 'webPGQ.services']);
 angular.module('webPGQ.filters', []);
