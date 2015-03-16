@@ -809,6 +809,10 @@ svg .edgePath {
 	vertical-align: top;
 }
 
+nowrap {
+	white-space: nowrap;
+}
+
 .square.ui.button {
 	border-radius: 0;
 }
