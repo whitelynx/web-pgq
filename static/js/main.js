@@ -600,11 +600,6 @@ angular.module('webPGQ')
                     queueUpdate();
                 } // end onNotice
 
-                function contains(haystack, needle)
-                {
-                    return (haystack.indexOf(needle) != -1);
-                } // end contains
-
                 function onFields(statementNum, fields)
                 {
                     currentResultSet = {rows: [], noticeMessages: [], num: statementNum};
@@ -615,7 +610,7 @@ angular.module('webPGQ')
                     var geomFieldLayerNames = [];
                     fields.forEach(function(field, idx)
                     {
-                        var nameContains = contains.bind(this, field.name.toLowerCase());
+                        var nameContains = _.contains.bind(_, field.name.toLowerCase());
 
                         if(field.dataType == 'text' &&
                             (nameContains('geojson') || nameContains('geom') || nameContains('shape')))
