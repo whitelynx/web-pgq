@@ -602,10 +602,8 @@ angular.module('webPGQ')
 
                 function onFields(statementNum, fields)
                 {
-                    currentResultSet = {rows: [], noticeMessages: [], num: statementNum};
+                    currentResultSet = {fields: fields, rows: [], noticeMessages: [], num: statementNum};
                     resultSets.push(currentResultSet);
-
-                    currentResultSet.fields = fields;
 
                     var geomFieldLayerNames = [];
                     fields.forEach(function(field, idx)
@@ -615,7 +613,7 @@ angular.module('webPGQ')
                         if(field.dataType == 'text' &&
                             (nameContains('geojson') || nameContains('geom') || nameContains('shape')))
                         {
-                            var layerColor = getUnusedLayerColor();
+                            var layerColor = getUnusedLayerColor(geoJSONColumns);
 
                             var initialLayerName = queryDef.queryID + '/' + field.name;
                             var layerName = initialLayerName;
@@ -1008,9 +1006,9 @@ angular.module('webPGQ')
                 [154, 191, 136]
             ];
 
-            function getUnusedLayerColor()
+            function getUnusedLayerColor(otherLayers)
             {
-                var usedColors = _.pluck($scope.availableLayers, 'color');
+                var usedColors = _.pluck(otherLayers.concat($scope.availableLayers), 'color');
                 return _.find(layerColors, function(color)
                 {
                     return !_.contains(usedColors, color);
