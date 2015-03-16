@@ -1,0 +1,18 @@
+<accordion ng-if="detect.isMultiLine(value)">
+	<strong class="title" ng-if="detect.isSet(key)"
+			tooltip-html="<nowrap><strong>Type:</strong> {{ detect.typeOf(v) }}</nowrap>"
+			tooltip-options="{delay: {show: 500, hide: 0}, position: 'top left'}">
+		<i class="dropdown icon"></i>{{ key }}: &#x2026;
+	</strong>
+
+	<ul class="array content" ng-if="detect.isArray(value) || detect.isPlainObject(value)"
+			ng-class="{array: detect.isArray(value), object: detect.isPlainObject(value)}">
+		<li ng-repeat="(k, v) in value" inspect="v" inspect-key="k"
+				tooltip-html="<nowrap><strong>Type:</strong> {{ detect.typeOf(v) }}</nowrap>"
+				tooltip-options="{delay: {show: 500, hide: 0}, position: 'top left'}"></li>
+	</ul>
+	<pre class="content" ng-if="!detect.isArray(value) && !detect.isPlainObject(value)"><code>{{ value|inspect }}</code></pre>
+</accordion>
+
+<strong ng-if="!detect.isMultiLine(value) && detect.isSet(key)">{{ key }}:</strong>
+<pre ng-if="!detect.isMultiLine(value)"><code>{{ value|inspect }}</code></pre>

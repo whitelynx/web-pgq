@@ -809,6 +809,16 @@ svg .edgePath {
 	vertical-align: top;
 }
 
+.ui.message ul.list li.inspect:before { content: none; }
+.ui.message ul.list li.inspect.multi-line { padding-left: -0.25em; }
+
+li.inspect > accordion > ul.array::before { content: '['; }
+li.inspect > accordion > ul.array::after { content: ']'; }
+
+li.inspect > accordion > ul.object::before { content: '{'; }
+li.inspect > accordion > ul.object::after { content: '\7D'; }
+/* The above was "content: '}';", but that breaks Vim's CSS highlighting. -.- */
+
 nowrap {
 	white-space: nowrap;
 }
