@@ -4,8 +4,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'olData', 'olHelpers', 'detect', 'graph', 'keybinding', 'logger', 'promise', 'queueDigest', 'socket', 'sql',
-        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, olData, olHelpers, detect, graph, keybinding, logger, promise, queueDigest, socket, sql)
+        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'detect', 'graph', 'keybinding', 'logger', 'map', 'promise', 'queueDigest', 'socket', 'sql',
+        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, detect, graph, keybinding, logger, map, promise, queueDigest, socket, sql)
         {
             function applyIfNecessary()
             {
@@ -746,8 +746,8 @@ angular.module('webPGQ')
 
                     _.assign(resultSets, _.omit(response, 'rows', 'queryResults'));
 
-                    removeLayers(currentColumnLayerNames, true);
-                    addLayers(geoJSONColumns);
+                    map.removeLayers(currentColumnLayerNames, true);
+                    map.addLayers(geoJSONColumns);
 
                     currentColumnLayerNames = _.pluck(geoJSONColumns, 'name');
 
@@ -957,7 +957,16 @@ angular.module('webPGQ')
                 { display: 'OpenStreetMap', source: { type: "OSM" }, active: true },
                 { display: 'Stamen Terrain', source: { type: "Stamen", layer: "terrain" } }
             ];
-            $scope.availableLayers = $scope.defaultLayers.slice();
+
+            $scope.availableLayers = map.layers;
+            map.on('layersChanged', function(layers)
+            {
+                $scope.availableLayers = layers;
+            });
+
+            // Add the default layers.
+            map.addLayers($scope.defaultLayers);
+
             var currentColumnLayerNames = [];
 
             var layerColors = [
@@ -1015,259 +1024,6 @@ angular.module('webPGQ')
                 event.stopPropagation();
             }; // end $scope.eatEvent
 
-            var addLayers;
-            olData.getMap().then(function(map)
-            {
-                map.addInteraction(new ol.interaction.MouseWheelZoom({ duration: 150 }));
-
-
-                var defaultSelectedStyle = new ol.style.Style({
-                    stroke: new ol.style.Stroke({ color: [0, 0, 0, 0.3], lineDash: [2, 2] }),
-                    fill: new ol.style.Fill({ color: [255, 255, 255, 0.1] })
-                });
-                var hoverSelectedStyle = new ol.style.Style({
-                    stroke: new ol.style.Stroke({ color: [0, 0, 0, 0.6], lineDash: [2, 2] }),
-                    fill: new ol.style.Fill({ color: [255, 255, 255, 0.3] })
-                });
-
-                /*
-                function lightenColor(color)
-                {
-                    color = ol.color.asArray(color);
-
-                    return _.initial(color)
-                        .map(function(value)
-                        {
-                            return Math.round((value + value + 255) / 3);
-                        })
-                        .concat(_.last(color));
-                } // end lightenColor
-                */
-
-                function makeColorTranslucent(color)
-                {
-                    color = ol.color.asArray(color);
-
-                    return _.initial(color)
-                        .concat(_.last(color) * 0.25);
-                } // end makeColorTranslucent
-
-                var select = new ol.interaction.Select({
-                    toggleCondition: ol.events.condition.never,
-                    multi: true,
-                    style: function(feature, resolution)
-                    {
-                        var featureStyle = feature.getStyle();
-                        if(_.isFunction(featureStyle))
-                        {
-                            featureStyle = featureStyle.call(feature, resolution);
-                        } // end if
-                        if(!featureStyle)
-                        {
-                            // Fall back to the layer style, and finally to the default.
-                            featureStyle = (feature.getProperties() || {}).layerStyle || {};
-                        } // end if
-
-                        var featureStroke, featureFill, featureGeometry, featureImage, featureText, featureZIndex;
-                        if(featureStyle.getStroke)
-                        {
-                            featureStroke = featureStyle.getStroke();
-                            featureStroke = {
-                                color: [255, 255, 255, 0.6],
-                                lineCap: featureStroke.getLineCap(),
-                                lineDash: [2, 2],
-                                lineJoin: featureStroke.getLineJoin(),
-                                miterLimit: featureStroke.getMiterLimit(),
-                                width: featureStroke.getWidth()
-                            };
-                            featureFill = {
-                                color: featureStyle.getFill().getColor()
-                            };
-                            featureGeometry = featureStyle.getGeometry();
-                            featureImage = featureStyle.getImage();
-                            featureText = featureStyle.getText();
-                            featureZIndex = featureStyle.getZIndex();
-                        }
-                        else
-                        {
-                            featureStroke = featureStyle.stroke;
-                            featureFill = featureStyle.fill;
-                            featureGeometry = featureStyle.geometry;
-                            featureImage = featureStyle.image;
-                            featureText = featureStyle.text;
-                            featureZIndex = featureStyle.zIndex;
-                        } // end if
-
-                        return [
-                            new ol.style.Style({
-                                stroke: featureStroke && new ol.style.Stroke({
-                                    color: makeColorTranslucent(featureStroke.color),
-                                    lineCap: featureStroke.lineCap,
-                                    lineDash: [2, 2],
-                                    lineJoin: featureStroke.lineJoin,
-                                    miterLimit: featureStroke.miterLimit,
-                                    width: featureStroke.width
-                                }),
-                                fill: featureFill && new ol.style.Fill({
-                                    color: makeColorTranslucent(featureFill.color)
-                                }),
-                                geometry: featureGeometry,
-                                image: featureImage,
-                                text: featureText,
-                                zIndex: featureZIndex
-                            }),
-                            defaultSelectedStyle
-                        ];
-                    }
-                });
-                map.addInteraction(select);
-
-                var selectedFeatures = [];
-                $scope.selectedFeatures = [];
-
-                var selectedFeatureCollection = select.getFeatures();
-
-                function getFeatureSortKey(feature)
-                {
-                    return -(feature.getGeometry().getArea());
-                } // end getFeatureSortKey
-
-                var highlightedFeature;
-
-                function highlightFeature()
-                {
-                    /* jshint validthis:true */
-                    highlightedFeature = this;
-                    map.render();
-                } // end highlightFeature
-
-                function unhighlightFeature()
-                {
-                    /* jshint validthis:true */
-                    if(highlightedFeature === this)
-                    {
-                        highlightedFeature = undefined;
-                    } // end if
-                    map.render();
-                } // end unhighlightFeature
-
-                map.on('postcompose', function(event)
-                {
-                    console.log('postcompose: event =', event);
-                    if(highlightedFeature)
-                    {
-                        console.log('highlightedFeature =', highlightedFeature);
-                        event.vectorContext.drawFeature(highlightedFeature, hoverSelectedStyle);
-                    } // end if
-                }); // end 'postcompose' handler
-
-                selectedFeatureCollection.on('add', function(ev)
-                {
-                    var selectedFeatureArray = selectedFeatureCollection.getArray();
-
-                    var newFeature = selectedFeatureArray.pop();
-                    if(newFeature !== ev.element)
-                    {
-                        console.warn("Got different feature from the end of selectedFeatures (", newFeature,
-                            ") than from the 'add' event! (", ev.element, ")");
-                    } // end if
-
-                    // Re-insert the new feature at the correct sorted location.
-                    var newFeatureIdx = _.sortedIndex(selectedFeatureArray, newFeature, getFeatureSortKey);
-
-                    selectedFeatureArray.splice(newFeatureIdx, 0, newFeature);
-
-                    queueDigest(function()
-                    {
-                        selectedFeatures.splice(newFeatureIdx, 0, newFeature);
-                        $scope.selectedFeatures.splice(newFeatureIdx, 0, _.defaults(
-                            {
-                                __highlight: highlightFeature.bind(newFeature),
-                                __unhighlight: unhighlightFeature.bind(newFeature)
-                            },
-                            newFeature.getProperties()
-                        ));
-
-                        if(selectedFeatures.length !== $scope.selectedFeatures.length)
-                        {
-                            console.warn("Lengths differ between selectedFeatures (", selectedFeatures.length,
-                                ") and $scope.selectedFeatures (", $scope.selectedFeatures.length, ")!");
-                        } // end if
-                    }, maxUpdateDelay);
-                });
-
-                selectedFeatureCollection.on('remove', function(ev)
-                {
-                    queueDigest(function()
-                    {
-                        var featureIdx = selectedFeatures.indexOf(ev.element);
-                        if(featureIdx == -1)
-                        {
-                            console.warn("Removed feature is not present in $scope.selectedFeatures!", ev.element);
-                            console.log("$scope.selectedFeatures:", $scope.selectedFeatures);
-                        }
-                        else
-                        {
-                            // Remove the feature.
-                            selectedFeatures.splice(featureIdx, 1);
-                            $scope.selectedFeatures.splice(featureIdx, 1);
-                        } // end if
-                    }, maxUpdateDelay);
-                });
-
-
-                var layerCollection = map.getLayers();
-
-                addLayers = function(layerDefs)
-                {
-                    _.forEach(layerDefs, function(layerDef)
-                    {
-                        var layer;
-
-                        layerDef.toggle = function()
-                        {
-                            layerDef.active = !layerDef.active;
-                        }; // end layerDef.toggle
-
-                        layerDef.center = function()
-                        {
-                            var source = layer.getSource();
-                            if(source.getExtent)
-                            {
-                                var extent = source.getExtent();
-                                map.getView().fitExtent(extent, map.getSize());
-                            } // end if
-                        }; // end layerDef.center
-
-                        $scope.availableLayers.push(layerDef);
-
-                        layerCollection.on('add', onAdd);
-                        function onAdd(ev)
-                        {
-                            if(!ev.element.__def)
-                            {
-                                layer = ev.element;
-
-                                layer.__def = layerDef;
-                                layerCollection.un('add', onAdd);
-                            } // end if
-                        } // end onAdd
-                    });
-
-                    applyIfNecessary();
-                }; // end addLayers
-            });
-
-            function removeLayers(layerNames, onlyIfHidden)
-            {
-                $scope.availableLayers = _.reject($scope.availableLayers, function(layer)
-                {
-                    return _.includes(layerNames, layer.name) && (!onlyIfHidden || !layer.active);
-                });
-
-                applyIfNecessary();
-            } // end removeLayers
-
             $scope.geomMapCenter = { lon: 0, lat: 0, zoom: 2 };
 
             // Switching results views //
@@ -1308,19 +1064,12 @@ angular.module('webPGQ')
                 switch(value)
                 {
                     case 'Geometry':
+                    case 'Query Plan':
+                        // Update the geometry view and query plan view if necessary whenever they become visible.
                         if(value != oldValue)
                         {
-                            // Update OpenLayers map.
-                            olData.getMap().then(function(map)
-                            {
-                                map.updateSize();
-                            });
+                            $scope.$broadcast('Update');
                         } // end if
-                        break;
-
-                    case 'Query Plan':
-                        // Update the query plan view if necessary whenever it becomes visible.
-                        $scope.$broadcast('Update');
                         break;
 
                     case 'Messages':
