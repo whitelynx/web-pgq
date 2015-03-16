@@ -21,7 +21,7 @@
 	</a>
 </div>
 
-<div class="left aligned inverted content">
+<div class="left aligned inverted content" scrollable="{ suppressScrollX: false, includePadding: true }">
 	<section>
 		<div class="fade slide animation small icon ui message" ng-class="banner.severity"
 				ng-repeat="(idx, banner) in logger.bannerMessages">
@@ -30,7 +30,7 @@
 				{{ banner.time | date:"h:mm a" }}
 				<div class="detail">{{ banner.time | date:"M/d/y" }}</div>
 			</div>
-			<div class="content" scrollable="{ suppressScrollX: false, includePadding: true }">
+			<div class="content">
 				<div class="header">
 					{{ banner.header }}
 				</div>
