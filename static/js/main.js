@@ -677,6 +677,9 @@ angular.module('webPGQ')
 
                     geoJSONColumns.forEach(function(column)
                     {
+                        // Only process GeoJSON columns for the current statement.
+                        if(column.statementNum != statementNum) { return; }
+
                         var val = row[column.index];
                         if(val === null)
                         {
