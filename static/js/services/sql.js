@@ -191,15 +191,17 @@ angular.module('webPGQ.services')
                         })
                         .catch(function(error)
                         {
-                            var msg = 'Error running query #' + queryDef.queryID + ': ';
+                            var msg = 'Error running query #' + queryDef.queryID + ' statement #' +
+                                error.statementNum + ': ';
+
                             if(typeof error == 'string')
                             {
-                                logger.error(msg + error, {}, 'sql');
-                            }
-                            else
-                            {
-                                logger.error(msg + error.message, error, 'sql');
+                                error = { message: error };
                             } // end if
+
+                            error.query = queryDef;
+
+                            logger.error(msg + error.message, error, 'sql');
 
                             throw error;
                         })
