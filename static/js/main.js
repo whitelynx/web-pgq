@@ -4,8 +4,8 @@
 
 angular.module('webPGQ')
     .controller('MainController', [
-        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'olData', 'olHelpers', 'graph', 'keybinding', 'logger', 'promise', 'queueDigest', 'socket', 'sql',
-        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, olData, olHelpers, graph, keybinding, logger, promise, queueDigest, socket, sql)
+        '$scope', '$cookies', '$timeout', '$location', '$window', '$', 'hljs', '_', 'ol', 'olData', 'olHelpers', 'detect', 'graph', 'keybinding', 'logger', 'promise', 'queueDigest', 'socket', 'sql',
+        function($scope, $cookies, $timeout, $location, $window, $, hljs, _, ol, olData, olHelpers, detect, graph, keybinding, logger, promise, queueDigest, socket, sql)
         {
             function applyIfNecessary()
             {
@@ -15,6 +15,8 @@ angular.module('webPGQ')
                 } // end if
             } // end applyIfNecessary
 
+
+            $scope.detect = detect;
 
             $scope.connected = false;
             $scope.connecting = true;
@@ -939,39 +941,6 @@ angular.module('webPGQ')
                     .then($scope.showPlan)
                     .then(applyIfNecessary);
             }; // end $scope.explainQuery
-
-            $scope.contains = _.contains;
-            $scope.isString = _.isString;
-
-            $scope.typeOf = function(val)
-            {
-                if(_.isNull(val))
-                {
-                    return 'null';
-                }
-                else if(_.isArray(val))
-                {
-                    return 'array';
-                }
-                else
-                {
-                    return typeof val;
-                } // end if
-            }; // end $scope.typeOf
-
-            var multiLineStringRE = /\n./;
-            $scope.isMultiLine = function(val)
-            {
-                if(_.isString(val))
-                {
-                    return multiLineStringRE.test(val);
-                }
-                else
-                {
-                    return (_.isArray(val) && val.length > 0) ||
-                        (_.isPlainObject(val) && _.keys(val).length > 0);
-                } // end if
-            }; // end $scope.isMultiLine
 
             $scope.setLineWidthKey = function(key)
             {
