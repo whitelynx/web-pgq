@@ -46,7 +46,7 @@
 			Total Affected <div class="detail">{{ resultSets.totalRowsAffected }}</div>
 		</div>
 		<div class="small compact ui label" ng-if="resultSets && resultSets.totalTimeMS">
-			<div class="left detail">{{ resultSets.totalTimeMS }}</div> ms
+			<div class="left detail">{{ resultSets.totalTimeMS | formatMS }}</div>
 		</div>
 	</div>
 </div>

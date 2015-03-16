@@ -12,7 +12,7 @@
 					Affected <div class="detail">{{ resultSet.affectedRowCount }}</div>
 				</div>
 				<div class="small compact ui label" ng-if="resultSet && resultSet.totalTimeMS">
-					<div class="left detail">{{ resultSet.totalTimeMS }}</div> <span>ms</span>
+					<div class="left detail">{{ resultSet.totalTimeMS | formatMS }}</div>
 				</div>
 			</div>
 		</sticky>
