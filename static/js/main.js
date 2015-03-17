@@ -1338,8 +1338,6 @@ angular.module('webPGQ')
                         transition: 'slide down'
                     });
 
-                $('[data-content], [data-html]').popup({ delay: 500 });
-
                 $timeout(function()
                 {
                     $scope.pageLoaded = true;
