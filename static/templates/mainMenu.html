@@ -43,7 +43,7 @@
 	</div>
 </dropdown>
 <div class="item" ng-show="connecting" ng-click="connectSocket()"
-		data-content="Click to force reconnect.">
+		tooltip="Click to force reconnect.">
 	<i class="spinner loading icon"></i>
 	<span class="hide on mobile">Connecting...</span>
 </div>
@@ -150,7 +150,7 @@
 
 <div class="borderless right fitted item hide on mobile">
 	<div class="horizontally fitted borderless item compact ui buttons">
-		<a class="fast fade animation red vertical animated ui button" data-content="Cancel query"
+		<a class="fast fade animation red vertical animated ui button" tooltip="Cancel query"
 				ng-if="query.running" ng-click="cancelQuery()">
 			<div class="hidden content">Cancel</div>
 			<div class="visible content"><i class="spinner loading icon"></i></div>
@@ -159,12 +159,14 @@
 
 	<div class="item compact ui buttons">
 		<a class="teal labeled icon ui button" ng-click="runQuery()"
-				ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>F5</b>">
+				ng-class="{disabled: !dbConnected || query.running}"
+				tooltip-title="Run query, then commit." tooltip-html="Shortcut: <b>F5</b>">
 			<i class="play icon"></i>
 			Run
 		</a>
 		<a class="teal labeled icon ui button" ng-click="testQuery()"
-				ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>Shift+F5</b>">
+				ng-class="{disabled: !dbConnected || query.running}"
+				tooltip-title="Run query, then roll back." tooltip-html="Shortcut: <b>Shift+F5</b>">
 			<i class="lab icon"></i>
 			Test
 		</a>
@@ -172,12 +174,15 @@
 
 	<div class="horizontally fitted borderless item compact ui buttons">
 		<a class="orange labeled icon ui button" ng-click="explainQuery()"
-				ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>F7</b>">
+				ng-class="{disabled: !dbConnected || query.running}"
+				tooltip-title="Display query's execution plan." tooltip-html="Shortcut: <b>F7</b>">
 			<i class="question icon"></i>
 			Explain
 		</a>
 		<a class="orange labeled icon ui button" ng-click="explainQuery(true)"
-				ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>Shift+F7</b>">
+				ng-class="{disabled: !dbConnected || query.running}"
+				tooltip-title="Test query, and display the execution plan with additional runtime statistics."
+				tooltip-html="Shortcut: <b>Shift+F7</b>">
 			<i class="treatment icon"></i>
 			Analyze
 		</a>
@@ -195,7 +200,7 @@
 				<div class="divider"></div>
 
 				<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
-						ng-class="{active: val.enabled, teal: val.enabled}" data-content="{{ val.description }}">
+						ng-class="{active: val.enabled, teal: val.enabled}" tooltip="{{ val.description }}">
 					<i class="left icon" ng-class="val.icon"></i>
 					{{ key }}
 					<div class="squarish right ui label" ng-class="{teal: val.enabled}">
@@ -209,7 +214,7 @@
 
 <div class="borderless right fitted item show on mobile">
 	<div class="horizontally fitted borderless item compact ui buttons">
-		<a class="fast fade animation red vertical animated ui button" data-content="Cancel query"
+		<a class="fast fade animation red vertical animated ui button" tooltip="Cancel query"
 				ng-if="query.running" ng-click="cancelQuery()">
 			<div class="hidden content">Cancel</div>
 			<div class="visible content"><i class="spinner loading icon"></i></div>
@@ -218,7 +223,8 @@
 
 	<div class="item compact ui buttons">
 		<a class="teal icon vertical animated ui button" ng-click="runQuery()"
-				ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>F5</b>">
+				ng-class="{disabled: !dbConnected || query.running}"
+				tooltip-title="Run query, then commit." tooltip-html="Shortcut: <b>F5</b>">
 			<div class="hidden content">Run</div>
 			<div class="visible content"><i class="play icon"></i></div>
 		</a>
@@ -226,12 +232,15 @@
 
 	<div class="horizontally fitted borderless item compact ui buttons">
 		<a class="orange vertical animated ui button" ng-click="explainQuery()"
-				ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>F7</b>">
+				ng-class="{disabled: !dbConnected || query.running}"
+				tooltip-title="Display query's execution plan." tooltip-html="Shortcut: <b>F7</b>">
 			<div class="hidden content">Explain</div>
 			<div class="visible content"><i class="question icon"></i></div>
 		</a>
 		<a class="orange vertical animated ui button" ng-click="explainQuery(true)"
-				ng-class="{disabled: !dbConnected || query.running}" data-html="Shortcut: <b>Shift+F7</b>">
+				ng-class="{disabled: !dbConnected || query.running}"
+				tooltip-title="Test query, and display the execution plan with additional runtime statistics."
+				tooltip-html="Shortcut: <b>Shift+F7</b>">
 			<div class="hidden content">Analyze</div>
 			<div class="visible content"><i class="treatment icon"></i></div>
 		</a>
@@ -244,7 +253,7 @@
 		<div id="settings-popup" class="popup vertical ui menu">
 			<div class="header item">EXPLAIN settings</div>
 			<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
-					ng-class="{active: val.enabled, teal: val.enabled}" data-content="{{ val.description }}">
+					ng-class="{active: val.enabled, teal: val.enabled}" tooltip="{{ val.description }}">
 				<i class="left icon" ng-class="val.icon"></i>
 				{{ key }}
 				<div class="squarish ui label" ng-class="{teal: val.enabled}">
