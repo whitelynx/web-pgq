@@ -228,6 +228,12 @@
 			<div class="hidden content">Run</div>
 			<div class="visible content"><i class="play icon"></i></div>
 		</a>
+		<a class="teal icon vertical animated ui button" ng-click="testQuery()"
+				ng-class="{disabled: !dbConnected || query.running}"
+				tooltip-title="Run query, then roll back." tooltip-html="Shortcut: <b>Shift+F5</b>">
+			<div class="hidden content">Test</div>
+			<div class="visible content"><i class="lab icon"></i></div>
+		</a>
 	</div>
 
 	<div class="horizontally fitted borderless item compact ui buttons">
