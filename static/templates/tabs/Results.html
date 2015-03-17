@@ -41,12 +41,6 @@
 			</thead>
 
 			<tbody>
-				<!--tr ng-repeat="row in resultSet.rows track by $index" class="fade animation">
-					<td ng-repeat="value in row track by $index"
-						result-value="value" result-field-type="resultSet.fields[$index].dataType"
-						ace-config="commonEditorConfig">
-					</td>
-				</tr-->
 				<tr ng-repeat="row in resultSet.rows track by $index">
 					<td ng-repeat="value in row track by $index"
 						result-value="value" result-field-type="resultSet.fields[$index].dataType">
