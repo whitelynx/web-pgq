@@ -18,12 +18,78 @@ angular.module('webPGQ')
 
             $scope.detect = detect;
 
-            $scope.connected = false;
-            $scope.connecting = true;
+            $scope.status = {
+                description: 'Disconnected.',
+                //detail: undefined,
+                connected: false,
+                connecting: true,
+                socket: {
+                    color: '',
+                    connected: false,
+                    connecting: true,
+                },
+                database: {
+                    color: 'teal',
+                    connected: false,
+                    connecting: false
+                }
+            };
+
+            function setConnectionStatus(status)
+            {
+                _.merge($scope.status, status);
+
+                if(_.has(status, 'description') && !_.has(status, 'detail'))
+                {
+                    // `description` was changed; if `detail` is present on `$scope.status`, remove it.
+                    delete $scope.status.description;
+                } // end if
+
+                $scope.status.connected = $scope.status.socket.connected && $scope.status.database.connected;
+                $scope.status.connecting = $scope.status.socket.connecting || $scope.status.database.connecting;
+
+                if($scope.status.socket.connected)
+                {
+                    $scope.status.socket.color = '';
+
+                    if($scope.status.database.connected)
+                    {
+                        $scope.status.database.color = 'teal';
+                        $scope.status.icon = 'database';
+                    }
+                    else if($scope.status.database.connecting)
+                    {
+                        $scope.status.database.color = 'yellow';
+                        $scope.status.icon = 'notched circle loading';
+                    }
+                    else
+                    {
+                        $scope.status.database.color = 'black';
+                        $scope.status.icon = 'circular inverted disabled database';
+                    } // end if
+                }
+                else
+                {
+                    if($scope.status.socket.connecting)
+                    {
+                        $scope.status.socket.color = 'red';
+                        $scope.status.icon = 'notched circle loading';
+                    }
+                    else
+                    {
+                        $scope.status.socket.color = 'red';
+                        $scope.status.icon = 'circular inverted plug';
+                    } // end if
+
+                    $scope.status.database.color = $scope.status.socket.color;
+                } // end if
+
+                applyIfNecessary();
+            } // end setConnectionStatus
 
             $scope.connectSocket = function()
             {
-                if($scope.connected)
+                if($scope.status.socket.connected)
                 {
                     // Already connected to web-pgq server.
                     return promise.resolve(true);
@@ -43,10 +109,11 @@ angular.module('webPGQ')
 
             function onSocketConnect()
             {
-                $scope.connected = true;
-                $scope.connecting = false;
+                setConnectionStatus({
+                    description:  'Connected to web-pgq server.',
+                    socket: { connected: true, connecting: false }
+                });
 
-                applyIfNecessary();
                 console.log("Socket connected.");
             } // end onSocketConnect
             socket.on('connected', onSocketConnect);
@@ -58,25 +125,34 @@ angular.module('webPGQ')
 
             socket.on('disconnected', function()
             {
-                if($scope.connected)
+                var statusDesc;
+                if($scope.status.socket.connected)
                 {
                     logger.warn("Connection to web-pgq server interrupted!", null, 'connection');
+                    statusDesc = 'Connection to web-pgq server interrupted!';
                 }
                 else
                 {
-                    console.warn("Unable to reconnect to web-pgq server.");
+                    console.warn("Unable to reconnect to web-pgq server.", null, 'connection');
+                    statusDesc = 'Unable to reconnect to web-pgq server.';
                 } // end if
 
-                $scope.connected = false;
-                $scope.dbConnected = false;
-                $scope.dbConnecting = false;
-                $scope.connecting = socket.reconnect;
-
-                applyIfNecessary();
+                setConnectionStatus({
+                    description: statusDesc,
+                    socket: { connected: false, connecting: socket.reconnect },
+                    database: { connected: false, connecting: false }
+                });
             });
             socket.on('error', function(error)
             {
                 logger.error("Error connecting to web-pgq server!", error, 'connection');
+
+                setConnectionStatus({
+                    description: 'Error connecting to web-pgq server!',
+                    details: error.toString(),
+                    socket: { connected: false, connecting: socket.reconnect },
+                    database: { connected: false, connecting: false }
+                });
             });
 
             $scope.scrollableDefaults = { minScrollbarLength: 12 };
@@ -248,7 +324,7 @@ angular.module('webPGQ')
                     return promise.reject(new Error(errMsg));
                 } // end if
 
-                if($scope.dbConnected && _.isEqual(currentConnectionInfo, connInfo))
+                if($scope.status.database.connected && _.isEqual(currentConnectionInfo, connInfo))
                 {
                     logger.debug("Already connected to database " + JSON.stringify(connectionName) +
                         "; ignoring connectDB() call.", connInfo.masked, 'connection');
@@ -258,7 +334,7 @@ angular.module('webPGQ')
                 $scope.currentConnection = connectionName;
                 currentConnectionInfo = connInfo;
 
-                if(!$scope.connected)
+                if(!$scope.status.socket.connected)
                 {
                     // Not yet connected to web-pgq server.
                     return promise(function(resolve)
@@ -286,22 +362,27 @@ angular.module('webPGQ')
 
                 console.log("(re)Connecting to database:", $scope.currentConnection);
 
-                $scope.dbConnected = false;
-                $scope.dbConnecting = true;
+                setConnectionStatus({
+                    description: "Connecting to database: " + $scope.currentConnection,
+                    database: { connected: false, connecting: true }
+                });
 
                 return sql.connect(currentConnectionInfo, $scope.currentConnection)
                     .then(function()
                     {
-                        $scope.dbConnected = true;
-                        $scope.dbConnecting = false;
-                        applyIfNecessary();
+                        setConnectionStatus({
+                            description: "Connected to database: " + $scope.currentConnection,
+                            database: { connected: true, connecting: false }
+                        });
                         return true;
                     })
-                    .catch(function()
+                    .catch(function(error)
                     {
-                        $scope.dbConnected = false;
-                        $scope.dbConnecting = false;
-                        applyIfNecessary();
+                        setConnectionStatus({
+                            description: "Error connecting to database " + $scope.currentConnection + "!",
+                            details: error.toString(),
+                            database: { connected: false, connecting: false }
+                        });
                         return false;
                     });
             } // end _connectDB
@@ -1264,19 +1345,22 @@ angular.module('webPGQ')
                     $scope.pageLoaded = true;
 
                     //TODO: Move these to directives!
-                    messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
-                    messagesContainer.scroll(function()
+                    $timeout(function()
                     {
-                        if($scope.resultsTab != 'Messages' || !ignoreMessagesContainerScroll)
+                        messagesContainer = $('#messages-dimmer.ui.dimmer > .content');
+                        messagesContainer.scroll(function()
                         {
-                            messagesAtBottom = false;
-                            if(messagesContainer.scrollTop() >=
-                                (messagesContainer.prop('scrollHeight') - messagesContainer.height()))
+                            if($scope.resultsTab != 'Messages' || !ignoreMessagesContainerScroll)
                             {
-                                messagesAtBottom = true;
+                                messagesAtBottom = false;
+                                if(messagesContainer.scrollTop() >=
+                                    (messagesContainer.prop('scrollHeight') - messagesContainer.height()))
+                                {
+                                    messagesAtBottom = true;
+                                } // end if
                             } // end if
-                        } // end if
-                    });
+                        });
+                    }, 100);
                 });
             });
         }]);
