@@ -25,7 +25,7 @@ angular.module('moment', []).factory('moment', function($window) { return $windo
 //// Application Modules ////
 
 angular.module('webPGQ', ['jQuery', 'hljs', 'lodash', 'ol', 'ngAnimate', 'ngCookies', 'openlayers-directive',
-    'bgDirectives', 'moment', 'vs-repeat', 'webPGQ.directives', 'webPGQ.filters', 'webPGQ.services']);
+    'bgDirectives', 'moment', 'webPGQ.directives', 'webPGQ.filters', 'webPGQ.services']);
 angular.module('webPGQ.services', ['unisocket', 'd3', 'dagreD3', 'rt.eventemitter']);
 angular.module('webPGQ.directives', ['ui.ace', 'hljs', 'RecursionHelper', 'webPGQ.services']);
 angular.module('webPGQ.filters', []);
