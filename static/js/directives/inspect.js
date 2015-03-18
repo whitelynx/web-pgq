@@ -1,5 +1,5 @@
 /* jshint browser:true, globalstrict:true */
-/* global angular:true, console:true */
+/* global angular:true */
 "use strict";
 
 angular.module('webPGQ.directives')
@@ -22,7 +22,6 @@ angular.module('webPGQ.directives')
                     scope.$watch('value', function(value)
                     {
                         element.toggleClass('multi-line', detect.isMultiLine(value));
-                        console.log("inspect: value =", value, "; isMultiLine(value) =", detect.isMultiLine(value), "; element.");
                     });
                 });
             },
