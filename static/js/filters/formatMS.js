@@ -11,14 +11,14 @@ angular.module('webPGQ.filters')
 
             var duration = moment.duration(input, 'ms');
             var days = Math.floor(duration.asDays());
-            var seconds = Math.floor(duration.asSeconds());
-            if(seconds > 60)
+            var seconds = duration.asSeconds();
+            if(seconds > (60 * 60)) // At least 1 hour
             {
-                return duration.format((days == 1) ? "d [day] h:mm:ss" : "d [days] h:mm:ss", 6);
+                return duration.format((days == 1) ? "d [day] h:mm:ss" : "d [days] h:mm:ss", 3);
             }
-            else if(seconds > 0)
+            else if(seconds > 0) // At least 1 second
             {
-                return duration.format((seconds == 1) ? "s [second]" : "s [seconds]", 6);
+                return duration.format("m [min] s [sec]", 3);
             }
             else
             {
