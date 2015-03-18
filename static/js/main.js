@@ -133,7 +133,7 @@ angular.module('webPGQ')
                 }
                 else
                 {
-                    console.warn("Unable to reconnect to web-pgq server.", null, 'connection');
+                    logger.warn("Unable to reconnect to web-pgq server.", null, 'connection');
                     statusDesc = 'Unable to reconnect to web-pgq server.';
                 } // end if
 
