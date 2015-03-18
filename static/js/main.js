@@ -207,14 +207,67 @@ angular.module('webPGQ')
                 info: new sql.ConnectionInfo()
             };
 
-            var editConnectionDimmer, removeConnectionModal;
+            var _editConnectionDimmer, _removeConnectionModal;
+            function getEditConnectionDimmer()
+            {
+                if(!_editConnectionDimmer || _editConnectionDimmer.length === 0)
+                {
+                    _editConnectionDimmer = $('#editConnectionDimmer');
+
+                    var editConnectionValidationSettings = {
+                        inline: true,
+                        on: 'blur',
+                        rules: {
+                            notExistingConnectionName: function(value)
+                            {
+                                return !$scope.connections[value] || (value == $scope.editingConnection.name);
+                            }
+                        },
+                        //FIXME: These never get called!
+                        onSuccess: function()
+                        {
+                            console.log("Success!");
+                            $scope.editingConnection.isValid = true;
+                            applyIfNecessary();
+                            return true;
+                        },
+                        onFailure: function()
+                        {
+                            console.log("Failure!");
+                            $scope.editingConnection.isValid = false;
+                            applyIfNecessary();
+                            return false;
+                        }
+                    };
+                    var editConnectionValidationRules = {
+                        connectionName: {
+                            identifier: 'connectionName',
+                            rules: [
+                                { type: 'empty', prompt: 'Please enter a name for the connection' },
+                                { type: 'notExistingConnectionName', prompt: 'This connection name is already taken' }
+                            ]
+                        }
+                    };
+
+                    $('.ui.form', _editConnectionDimmer)
+                        .form(editConnectionValidationRules, editConnectionValidationSettings);
+                } // end if
+                return _editConnectionDimmer;
+            } // end getEditConnectionDimmer
+
+            function getRemoveConnectionModal()
+            {
+                if(!_removeConnectionModal || _removeConnectionModal.length === 0)
+                {
+                    _removeConnectionModal = $('#removeConnectionModal');
+                    _removeConnectionModal.modal({closable: false});
+                } // end if
+                return _removeConnectionModal;
+            } // end getRemoveConnectionModal
 
             function showEditConnection()
             {
-                if(editConnectionDimmer)
-                {
-                    editConnectionDimmer.dimmer('show');
-                } // end if
+                getEditConnectionDimmer().dimmer('show');
             } // end showEditConnection
 
             $scope.addConnection = function()
@@ -235,7 +288,7 @@ angular.module('webPGQ')
 
                 $window.setTimeout(function()
                 {
-                    removeConnectionModal.modal('show');
+                    getRemoveConnectionModal().modal('show');
                 }, 0);
             }; // end $scope.removeConnection
 
@@ -275,10 +328,7 @@ angular.module('webPGQ')
 
             $scope.hideEditConnection = function()
             {
-                if(editConnectionDimmer)
-                {
-                    editConnectionDimmer.dimmer('hide');
-                } // end if
+                getEditConnectionDimmer().dimmer('hide');
 
                 $scope.editConnectionError = undefined;
             }; // end $scope.hideEditConnection
@@ -1253,47 +1303,6 @@ angular.module('webPGQ')
                 {
                     $scope.$broadcast('windowResized');
                 });
-
-                editConnectionDimmer = $('#editConnectionDimmer');
-                removeConnectionModal = $('#removeConnectionModal');
-                removeConnectionModal.modal({closable: false});
-
-                var editConnectionValidationSettings = {
-                    inline: true,
-                    on: 'blur',
-                    rules: {
-                        notExistingConnectionName: function(value)
-                        {
-                            return !$scope.connections[value] || (value == $scope.editingConnection.name);
-                        }
-                    },
-                    //FIXME: These never get called!
-                    onSuccess: function()
-                    {
-                        console.log("Success!");
-                        $scope.editingConnection.isValid = true;
-                        applyIfNecessary();
-                        return true;
-                    },
-                    onFailure: function()
-                    {
-                        console.log("Failure!");
-                        $scope.editingConnection.isValid = false;
-                        applyIfNecessary();
-                        return false;
-                    }
-                };
-                var editConnectionValidationRules = {
-                    connectionName: {
-                        identifier: 'connectionName',
-                        rules: [
-                            { type: 'empty', prompt: 'Please enter a name for the connection' },
-                            { type: 'notExistingConnectionName', prompt: 'This connection name is already taken' }
-                        ]
-                    }
-                };
-                $('.ui.form', editConnectionDimmer)
-                    .form(editConnectionValidationRules, editConnectionValidationSettings);
 
                 // Key bindings //
                 function execRun(event)
