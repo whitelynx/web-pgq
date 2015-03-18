@@ -97,5 +97,23 @@ angular.module('webPGQ.services')
             }
         });
 
+        window.onerror = function(error)
+        {
+            logger.error('Unhandled error: ' + error.toString() + ' (via `window.error`)', error, 'web');
+        };
+        angular.element(document).ajaxError(function(event, _jqXHR, _ajaxSettings, thrownError)
+        {
+            logger.debug('AJAX error: ' + thrownError, event, 'web');
+        });
+
         return logger;
+    }])
+
+    .factory('$exceptionHandler', ['logger', function(logger)
+    {
+        return function(exception, cause)
+        {
+            logger.debug('Unhandled error: ' + exception.toString() + (cause ? ' (caused by "' + cause + '")' : ''),
+                exception, 'web');
+        };
     }]);
