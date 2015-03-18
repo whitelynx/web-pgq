@@ -38,9 +38,7 @@
 					<strong class="title"><i class="dropdown icon"></i>Details &#x2026;</strong>
 					<pre class="content" ng-if="banner.detailType == 'string'"><code>{{ banner.detail }}</code></pre>
 					<ul class="content list" ng-if="banner.detailType != 'string'">
-						<li ng-repeat="(key, val) in banner.detail" inspect="val" inspect-key="key"
-							tooltip-html="<nowrap><strong>Type:</strong> {{ detect.typeOf(val) }}</nowrap>"
-							tooltip-options="{delay: {show: 500, hide: 0}, position: 'top left'}"></li>
+						<li ng-repeat="(key, val) in banner.detail" inspect="val" inspect-key="key"></li>
 					</ul>
 				</accordion>
 			</div>
