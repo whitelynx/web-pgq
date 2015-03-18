@@ -14,7 +14,8 @@
                     html: attrs.tooltipHtml,
                     title: attrs.tooltipTitle,
                     position: attrs.tooltipPosition,
-                    variation: 'small inverted'
+                    variation: 'small inverted',
+                    exclusive: false
                 },
                 scope.$eval(attrs.tooltipOptions)
             );
