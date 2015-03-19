@@ -1257,11 +1257,10 @@ angular.module('webPGQ')
 
             function setPermalinkThrottled()
             {
-                if(setPermalinkTimerID)
+                if(setPermalinkTimerID === undefined)
                 {
-                    $window.clearTimeout(setPermalinkTimerID);
+                    setPermalinkTimerID = $window.setTimeout(setPermalink, setPermalinkDelay);
                 } // end if
-                setPermalinkTimerID = $window.setTimeout(setPermalink, setPermalinkDelay);
             } // end setPermalinkThrottled
 
             $scope.$watchCollection('query', setPermalinkThrottled);
