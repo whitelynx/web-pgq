@@ -253,7 +253,7 @@ angular.module('webPGQ.directives')
 
                         var popupSettings = {
                             on: 'hover',
-                            html: '<div class="content"><b>Referenced by:</b> ' + line.field + '</div>',
+                            html: '<b>Referenced by:</b> ' + line.field,
                             position: 'top center',
                             variation: 'inverted',
                             className: { popup: 'query-plan ui popup' },
