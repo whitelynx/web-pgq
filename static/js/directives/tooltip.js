@@ -1,5 +1,5 @@
 /* jshint browser:true, globalstrict:true */
-/* global angular:true, console:true */
+/* global angular:true */
 "use strict";
 
 (function()
@@ -19,8 +19,6 @@
                 },
                 scope.$eval(attrs.tooltipOptions)
             );
-
-            console.log("tooltip~update(): element =", element, "; element.popup(", popupOpts, ")");
 
             element.popup(popupOpts);
         } // end update
