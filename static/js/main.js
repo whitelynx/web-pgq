@@ -746,7 +746,9 @@ angular.module('webPGQ')
                         {
                             var layerColor = getUnusedLayerColor(geoJSONColumns);
 
-                            var initialLayerName = queryDef.queryID + '/' + field.name;
+                            var initialLayerName = 'query #' + queryDef.queryID + ', stmt #' + statementNum +
+                                ' / ' + field.name;
+
                             var layerName = initialLayerName;
                             var uniquenessCounter = 1;
                             while(geomFieldLayerNames.indexOf(layerName) != -1)
@@ -1086,8 +1088,8 @@ angular.module('webPGQ')
 
             // Geometry Map //
             $scope.defaultLayers = [
-                { display: 'OpenStreetMap', source: { type: "OSM" }, active: true },
-                { display: 'Stamen Terrain', source: { type: "Stamen", layer: "terrain" } }
+                { name: 'OpenStreetMap', source: { type: "OSM" }, active: true },
+                { name: 'Stamen Terrain', source: { type: "Stamen", layer: "terrain" } }
             ];
 
             $scope.availableLayers = map.layers;
