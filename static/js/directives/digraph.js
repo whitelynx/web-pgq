@@ -77,6 +77,7 @@ angular.module('webPGQ.directives')
 
                         var nestedDropdownSettings = {
                             on: 'hover',
+                            action: 'nothing',
                             delay: { show: 10 },
                             onShow: function()
                             {
@@ -84,7 +85,7 @@ angular.module('webPGQ.directives')
                                 $timeout(function()
                                 {
                                     $elem.perfectScrollbar('update');
-                                }, 300);
+                                }, 100);
                             }
                         };
 
@@ -93,7 +94,8 @@ angular.module('webPGQ.directives')
                             title: node.label,
                             //preserve: true,
                             position: 'top left',
-                            html: '<table class="compact smallest definition ui table">' +
+                            variation: 'flowing',
+                            html: '<div class="content"><table class="compact smallest definition ui table">' +
                                 Object.keys(metadata)
                                     .filter(function(key)
                                     {
@@ -180,7 +182,7 @@ angular.module('webPGQ.directives')
                                         if(full)
                                         {
                                             row += '<td class="hoverable ui dropdown"><pre class="text"><code>' +
-                                                firstLine + '</code></pre><i class="vertical ellipsis icon"></i>' +
+                                                full + '</code></pre><i class="vertical ellipsis icon"></i>' +
                                                 '<pre class="overlapping menu"><code>' + full + '</code></pre></td>';
                                         }
                                         else
@@ -192,7 +194,7 @@ angular.module('webPGQ.directives')
                                         return row;
                                     })
                                     .join('') +
-                                '</table>',
+                                '</table></div>',
                             className: {
                                 popup: 'query-plan info ui popup',
                             },
@@ -206,6 +208,23 @@ angular.module('webPGQ.directives')
                                         includePadding: true,
                                         minScrollbarLength: 12
                                     });
+
+                                var contentElem = $('.content', this);
+                                $timeout(function()
+                                {
+                                    contentElem.perfectScrollbar({
+                                        includePadding: true,
+                                        minScrollbarLength: 12
+                                    });
+                                }, 100);
+                            },
+                            onShow: function()
+                            {
+                                var $elem = $('content', this);
+                                $timeout(function()
+                                {
+                                    $elem.perfectScrollbar('update');
+                                }, 100);
                             }
                         };
 

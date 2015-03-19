@@ -342,22 +342,22 @@ editor > .ace_editor .ace_marker-layer .error {
 }
 
 .query-plan.info.ui.popup {
-	max-width: 90%;
-	max-height: 65%;
 	padding: 0;
 }
 
-.query-plan.ui.popup > .header, .query-plan.ui.popup > .content {
-	padding: 0.5em;
-}
-
-.query-plan.ui.popup table {
-	max-width: 100%;
+.query-plan.ui.popup > .content {
+	max-width: 50vw;
+	max-height: 65vh;
+	overflow: hidden;
 	position: relative;
+}
+.query-plan.ui.popup > .content > table {
 	z-index: 10;
+	margin: 0;
+	border: none;
 }
 
-.query-plan.ui.popup table th {
+.query-plan.ui.popup > .content > table th {
 	white-space: nowrap;
 }
 
@@ -369,6 +369,11 @@ tspan.hoverable:hover { fill: #00827c; }
 table td.hoverable.ui.dropdown {
 	cursor: default;
 	box-shadow: 2px 0px 0px rgba(0, 181, 173, 0.9) inset;
+}
+table td.hoverable.ui.dropdown > .text {
+	max-height: 1.3em;
+	padding: 0 0.5em 0 0;
+	overflow: hidden;
 }
 
 table tbody tr td.clickable {
@@ -383,12 +388,12 @@ table tbody tr td.clickable.visible {
 }
 
 table td.ui.dropdown {
-	line-height: normal;
+	line-height: 1.33em;
 	display: table-cell;
 }
 table td.hoverable.ui.dropdown > .menu {
 	box-sizing: border-box;
-	padding: 0.3em 1em 1em 0.2em;
+	padding: 0.3em 1em 1em 0.3em;
 	border-radius: 0;
 	border-left: 2px solid rgba(50, 50, 50, 0.9);
 	max-width: 100%;
