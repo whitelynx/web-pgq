@@ -3,16 +3,43 @@
 "use strict";
 
 angular.module('webPGQ.services')
-    .service('map', ['_', 'eventEmitter', 'ol', 'olData', 'promise', 'queueDigest',
-        function(_, eventEmitter, ol, olData, promise, queueDigest)
+    .service('map', ['$timeout', '_', 'eventEmitter', 'ol', 'olData', 'promise', 'queueDigest',
+        function($timeout, _, eventEmitter, ol, olData, promise, queueDigest)
         {
             var layerCollection;
+            var waitingLayers = [];
             var maxUpdateDelay = 200;
 
             var mapPromise = olData.getMap();
             mapPromise.then(function(map)
             {
                 layerCollection = map.getLayers();
+
+                layerCollection.on('add', function(ev)
+                {
+                    var layer = ev.element;
+
+                    var waitingLayerIdx = _.findIndex(waitingLayers, { name: layer.get('name') });
+                    if(waitingLayerIdx >= 0)
+                    {
+                        // Remove waiting layer, and call its onAdd().
+                        var layerDef = _.pullAt(waitingLayers, waitingLayerIdx)[0];
+                        if(layerDef.onAdd)
+                        {
+                            layerDef.onAdd(layer);
+                        }
+                        else
+                        {
+                            console.warn("Layer definition for layer with name", layer.get('name'), 'has no onAdd():',
+                                layerDef);
+                        } // end if
+                    }
+                    else
+                    {
+                        console.warn("No matching layer definition found for layer with name", layer.get('name'), '!',
+                            layer);
+                    } // end if
+                }); // end 'add' handler
 
                 map.addInteraction(new ol.interaction.MouseWheelZoom({ duration: 150 }));
 
@@ -248,35 +275,40 @@ angular.module('webPGQ.services')
                             }; // end layerDef.center
 
                             layerDef.layerID = layerID;
-
-                            layerCollection.on('add', onAdd);
-                            mapService.layers.push(layerDef);
-                            mapService.emit('layersChanged', mapService.layers);
-
-                            function onAdd(ev)
+                            function onAdd(layer_)
                             {
+                                layer = layer_;
+
                                 try
                                 {
-                                    if(!ev.element.get('layerDef'))
+                                    if(layer.get('layerDef'))
                                     {
-                                        console.log("Matched layerDef #", layerID, "to layer:", ev.element);
-                                        layer = ev.element;
-                                        layer.set('layerID', layerID);
-                                        layer.set('layerDef', layerDef);
-                                        layerCollection.un('add', onAdd);
-
-                                        resolve(promise(processNextLayerDef));
-                                    }
-                                    else
-                                    {
-                                        console.log("Layer def #", layerID, "did not match added layer:", ev.element);
+                                        console.warn(
+                                            "Layer already has `layerDef` set while processing onAdd() for def #",
+                                            layerID, "with name", layerDef.name, ":", layer
+                                        );
                                     } // end if
+
+                                    console.log("Matched layerDef #", layerID, "with name", layerDef.name, "to layer:", layer);
+                                    layer.set('layerID', layerID);
+                                    layer.set('layerDef', layerDef);
+
+                                    resolve(promise(processNextLayerDef));
                                 }
                                 catch(exc)
                                 {
                                     reject(exc);
                                 } // end try
                             } // end onAdd
+
+                            waitingLayers.push({
+                                name: layerDef.name,
+                                layerDef: layerDef,
+                                onAdd: onAdd
+                            });
+
+                            mapService.layers.push(layerDef);
+                            mapService.emit('layersChanged', mapService.layers);
                         } // end processNextLayerDef
                     });
                 }, // end addLayers
