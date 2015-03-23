@@ -67,12 +67,12 @@
 		</div>
 	</div>
 	<div class="actions">
-		<div class="two fluid ui inverted buttons">
-			<div class="ui red basic inverted button" ng-click="removeConnection()">
+		<div class="two fluid ui buttons">
+			<div class="inverted red ui button" ng-click="removeConnection()">
 				<i class="checkmark icon"></i>
 				Yes, <strong>delete</strong> it.
 			</div>
-			<div class="ui blue basic inverted button">
+			<div class="inverted blue ui button">
 				<i class="remove icon"></i>
 				No, keep it!
 			</div>
@@ -84,8 +84,9 @@
 	<div class="content">
 		<div class="center">
 			<div class="inverted small ui form segment" ng-class="{error: editConnectionError}">
-				<h2 ng-show="editingConnection.isNew">Add Connection</h2>
-				<h2 ng-show="!editingConnection.isNew">Edit Connection {{ editingConnection.name|json }}</h2>
+				<h2>{{ editingConnection.isNew ? 'Add Connection' : 'Edit Connection ' + editingConnection.name|json }}</h2>
+				<h2 ng-if="editingConnection.isNew">Add Connection</h2>
+				<h2 ng-if="!editingConnection.isNew">Edit Connection {{ editingConnection.name|json }}</h2>
 
 				<div class="inline field">
 					<label>Connection Name</label>
