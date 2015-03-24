@@ -13,6 +13,8 @@ angular.module('webPGQ.services')
         var minEdgeWidth = 1, maxEdgeWidth = 40;
         var edgeWidthRange = maxEdgeWidth - minEdgeWidth;
 
+        var defaultEdgeStyle = 'stroke: #000; stroke-dasharray: none';
+
         var nodeTypeIcons = [
             'Aggregate',
             'Append',
@@ -63,7 +65,7 @@ angular.module('webPGQ.services')
             var edgePercent = maxEdgeWidthValue ? (child[edgeWidthKey] || 0) / maxEdgeWidthValue : 0;
             var edgeSize = (edgePercent * edgeWidthRange) + minEdgeWidth;
 
-            edge.style = (edge.style ? edge.style + ';' : '') + 'stroke-width: ' + edgeSize + 'px';
+            edge.style = (edge.style || defaultEdgeStyle) + 'stroke-width: ' + edgeSize + 'px';
 
             return edge;
         } // end updateEdge
