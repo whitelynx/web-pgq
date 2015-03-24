@@ -635,7 +635,7 @@ angular.module('webPGQ')
             var lastExecutedRange, lastExecutedMarkerID, errorMarkerID, lastErrorLine;
             var lastRowCount = 0;
             var runSQLCallCount = 0;
-            function runSQL(queryDef)
+            function runSQL(batchDef)
             {
                 if($scope.query.running)
                 {
@@ -696,6 +696,9 @@ angular.module('webPGQ')
                     {
                         var session = mainEditor.getSession();
 
+                        // Subtract 1 since statement numbers are 1-based.
+                        var queryDef = batchDef.queries[error.statementNum - 1];
+
                         // Subtract 1 since PostgreSQL reports 1-based positions instead of 0-based.
                         var index = parseInt(error.position, 10) - 1 + queryDef.startIndex;
 
@@ -746,7 +749,7 @@ angular.module('webPGQ')
                         {
                             var layerColor = getUnusedLayerColor(geoJSONColumns);
 
-                            var initialLayerName = 'query #' + queryDef.queryID + ', stmt #' + statementNum +
+                            var initialLayerName = 'query #' + batchDef.queryID + ', stmt #' + statementNum +
                                 ' / ' + field.name;
 
                             var layerName = initialLayerName;
@@ -768,7 +771,7 @@ angular.module('webPGQ')
                                 name: layerName,
                                 display: field.name +
                                     (uniquenessCounter > 1 ? ' #' + uniquenessCounter : ''),
-                                queryID: queryDef.queryID,
+                                queryID: batchDef.queryID,
                                 statementNum: statementNum,
 
                                 color: layerColor,
@@ -896,7 +899,7 @@ angular.module('webPGQ')
 
                 sql.on('notice', onNotice);
 
-                var queryPromise = sql.run(queryDef);
+                var queryPromise = sql.run(batchDef);
 
                 queryPromise.on('fields', onFields);
                 queryPromise.on('row', onRow);
