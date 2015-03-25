@@ -765,7 +765,7 @@ angular.module('webPGQ')
                                     geojson: { object: { type: 'FeatureCollection', features: [] }, projection: 'EPSG:3857' }
                                 },
 
-                                index: idx,
+                                columnIndex: idx,
                                 fieldName: field.name,
 
                                 name: layerName,
@@ -814,7 +814,7 @@ angular.module('webPGQ')
                         // Only process GeoJSON columns for the current statement.
                         if(column.statementNum != statementNum) { return; }
 
-                        var val = row[column.index];
+                        var val = row[column.columnIndex];
                         if(val === null)
                         {
                             return;
@@ -851,7 +851,7 @@ angular.module('webPGQ')
                         };
                         currentResultSet.fields.forEach(function(field, idx)
                         {
-                            if(idx === column.index) { return; }
+                            if(idx === column.columnIndex) { return; }
 
                             feature.properties.properties[field.name] = row[idx];
                         });
