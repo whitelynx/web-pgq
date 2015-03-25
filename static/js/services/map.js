@@ -236,14 +236,13 @@ angular.module('webPGQ.services')
                 {
                     return mapPromise.then(function(map)
                     {
-                        var idx = -1;
-                        return promise(processNextLayerDef);
-
-                        function processNextLayerDef(resolve, reject)
+                        return promise.all(layerDefs.map(function(layerDef)
                         {
-                            var layerDef = layerDefs[++idx];
-                            if(!layerDef) { return resolve(idx); }
+                            return promise(processLayerDef.bind(this, layerDef));
+                        }));
 
+                        function processLayerDef(layerDef, resolve, reject)
+                        {
                             var layer;
                             var layerID = lastLayerID++;
 
@@ -293,7 +292,7 @@ angular.module('webPGQ.services')
                                     layer.set('layerID', layerID);
                                     layer.set('layerDef', layerDef);
 
-                                    resolve(promise(processNextLayerDef));
+                                    resolve();
                                 }
                                 catch(exc)
                                 {
@@ -309,7 +308,7 @@ angular.module('webPGQ.services')
 
                             mapService.layers.push(layerDef);
                             mapService.emit('layersChanged', mapService.layers);
-                        } // end processNextLayerDef
+                        } // end processLayerDef
                     });
                 }, // end addLayers
 
