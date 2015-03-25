@@ -4,7 +4,7 @@
 		<i class="dropdown icon"></i>
 
 		<div id="layers-dropdown" class="small vertical menu">
-			<a class="item" ng-repeat="layer in availableLayers"
+			<a class="item" ng-repeat="layer in availableLayers track by layer.name"
 					ng-click="eatEvent($event, layer.toggle)"
 					ng-class="{active: layer.active, teal: layer.active}">
 
