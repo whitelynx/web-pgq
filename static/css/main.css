@@ -1177,6 +1177,37 @@ sticky.fixed.ui.header::before {
 	border-top-right-radius: 0;
 }
 
+div.handle {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 1.5em;
+	cursor: move;
+	background: #d8d8d8;
+	color: rgba(0, 0, 0, 0.8);
+	border: 1px solid white;
+	font-family: Icons;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 0.8em;
+	opacity: 0.6;
+}
+div.handle::before {
+	position: absolute;
+	line-height: 1em;
+	left: 50%;
+	top: 50%;
+	margin-left: -1em;
+	margin-top: -0.51em;
+	width: 2em;
+	text-align: center;
+	content: "\f047";
+}
+div.handle:hover {
+	opacity: 1;
+}
+
 .normal-case.ui.label {
 	text-transform:	none;
 }

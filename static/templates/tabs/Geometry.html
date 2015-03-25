@@ -3,10 +3,13 @@
 		Layers
 		<i class="dropdown icon"></i>
 
-		<div id="layers-dropdown" class="small vertical menu">
+		<div id="layers-dropdown" class="small vertical menu"
+				ng-sortable="{handle: 'div.handle'}" ng-model="availableLayers">
 			<a class="item" ng-repeat="layer in availableLayers track by layer.name"
 					ng-click="eatEvent($event, layer.toggle)"
 					ng-class="{active: layer.active, teal: layer.active}">
+
+				<div class="handle"></div>
 
 				<i class="color icon" ng-if="layer.htmlColor" ng-style="{'background-color': layer.htmlColor}"></i>
 				{{ layer.display || layer.name }}
