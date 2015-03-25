@@ -3,8 +3,10 @@
 		<i class="dropdown icon"></i>{{ key }}: &#x2026;
 	</strong>
 
-	<ul class="array content" ng-if="detect.isArray(value) || detect.isPlainObject(value)"
-			ng-class="{array: detect.isArray(value), object: detect.isPlainObject(value)}">
+	<ul class="array content" ng-if="detect.isArray(value)">
+		<li ng-repeat="v in value track by $index" inspect="v" inspect-key="$index"></li>
+	</ul>
+	<ul class="object content" ng-if="detect.isPlainObject(value)">
 		<li ng-repeat="(k, v) in value" inspect="v" inspect-key="k"></li>
 	</ul>
 	<pre class="content" ng-if="!detect.isArray(value) && !detect.isPlainObject(value)"><code>{{ value|inspect }}</code></pre>
