@@ -199,7 +199,7 @@ angular.module('webPGQ.services')
                                 error = { message: error };
                             } // end if
 
-                            error.query = queryDef;
+                            error.query = queryDef.queries[error.statementNum - 1];
 
                             logger.error(msg + error.message, error, 'sql');
 
