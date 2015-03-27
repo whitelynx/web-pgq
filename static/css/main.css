@@ -802,7 +802,7 @@ svg .edgePath {
 	-webkit-transition: -webkit-transform 0.2s ease, opacity 0.2s ease;
 	transition: transform 0.2s ease, opacity 0.2s ease;
 }
-.ui.message ul > li.ui.accordion > .active.title:before {
+.ui.message ul > li.ui.accordion > .active.title::before {
 	-webkit-transform: rotate(90deg);
 	-ms-transform: rotate(90deg);
 	transform: rotate(90deg);
@@ -817,11 +817,11 @@ svg .edgePath {
 .ui.message ul.list li.inspect:before { content: none; }
 .ui.message ul.list li.inspect.multi-line { padding-left: -0.25em; }
 
-li.inspect > accordion > ul.array::before { content: '['; }
-li.inspect > accordion > ul.array::after { content: ']'; }
+li.inspect.array > accordion > ul::before { content: '['; }
+li.inspect.array > accordion > ul::after { content: ']'; }
 
-li.inspect > accordion > ul.object::before { content: '{'; }
-li.inspect > accordion > ul.object::after { content: '\7D'; }
+li.inspect.object > accordion > ul::before { content: '{'; }
+li.inspect.object > accordion > ul::after { content: '\7D'; }
 /* The above was "content: '}';", but that breaks Vim's CSS highlighting. -.- */
 
 nowrap {
