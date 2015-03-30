@@ -882,6 +882,11 @@ nowrap {
 	padding: 0 0.4rem 0.5rem 0;
 }
 
+#paramsGrid > tbody > tr > td:last-child {
+	width: 2em;
+	padding-right: 0.45rem;
+}
+
 #paramsGrid > tbody > tr:first-child td {
 	padding-top: 0.5rem;
 }
