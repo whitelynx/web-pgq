@@ -18,12 +18,12 @@
 		<div class="divider"></div>
 
 		<div class="two button item" ng-repeat="(name, conn) in connections" ng-click="connectDB(name)"
-				title="{{ conn.masked|json }}">
+				tooltip-html="<pre>{{ conn.masked|json }}</pre>" tooltip-position="right center">
 			<div class="right compact mini icon ui buttons">
-				<div class="red ui button" title="Remove connection" ng-click="showRemoveConnection(name, $event)">
+				<div class="red ui button" tooltip="Remove connection" ng-click="showRemoveConnection(name, $event)">
 					<i class="remove icon"></i>
 				</div>
-				<div class="teal ui button" title="Edit connection" ng-click="editConnection(name, $event)">
+				<div class="teal ui button" tooltip="Edit connection" ng-click="editConnection(name, $event)">
 					<i class="write icon"></i>
 				</div>
 			</div>
