@@ -196,7 +196,7 @@ angular.module('webPGQ.services')
                                 ") and selectedFeatureProperties (", mapService.selectedFeatureProperties.length, ")!");
                         } // end if
 
-                        mapService.emit('selectedLayersChanged', mapService.selectedFeatureProperties);
+                        mapService.emit('selectedFeaturesChanged', mapService.selectedFeatureProperties);
                     }, maxUpdateDelay);
                 }); // end 'add' handler
 
@@ -216,7 +216,7 @@ angular.module('webPGQ.services')
                             mapService.selectedFeatures.splice(featureIdx, 1);
                             mapService.selectedFeatureProperties.splice(featureIdx, 1);
 
-                            mapService.emit('selectedLayersChanged', mapService.selectedFeatureProperties);
+                            mapService.emit('selectedFeaturesChanged', mapService.selectedFeatureProperties);
                         } // end if
                     }, maxUpdateDelay);
                 }); // end 'remove' handler

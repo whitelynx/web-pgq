@@ -1104,7 +1104,7 @@ angular.module('webPGQ')
             // Add the default layers.
             map.addLayers($scope.defaultLayers);
 
-            map.on('selectedLayersChanged', function(selectedFeatures)
+            map.on('selectedFeaturesChanged', function(selectedFeatures)
             {
                 $scope.selectedFeatures = selectedFeatures;
             });
