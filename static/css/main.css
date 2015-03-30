@@ -1331,6 +1331,9 @@ div.handle:hover {
 	margin-left: 0;
 }
 
+/* FIX: When a <table> used as accordion content is expanded, set its display property correctly! */
+.ui.accordion table.active.content, .ui.accordion .accordion table.active.content { display: table; }
+
 /* FIX: Don't set font size to 0em in dropdown menus! */
 .ui.menu:not(.vertical) .dropdown .menu { font-size: 1rem; }
 
