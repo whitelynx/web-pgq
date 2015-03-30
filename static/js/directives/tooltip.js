@@ -20,6 +20,14 @@
                 scope.$eval(attrs.tooltipOptions)
             );
 
+            if(attrs.tooltipHtml && attrs.tooltipTitle)
+            {
+                // Don't ignore `title` just because `html` was specified.
+                popupOpts.html = '<div class="header">' + attrs.tooltipTitle +
+                    '</div><div class="content">' + attrs.tooltipHtml + '</div>';
+                delete popupOpts.title;
+            } // end if
+
             element.popup(popupOpts);
         } // end update
 
