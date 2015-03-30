@@ -1,21 +1,9 @@
-<div class="header item">
-	<i class="icon" ng-class="status.socket.color + ' ' + status.icon"></i>
-
-	<b class="hide on mobile">{{ status.socket.connecting ? 'Connecting...' : 'web-pgq' }}</b>
-
-	<a class="fast fade animation red vertical animated ui button"
-			tooltip="Click to force reconnect." tooltip-title="Connecting to web-pgq server."
-			ng-show="status.socket.connecting" ng-click="connectSocket()">
-		<div class="hidden content">Reconnect</div>
-		<div class="visible content"><i class="asterisk loading icon"></i></div>
-	</a>
-</div>
-
 <dropdown class="item" ng-class="{disabled: !status.socket.connected || query.running}">
 	<span ng-if="!currentConnection" class="value placeholder">Connect to...</span>
 
 	<span ng-cloak ng-if="currentConnection" class="value" ng-class="status.database.color"
 			tooltip-title="{{ status.description }}" tooltip-html="{{ status.details }}">
+		<i ng-show="status.connected" class="icon" ng-class="status.socket.color + ' ' + status.icon"></i>
 		<i ng-show="!status.connected" class="attention icon"></i>
 		{{ currentConnection }}
 	</span>
@@ -53,6 +41,18 @@
 <div class="item" ng-show="status.database.connecting">
 	<i class="asterisk loading icon"></i>
 	<span class="hide on mobile">Connecting to {{ currentConnection }}...</span>
+</div>
+
+<div class="header item">
+	<b class="hide on mobile">{{ status.socket.connecting ? 'Connecting...' : 'web-pgq' }}</b>
+	<i class="show on mobile icon" ng-class="status.socket.color + ' ' + status.icon"></i>
+
+	<a class="fast fade animation red vertical animated ui button"
+			tooltip="Click to force reconnect." tooltip-title="Connecting to web-pgq server."
+			ng-show="status.socket.connecting" ng-click="connectSocket()">
+		<div class="hidden content">Reconnect</div>
+		<div class="visible content"><i class="asterisk loading icon"></i></div>
+	</a>
 </div>
 
 <div id="removeConnectionModal" class="ui basic modal">
@@ -161,117 +161,69 @@
 		</a>
 	</div>
 
-	<div class="item compact ui buttons">
-		<a class="teal labeled icon ui button" ng-click="runQuery()"
+	<div class="item compact teal ui buttons">
+		<a class="labeled icon ui button" ng-click="runQuery()"
 				ng-class="{disabled: !status.connected || query.running}"
-				tooltip-title="Run query, then commit." tooltip-html="Shortcut: <b>F5</b>">
+				tooltip-title="Run query in a transaction, then commit." tooltip-html="Shortcut: <b>F5</b>">
 			<i class="play icon"></i>
 			Run
 		</a>
-		<a class="teal labeled icon ui button" ng-click="testQuery()"
-				ng-class="{disabled: !status.connected || query.running}"
-				tooltip-title="Run query, then roll back." tooltip-html="Shortcut: <b>Shift+F5</b>">
-			<i class="lab icon"></i>
-			Test
-		</a>
+
+		<dropdown class="item icon ui button" ng-class="{disabled: !status.connected || query.running}">
+			<i class="dropdown icon"></i>
+			<div class="left menu">
+				<div class="item" ng-click="testQuery()"
+						ng-class="{disabled: !status.connected || query.running}"
+						tooltip-title="Run query in a transaction, then roll back."
+						tooltip-html="Shortcut: <b>Shift+F5</b>" tooltip-position="left center">
+					<i class="lab icon"></i>
+					Test
+				</div>
+			</div>
+		</dropdown>
 	</div>
 
-	<div class="horizontally fitted borderless item compact ui buttons">
-		<a class="orange labeled icon ui button" ng-click="explainQuery()"
+	<div class="horizontally fitted borderless item compact orange ui buttons">
+		<a class="labeled icon ui button" ng-click="explainQuery()"
 				ng-class="{disabled: !status.connected || query.running}"
 				tooltip-title="Display query's execution plan." tooltip-html="Shortcut: <b>F7</b>">
 			<i class="question icon"></i>
 			Explain
 		</a>
-		<a class="orange labeled icon ui button" ng-click="explainQuery(true)"
-				ng-class="{disabled: !status.connected || query.running}"
-				tooltip-title="Test query, and display the execution plan with additional runtime statistics."
-				tooltip-html="Shortcut: <b>Shift+F7</b>">
-			<i class="treatment icon"></i>
-			Analyze
-		</a>
-	</div>
 
-	<div class="borderless item compact ui buttons">
-		<dropdown class="orange icon ui button">
-			<i class="settings icon"></i>
-
-			<div class="menu">
-				<div class="header">
-					<i class="settings icon"></i>
-					EXPLAIN settings
+		<dropdown class="item icon ui button" ng-class="{disabled: !status.connected || query.running}">
+			<i class="dropdown icon"></i>
+			<div class="left menu">
+				<div class="item" ng-click="explainQuery(true)"
+						ng-class="{disabled: !status.connected || query.running}"
+						tooltip-title="Test query, and display the execution plan with additional runtime statistics."
+						tooltip-html="Shortcut: <b>Shift+F7</b>" tooltip-position="left center">
+					<i class="treatment icon"></i>
+					Analyze
 				</div>
+
 				<div class="divider"></div>
 
-				<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
-						ng-class="{active: val.enabled, teal: val.enabled}" tooltip="{{ val.description }}">
-					<i class="left icon" ng-class="val.icon"></i>
-					{{ key }}
-					<div class="squarish right ui label" ng-class="{teal: val.enabled}">
-						<i class="icon" ng-class="{disabled: !val.enabled, checkmark: val.enabled}"></i>
+				<div class="item">
+					<i class="dropdown icon"></i>
+					Explain and Analyze options
+
+					<div class="menu">
+						<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
+								ng-class="{active: val.enabled, teal: val.enabled}" tooltip="{{ val.description }}"
+								tooltip-position="left center">
+							<i class="left icon" ng-class="val.icon"></i>
+							{{ key }}
+							<div class="squarish right ui label" ng-class="{teal: val.enabled}">
+								<i class="icon" ng-class="{disabled: !val.enabled, checkmark: val.enabled}"></i>
+							</div>
+						</a>
 					</div>
-				</a>
+				</div>
 			</div>
 		</dropdown>
 	</div>
-</div>
 
-<div class="borderless right fitted item show on mobile">
-	<div class="horizontally fitted borderless item compact ui buttons">
-		<a class="fast fade animation red vertical animated ui button" tooltip="Cancel query"
-				ng-if="query.running" ng-click="cancelQuery()">
-			<div class="hidden content">Cancel</div>
-			<div class="visible content"><i class="spinner loading icon"></i></div>
-		</a>
-	</div>
-
-	<div class="item compact ui buttons">
-		<a class="teal icon vertical animated ui button" ng-click="runQuery()"
-				ng-class="{disabled: !status.connected || query.running}"
-				tooltip-title="Run query, then commit." tooltip-html="Shortcut: <b>F5</b>">
-			<div class="hidden content">Run</div>
-			<div class="visible content"><i class="play icon"></i></div>
-		</a>
-		<a class="teal icon vertical animated ui button" ng-click="testQuery()"
-				ng-class="{disabled: !status.connected || query.running}"
-				tooltip-title="Run query, then roll back." tooltip-html="Shortcut: <b>Shift+F5</b>">
-			<div class="hidden content">Test</div>
-			<div class="visible content"><i class="lab icon"></i></div>
-		</a>
-	</div>
-
-	<div class="horizontally fitted borderless item compact ui buttons">
-		<a class="orange vertical animated ui button" ng-click="explainQuery()"
-				ng-class="{disabled: !status.connected || query.running}"
-				tooltip-title="Display query's execution plan." tooltip-html="Shortcut: <b>F7</b>">
-			<div class="hidden content">Explain</div>
-			<div class="visible content"><i class="question icon"></i></div>
-		</a>
-		<a class="orange vertical animated ui button" ng-click="explainQuery(true)"
-				ng-class="{disabled: !status.connected || query.running}"
-				tooltip-title="Test query, and display the execution plan with additional runtime statistics."
-				tooltip-html="Shortcut: <b>Shift+F7</b>">
-			<div class="hidden content">Analyze</div>
-			<div class="visible content"><i class="treatment icon"></i></div>
-		</a>
-	</div>
-
-	<div class="borderless item compact ui buttons">
-		<a id="settings-button" class="orange icon ui button">
-			<i class="settings icon"></i>
-		</a>
-		<div id="settings-popup" class="popup vertical ui menu">
-			<div class="header item">EXPLAIN settings</div>
-			<a class="item" ng-repeat="(key, val) in explainOptions" ng-click="val.enabled = !val.enabled"
-					ng-class="{active: val.enabled, teal: val.enabled}" tooltip="{{ val.description }}">
-				<i class="left icon" ng-class="val.icon"></i>
-				{{ key }}
-				<div class="squarish ui label" ng-class="{teal: val.enabled}">
-					<i class="icon" ng-class="{disabled: !val.enabled, checkmark: val.enabled}"></i>
-				</div>
-			</a>
-		</div>
-	</div>
 	<a class="borderless item" href="https://github.com/whitelynx/web-pgq"
 			tooltip="View project on GitHub" tooltip-options="{position: 'bottom right', offset: -7}">
 		<i class="alternate github ui icon"></i>
