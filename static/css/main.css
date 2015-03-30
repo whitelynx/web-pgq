@@ -1409,6 +1409,25 @@ div.handle:hover {
 /* FIX: Re-enable background color change on hover for active dropdown menu items. */
 .ui.dropdown .menu > .active.item:hover { background: rgba(0, 0, 0, 0.05); }
 
+/* FIX: Dropdown buttons in menus get their background color overridden incorrectly. */
+.ui.menu .item.teal.buttons .item.dropdown.active.ui.button,
+.ui.menu .item.dropdown.active.ui.button.teal,
+.ui.menu .item.teal.buttons .item.dropdown.visible.ui.button,
+.ui.menu .item.dropdown.visible.ui.button.teal,
+.ui.menu .item.teal.buttons .item.dropdown.ui.button:hover,
+.ui.menu .item.dropdown.ui.button.teal:hover {
+	background-color: #009c95;
+}
+
+.ui.menu .item.orange.buttons .item.dropdown.active.ui.button,
+.ui.menu .item.dropdown.active.ui.button.orange,
+.ui.menu .item.orange.buttons .item.dropdown.visible.ui.button,
+.ui.menu .item.dropdown.visible.ui.button.orange,
+.ui.menu .item.orange.buttons .item.dropdown.ui.button:hover,
+.ui.menu .item.dropdown.ui.button.orange:hover {
+	background-color: #e28560;
+}
+
 /* FIX: Non-inverted popup or dropdown menus inside inverted menus get the wrong colors on their items. */
 .ui.menu .item .ui.dropdown .menu:not(.inverted) > .green.active.item,
 .ui.menu .item .popup.menu:not(.inverted) > .green.active.item,
