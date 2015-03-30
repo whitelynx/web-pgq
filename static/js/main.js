@@ -1104,6 +1104,11 @@ angular.module('webPGQ')
             // Add the default layers.
             map.addLayers($scope.defaultLayers);
 
+            map.on('selectedLayersChanged', function(selectedFeatures)
+            {
+                $scope.selectedFeatures = selectedFeatures;
+            });
+
             var currentColumnLayerNames = [];
 
             var layerColors = [
