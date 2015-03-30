@@ -23,6 +23,7 @@ angular.module('webPGQ')
                 //detail: undefined,
                 connected: false,
                 connecting: true,
+                icon: 'circular inverted plug',
                 socket: {
                     color: '',
                     connected: false,
