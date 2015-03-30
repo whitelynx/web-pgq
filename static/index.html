@@ -182,6 +182,9 @@
 
 		<bg-splitter orientation="horizontal">
 			<bg-pane min-size="128" id="topPane">
+				<div id="mainMenu" class="transparent small inverted attached compact main ui menu"
+					ng-include="'templates/mainMenu.html'"></div>
+
 				<bg-splitter id="editorArea" pos="75%" orientation="vertical">
 					<bg-pane id="editor" min-size="128" class="inverted ui segment">
 						<editor options="mainEditorConfig" ng-model="query.text"></editor>
@@ -191,9 +194,6 @@
 						<div ng-include="'templates/querySidebar.html'"></div>
 					</bg-pane>
 				</bg-splitter>
-
-				<div id="mainMenu" class="transparent small inverted attached compact main ui menu"
-					ng-include="'templates/mainMenu.html'"></div>
 
 				<div id="copyright">
 					&copy; 2014 David H. Bronke

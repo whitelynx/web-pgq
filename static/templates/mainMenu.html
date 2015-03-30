@@ -11,7 +11,7 @@
 	</a>
 </div>
 
-<dropdown class="item upward" ng-class="{disabled: !status.socket.connected || query.running}">
+<dropdown class="item" ng-class="{disabled: !status.socket.connected || query.running}">
 	<span ng-if="!currentConnection" class="value placeholder">Connect to...</span>
 
 	<span ng-cloak ng-if="currentConnection" class="value" ng-class="status.database.color"
@@ -193,7 +193,7 @@
 	</div>
 
 	<div class="borderless item compact ui buttons">
-		<dropdown class="upward orange icon ui button">
+		<dropdown class="orange icon ui button">
 			<i class="settings icon"></i>
 
 			<div class="menu">
