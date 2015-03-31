@@ -13,6 +13,7 @@ angular.module('webPGQ.services')
             isArray: _.isArray,
             isObject: _.isObject,
             isPlainObject: _.isPlainObject,
+            isEmpty: _.isEmpty,
 
             isSet: function(val)
             {
