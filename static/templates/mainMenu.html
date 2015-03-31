@@ -1,3 +1,8 @@
+<a class="item" ng-class="{teal: dbInfo.visible}" ng-click="toggleDBBrowser()"
+		tooltip="Browse the database" tooltip-options="{position: 'bottom left'}">
+	<i class="sitemap ui icon"></i>
+</a>
+
 <dropdown class="item" ng-class="{disabled: !status.socket.connected || query.running}">
 	<span ng-if="!currentConnection" class="value placeholder">Connect to...</span>
 

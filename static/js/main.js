@@ -363,6 +363,13 @@ angular.module('webPGQ')
                 applyIfNecessary();
             }; // end $scope.saveConnection
 
+            $scope.dbInfo = {
+                disabled: true,
+                loading: false,
+                outOfDate: false,
+                visible: false
+            };
+
             $scope.connectDB = function(connectionName)
             {
                 connectionName = connectionName || $scope.currentConnection;
@@ -383,6 +390,7 @@ angular.module('webPGQ')
                 } // end if
 
                 $scope.currentConnection = connectionName;
+                $scope.serverName = connInfo.host;
                 currentConnectionInfo = connInfo;
 
                 if(!$scope.status.socket.connected)
@@ -392,7 +400,7 @@ angular.module('webPGQ')
                     {
                         sql.once('connected', function()
                         {
-                            resolve(true);
+                            resolve(_connectDB());
                         });
 
                         $scope.connectSocket();
@@ -425,6 +433,17 @@ angular.module('webPGQ')
                             description: "Connected to database: " + $scope.currentConnection,
                             database: { connected: true, connecting: false }
                         });
+
+                        $scope.dbInfo.outOfDate = true;
+
+                        refreshDBList()
+                            .then(function()
+                            {
+                                $scope.dbInfo.disabled = false;
+
+                                refreshDBInfo(currentConnectionInfo.database);
+                            });
+
                         return true;
                     })
                     .catch(function(error)
@@ -434,11 +453,128 @@ angular.module('webPGQ')
                             details: error.toString(),
                             database: { connected: false, connecting: false }
                         });
+
+                        $scope.dbInfo.disabled = true;
+
                         return false;
                     });
             } // end _connectDB
 
             sql.on('ready', _connectDB);
+
+            function refreshDBList()
+            {
+                $scope.dbInfo.loading = true;
+                applyIfNecessary();
+
+                var queryPromise = sql.run({
+                    queries: [
+                        {
+                            text: 'select current_database() as "currentDatabase",' +
+                                'current_schema() as "currentSchema",' +
+                                'array_agg(current_schemas(false)::text) as "schemaSearchPath",' +
+                                'array_agg(current_schemas(true)::text) as "schemaSearchPathWithImplicit"',
+                            rowMode: ''
+                        },
+                        { text: 'select * from pg_catalog.pg_database', rowMode: '' }
+                    ],
+                    rollback: true
+                });
+
+                $scope.databases = {};
+
+                function onRow(statementNum, row)
+                {
+                    switch(statementNum)
+                    {
+                        case 1:
+                            $scope.sessionInfo = row;
+                            break;
+                        case 2:
+                            $scope.databases[row.datname] = row;
+                            break;
+                    } // end switch
+                } // end onRow
+
+                queryPromise.on('row', onRow);
+
+                return queryPromise
+                    .then(function()
+                    {
+                        console.log("databases:", $scope.databases);
+                    })
+                    .catch(function()//error
+                    {
+                        $scope.dbInfo.outOfDate = true;
+                    })
+                    .finally(function()
+                    {
+                        queryPromise.removeListener('row', onRow);
+                        $scope.dbInfo.loading = false;
+                        applyIfNecessary();
+                    });
+            } // end refreshDBList
+
+            var defaultSchemaObj = { tables: {}, functions: {}, views: {} };
+
+            function refreshDBInfo(dbName)
+            {
+                $scope.dbInfo.loading = true;
+                applyIfNecessary();
+
+                var db = {schemas: {}};
+
+                var queryPromise = sql.run({
+                    queries: [
+                        { text: 'select * from pg_catalog.pg_tables', rowMode: '' },
+                        { text: 'select p.*, ns.nspname as schemaname ' +
+                                'from pg_catalog.pg_proc p ' +
+                                'left join pg_namespace ns on ns.oid = p.pronamespace', rowMode: '' },
+                        { text: 'select * from pg_catalog.pg_views', rowMode: '' }
+                    ],
+                    rollback: true
+                });
+
+                function onRow(statementNum, row)
+                {
+                    var schema = db.schemas[row.schemaname];
+                    if(!schema)
+                    {
+                        schema = db.schemas[row.schemaname] = _.clone(defaultSchemaObj);
+                    } // end if
+
+                    switch(statementNum)
+                    {
+                        case 1: // pg_tables
+                            schema.tables[row.tablename] = row;
+                            break;
+                        case 2: // pg_proc
+                            schema.functions[row.proname] = row;
+                            break;
+                        case 3: // pg_views
+                            schema.views[row.viewname] = row;
+                            break;
+                    } // end switch
+                } // end onRow
+
+                queryPromise.on('row', onRow);
+
+                return queryPromise
+                    .then(function()//results
+                    {
+                        console.log("Done; db =", db);
+                        $scope.databases[dbName] = db;
+                        $scope.dbInfo.loading = false;
+                        $scope.dbInfo.outOfDate = false;
+                        applyIfNecessary();
+                    })
+                    .catch(function()//error
+                    {
+                        $scope.databases[dbName] = {};
+                        $scope.dbInfo.loading = false;
+                        applyIfNecessary();
+                    });
+            } // end refreshDBInfo
 
             // Queries //
             var defaultFilename = "untitled.sql";
@@ -730,6 +866,7 @@ angular.module('webPGQ')
 
                 function onNotice(noticeMessage)
                 {
+                    console.log('onNotice(): noticeMessage =', noticeMessage);
                     currentResultSet.noticeMessages.push(noticeMessage);
 
                     queueUpdate();
@@ -1168,6 +1305,31 @@ angular.module('webPGQ')
             }; // end $scope.eatEvent
 
             $scope.geomMapCenter = { lon: 0, lat: 0, zoom: 2 };
+
+            // Database Browser //
+            var dbBrowser;
+            $scope.toggleDBBrowser = function()
+            {
+                if(!dbBrowser)
+                {
+                    dbBrowser = $("#dbBrowser");
+
+                    dbBrowser.sidebar({
+                        transition: 'overlay',
+                        mobileTransition: 'overlay',
+                        dimPage: false,
+                        onChange: function()
+                        {
+                            queueDigest(function()
+                            {
+                                $scope.dbInfo.visible = dbBrowser.sidebar('is visible');
+                            }, maxUpdateDelay);
+                        }
+                    });
+                } // end if
+
+                dbBrowser.sidebar('toggle');
+            }; // end $scope.toggleDBBrowser
 
             // Switching results views //
             $scope.resultsTab = 'Messages';

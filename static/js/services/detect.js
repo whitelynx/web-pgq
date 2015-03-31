@@ -11,6 +11,7 @@ angular.module('webPGQ.services')
             contains: _.contains,
             isString: _.isString,
             isArray: _.isArray,
+            isObject: _.isObject,
             isPlainObject: _.isPlainObject,
 
             isSet: function(val)
