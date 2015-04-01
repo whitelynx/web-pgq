@@ -8,14 +8,18 @@
     {
         function update()
         {
-            var popupOpts = _.assign(
+            var popupOpts = _.merge(
                 {
                     content: attrs.tooltip,
                     html: attrs.tooltipHtml,
                     title: attrs.tooltipTitle,
                     position: attrs.tooltipPosition,
                     variation: 'small inverted',
-                    exclusive: false
+                    exclusive: false,
+                    delay: {
+                        show: 200,
+                        hide: 0
+                    }
                 },
                 scope.$eval(attrs.tooltipOptions)
             );
