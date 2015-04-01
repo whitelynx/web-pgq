@@ -467,6 +467,11 @@ table td.clickable > .text > i.icon {
 	z-index: auto;
 }
 
+*[scrollable],
+.ui.sidebar[scrollable] {
+	overflow: hidden !important;
+}
+
 .ui.popup > .left.corner.ui.label:after {
 	-webkit-clip-path: inset(-0.1px -5px -5px -0.1px round 2.5px);
 	clip-path: inset(-0.1px -5px -5px -0.1px round 2.5px);
