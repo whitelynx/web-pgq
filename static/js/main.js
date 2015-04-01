@@ -540,7 +540,7 @@ angular.module('webPGQ')
                     var schema = db.schemas[row.schemaname];
                     if(!schema)
                     {
-                        schema = db.schemas[row.schemaname] = _.clone(defaultSchemaObj);
+                        schema = db.schemas[row.schemaname] = _.cloneDeep(defaultSchemaObj);
                     } // end if
 
                     switch(statementNum)
