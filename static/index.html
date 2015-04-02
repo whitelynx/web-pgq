@@ -140,6 +140,7 @@
 		<script src="js/modules.js"></script>
 
 		<script src="js/directives/accordion.js"></script>
+		<script src="js/directives/dbBrowser.js"></script>
 		<script src="js/directives/digraph.js"></script>
 		<script src="js/directives/dropdown.js"></script>
 		<script src="js/directives/editor.js"></script>
@@ -180,8 +181,8 @@
 			<div class="ui text loader">Loading</div>
 		</div>
 
-		<div id="dbBrowser" class="left vertical inverted wide ui sidebar menu" scrollable="{ includePadding: false }"
-			ng-include="'templates/dbBrowser.html'"></div>
+		<db-browser id="dbBrowser" class="left vertical inverted wide ui sidebar menu"
+			scrollable="{ includePadding: false }"></db-browser>
 
 		<div class="pusher">
 			<bg-splitter orientation="horizontal">

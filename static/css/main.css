@@ -1045,6 +1045,15 @@ td > .ui.button:last-child {
 
 #selectedFeaturesPanel accordion > .title { display: block; padding: 0; }
 
+#dbBrowser .ui.accordion .title,
+#dbBrowser .ui.accordion .accordion .title {
+	cursor: default;
+}
+#dbBrowser .ui.accordion .title .icon,
+#dbBrowser .ui.accordion .accordion .title .icon {
+	cursor: pointer;
+}
+
 .color.icon,
 .ui.dropdown .menu > .item > .color.icon {
 	display: inline-block;
@@ -1340,6 +1349,28 @@ div.handle:hover {
 .ui.label > .middle.detail {
 	margin-left: 0;
 }
+
+/* Add separators at the end of accordion contents in menus. */
+.menu .ui.accordion:not(.styled) .title ~ .content:not(.ui) {
+	position: relative;
+	padding-top: 0;
+	padding-bottom: 0.5em;
+	margin-bottom: 0.5em;
+}
+.menu .ui.accordion:not(.styled) .title ~ .content:not(.ui)::after {
+	position: absolute;
+	display: block;
+	content: '';
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 1px;
+	background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.03) 100%);
+	background: linear-gradient(to right, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.03) 100%);
+}
+
+/* FIX: When unstyled accordions are nested inside a menu, there's no indication of nesting; add some padding. */
+.menu .ui.accordion:not(.styled) .title ~ .content:not(.ui) { padding-left: 0.5em; }
 
 /* FIX: When a <table> used as accordion content is expanded, set its display property correctly! */
 .ui.accordion table.active.content, .ui.accordion .accordion table.active.content { display: table; }

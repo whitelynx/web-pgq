@@ -1,0 +1,77 @@
+<div class="header item">
+	<i class="server icon"></i> {{ serverName }}
+</div>
+
+<div class="text ui loader" ng-class="{active: dbInfo.loading}">Loading...</div>
+
+<div class="item">
+	<div class="inverted transparent icon ui input">
+		<input type="text" placeholder="Search..." ng-disabled="dbInfo.loading" ng-model="dbInfoSearch">
+		<i class="left search icon" ng-hide="dbInfoSearch.length > 0"></i>
+		<i class="remove circle link icon" ng-show="dbInfoSearch.length > 0" ng-click="dbInfoSearch = ''"></i>
+	</div>
+</div>
+
+<div class="text ui loader" ng-class="{active: dbInfo.searching}">Searching...</div>
+
+<div class="item" ng-if="!detect.isEmpty(dbInfoSearchResults)">
+	<i class="search icon" tooltip="Search Results"></i> <strong>Search Results:</strong>
+
+	<div class="menu">
+		<div ng-repeat="result in dbInfoSearchResults | orderBy:['-__searchRank','schemaname','name'] track by result.fullName"
+				class="item">
+			<i class="icon" ng-class="result.icon" tooltip="{{ result.type }}"></i> {{ tableName }}
+		</div>
+	</div>
+</div>
+
+<accordion class="inverted item"
+		accordion-options="{ animateChildren: false, selector: { trigger: '.title .dropdown.icon' } }">
+
+	<div class="title" ng-repeat-start="(databaseName, database) in databases">
+		<i class="dropdown icon"></i>
+		<i class="database icon"></i> {{ databaseName }}
+	</div>
+
+	<accordion class="inverted content" ng-repeat-end>
+		<div class="title" ng-repeat-start="(schemaName, schema) in database.schemas">
+			<i class="dropdown icon"></i>
+			<i class="sitemap icon"></i> {{ schemaName }}
+		</div>
+
+		<accordion class="inverted content" ng-repeat-end>
+			<div class="title" ng-if="!detect.isEmpty(schema.tables)">
+				<i class="dropdown icon"></i>
+				<i class="table icon" tooltip="Table"></i> Tables
+			</div>
+
+			<div class="content" ng-if="!detect.isEmpty(schema.tables)">
+				<div class="item" ng-repeat="table in schema.tables">
+					<i class="table icon" tooltip="Table"></i> {{ table.name }}
+				</div>
+			</div>
+
+			<div class="title" ng-if="!detect.isEmpty(schema.functions)">
+				<i class="dropdown icon"></i>
+				<i class="code icon" tooltip="Function"></i> Functions
+			</div>
+
+			<div class="content" ng-if="!detect.isEmpty(schema.functions)">
+				<div class="item" ng-repeat="func in schema.functions">
+					<i class="code icon" tooltip="Function"></i> {{ func.name }}
+				</div>
+			</div>
+
+			<div class="title" ng-if="!detect.isEmpty(schema.views)">
+				<i class="dropdown icon"></i>
+				<i class="unhide icon" tooltip="View"></i> Views
+			</div>
+
+			<div class="content" ng-if="!detect.isEmpty(schema.views)">
+				<div class="item" ng-repeat="view in schema.views">
+					<i class="unhide icon" tooltip="View"></i> {{ view.name }}
+				</div>
+			</div>
+		</accordion>
+	</accordion>
+</accordion>
