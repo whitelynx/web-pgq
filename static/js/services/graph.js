@@ -65,7 +65,7 @@ angular.module('webPGQ.services')
             var edgePercent = maxEdgeWidthValue ? (child[edgeWidthKey] || 0) / maxEdgeWidthValue : 0;
             var edgeSize = (edgePercent * edgeWidthRange) + minEdgeWidth;
 
-            edge.style = (edge.style || defaultEdgeStyle) + 'stroke-width: ' + edgeSize + 'px';
+            edge.style = (edge.style || defaultEdgeStyle) + '; stroke-width: ' + edgeSize + 'px';
 
             return edge;
         } // end updateEdge
