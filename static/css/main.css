@@ -1169,7 +1169,7 @@ sticky.fixed.ui.header::before {
 #resultsTabs > div .top.right.attached.ui.labels {
 	position: absolute;
 	top: 0;
-	z-index: 100;
+	z-index: 101;
 	padding: 0 4px 4px 0;
 }
 
@@ -1177,7 +1177,7 @@ sticky.fixed.ui.header::before {
 	position: absolute;
 	top: 0;
 	left: 0;
-	z-index: 100;
+	z-index: 101;
 	padding: 0 4px 4px 0;
 }
 #resultsTabs > div .top.left.attached.ui.labels > .label:first-child {
