@@ -120,6 +120,7 @@ angular.module('webPGQ')
                 console.log("Socket connected.");
             } // end onSocketConnect
             socket.on('connected', onSocketConnect);
+
             socket.on('reconnected', function()
             {
                 logger.success("Reconnected to web-pgq server.", null, 'connection');
@@ -364,6 +365,38 @@ angular.module('webPGQ')
 
                 applyIfNecessary();
             }; // end $scope.saveConnection
+
+            $scope.disconnectDB = function()
+            {
+                if(!$scope.status.database.connected)
+                {
+                    logger.debug("Already disconnected from database; ignoring disconnectDB() call.", null,
+                        'connection');
+                    return promise.resolve(true);
+                } // end if
+
+                $scope.currentConnection = null;
+                delete $scope.serverName;
+                currentConnectionInfo = undefined;
+
+                if(!$scope.status.socket.connected)
+                {
+                    // Not yet connected to web-pgq server.
+                    return promise(function(resolve)
+                    {
+                        sql.once('connected', function()
+                        {
+                            resolve(sql.disconnect());
+                        });
+
+                        $scope.connectSocket();
+                    });
+                }
+                else
+                {
+                    return sql.disconnect();
+                } // end if
+            }; // end $scope.disconnectDB
 
             $scope.connectDB = function(connectionName)
             {

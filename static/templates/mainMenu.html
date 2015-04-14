@@ -22,7 +22,14 @@
 		</div>
 		<div class="divider"></div>
 
+		<div class="item" ng-click="disconnectDB()" ng-class="{disabled: !currentConnection}"
+				tooltip-html="Disconnect from the current database." tooltip-position="right center">
+			<i class="plug icon"></i>
+			Disconnect.
+		</div>
+
 		<div class="two button item" ng-repeat="(name, conn) in connections" ng-click="connectDB(name)"
+				ng-class="{active: name == currentConnection}"
 				tooltip-html="<pre>{{ conn.masked|json }}</pre>" tooltip-position="right center">
 			<div class="right compact mini icon ui buttons">
 				<div class="red ui button" tooltip="Remove connection" ng-click="showRemoveConnection(name, $event)">
@@ -32,6 +39,7 @@
 					<i class="write icon"></i>
 				</div>
 			</div>
+			<i class="database icon"></i>
 			{{ name }}
 		</div>
 

@@ -127,7 +127,7 @@ angular.module('webPGQ.services')
                 });
             }, // end connect
 
-            disconnect: function(connectionInfo)
+            disconnect: function()
             {
                 if(!sqlService.connectionInfo)
                 {
@@ -140,9 +140,9 @@ angular.module('webPGQ.services')
                 return channel.request('disconnect')
                 .then(function()
                 {
+                    logger.success('Disconnected from database.', sqlService.connectionInfo.masked, 'sql');
                     delete sqlService.connectionInfo;
                     delete sqlService.serverSettings;
-                    logger.success('Disconnected from database.', connectionInfo.masked, 'sql');
                     return true;
                 })
                 .catch(function(error)
