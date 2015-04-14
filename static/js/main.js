@@ -971,6 +971,18 @@ angular.module('webPGQ')
                     .then($scope.showResults);
             }; // end $scope.testQuery
 
+            $scope.transactionlessQuery = function()
+            {
+                var queries = getActiveQueries();
+                highlightLastExecuted();
+
+                runSQL({
+                    queries: queries
+                    //rollback: undefined  // Don't run inside a transaction.
+                })
+                    .then($scope.showResults);
+            }; // end $scope.transactionlessQuery
+
             var planKeyREs = {
                 actual: /^Actual /,
                 buffer: /^Shared |^Local /,
@@ -1345,6 +1357,14 @@ angular.module('webPGQ')
                     } // end if
                 } // end execTest
 
+                function execTransactionless(event)
+                {
+                    if(!event.ctrlKey && !event.metaKey)
+                    {
+                        $scope.testQuery();
+                    } // end if
+                } // end execTransactionless
+
                 function execAnalyze(event)
                 {
                     if(!event.ctrlKey && !event.metaKey)
@@ -1355,6 +1375,7 @@ angular.module('webPGQ')
 
                 keybinding.bindKey('F5', {preventDefault: true}, execRun);
                 keybinding.bindKey('Shift+F5', {preventDefault: true}, execTest);
+                keybinding.bindKey('Ctrl+F5', {preventDefault: true}, execTransactionless);
                 keybinding.bindKey('F7', {preventDefault: true}, execAnalyze);
                 keybinding.bindKey('Shift+F7', {preventDefault: true}, execAnalyze);
 

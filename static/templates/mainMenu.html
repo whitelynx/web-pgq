@@ -184,6 +184,14 @@
 					<i class="lab icon"></i>
 					Test
 				</div>
+				<div class="item" ng-click="transactionlessQuery()"
+						ng-class="{disabled: !status.connected || query.running}"
+						tooltip-title="Run query outside a transaction."
+						tooltip-html="<em>This is <strong>not atomic</strong>!</em><br>Shortcut: <b>Ctrl+F5</b>"
+						tooltip-position="left center">
+					<i class="warning circle icon"></i>
+					Transactionless
+				</div>
 			</div>
 		</dropdown>
 	</div>
