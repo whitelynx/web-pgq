@@ -22,7 +22,8 @@
 			No rows returned.
 		</div>
 
-		<table ng-if="resultSet.rows.length > 0"
+		<div class="fade animation grid" ng-if="resultSet.rows.length > 0" ui-grid="{data: resultSet.rows, enableSorting: true, columnDefs: resultSet.fields}"></div>
+		<!--table ng-if="resultSet.rows.length > 0"
 				class="fade animation compact collapsing celled bottom attached ui table">
 
 			<thead>
@@ -47,6 +48,6 @@
 					</td>
 				</tr>
 			</tbody>
-		</table>
+		</table-->
 	</div>
 </div>

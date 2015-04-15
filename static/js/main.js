@@ -795,9 +795,15 @@ angular.module('webPGQ')
                     {
                         var nameContains = _.contains.bind(_, field.name.toLowerCase());
 
+                        field.maxWidth = 512;
+                        field.headerCellTemplate = '/templates/ResultHeaderCell.html';
+
                         if(field.dataType == 'text' &&
                             (nameContains('geojson') || nameContains('geom') || nameContains('shape')))
                         {
+                            // It doesn't make sense to sort on geometry columns.
+                            field.enableSorting = false;
+
                             var layerColor = getUnusedLayerColor(geoJSONColumns);
 
                             var initialLayerName = 'query #' + batchDef.queryID + ', stmt #' + statementNum +
