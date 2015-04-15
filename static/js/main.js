@@ -871,6 +871,7 @@ angular.module('webPGQ')
                         {
                             console.error('Got exception while parsing possible GeoJSON value in column "' +
                                 column.fieldName + '":', exc);
+                            return;
                         } // end try
 
                         var feature = parsed.type == 'Feature' ? parsed : { type: 'Feature', geometry: parsed };
