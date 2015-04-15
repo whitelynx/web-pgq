@@ -18,9 +18,9 @@
 	<i class="search icon" tooltip="Search Results"></i> <strong>Search Results:</strong>
 
 	<div class="menu">
-		<div ng-repeat="result in dbInfoSearchResults | orderBy:['-__searchRank','schemaname','name'] track by result.fullName"
+		<div ng-repeat="result in dbInfoSearchResults | orderBy:['-__searchRank','fullName'] track by result.fullName"
 				class="item">
-			<i class="icon" ng-class="result.icon" tooltip="{{ result.type }}"></i> {{ tableName }}
+			<i class="icon" ng-class="result.icon" tooltip="{{ result.type }}"></i> {{ result.fullName }}
 		</div>
 	</div>
 </div>
