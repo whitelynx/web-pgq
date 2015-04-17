@@ -108,15 +108,15 @@ code, pre, .ace_editor, table td.code {
 	margin-bottom: -0.5rem;
 }
 
-.split-panes.horizontal > * + .split-handler {
+.split-panes.horizontal > * + .split-handle {
 	height: 1rem;
 	margin-top: -0.5rem;
 	z-index: 10;
 }
-.split-panes.horizontal > * + .split-handler:hover {
+.split-panes.horizontal > * + .split-handle:hover {
 	background: rgba(0, 0, 0, 0.2);
 }
-.split-panes.horizontal > * + .split-handler::before {
+.split-panes.horizontal > * + .split-handle::before {
 	font-size: 1.22em;
 	position: absolute;
 	line-height: 1em;
@@ -129,25 +129,25 @@ code, pre, .ace_editor, table td.code {
 	content: '\294C';
 	color: #EEEEEE;
 }
-.split-panes.horizontal > * + .split-handler:hover::before {
+.split-panes.horizontal > * + .split-handle:hover::before {
 	color: #FFFFFF;
 }
 
-.split-panes.vertical > :not(.split-handler):not(:last-child) {
+.split-panes.vertical > :not(.split-handle):not(:last-child) {
 	padding-right: 0.5rem;
 }
-.split-panes.vertical > :not(.split-handler):not(:first-child) {
+.split-panes.vertical > :not(.split-handle):not(:first-child) {
 	padding-left: 0.5rem;
 }
-.split-panes.vertical > * + .split-handler {
+.split-panes.vertical > * + .split-handle {
 	width: 1rem;
 	margin-left: -0.5rem;
 	z-index: 10;
 }
-.split-panes.vertical > * + .split-handler:hover {
+.split-panes.vertical > * + .split-handle:hover {
 	background: rgba(0, 0, 0, 0.2);
 }
-.split-panes.vertical > * + .split-handler::before {
+.split-panes.vertical > * + .split-handle::before {
 	font-size: 1.22em;
 	position: absolute;
 	line-height: 1em;
@@ -160,7 +160,7 @@ code, pre, .ace_editor, table td.code {
 	content: '\294A';
 	color: #EEEEEE;
 }
-.split-panes.vertical > * + .split-handler:hover::before {
+.split-panes.vertical > * + .split-handle:hover::before {
 	color: #FFFFFF;
 }
 
@@ -193,7 +193,7 @@ editor > .ace_editor {
 	height: auto;
 }
 
-.split-panes.vertical > #editor + .split-handler {
+.split-panes.vertical > #editor + .split-handle {
 	background: #bbbbbb;
 	border-left: 1px solid #eee;
 	border-right: 1px solid #aaa;
