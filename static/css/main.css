@@ -922,6 +922,7 @@ td > .ui.button:last-child {
 }
 #paramsGrid td > .ui.input > .dropdown {
 	text-align: right;
+	white-space: nowrap;
 }
 
 .item .ui.right.buttons,
