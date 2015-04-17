@@ -541,6 +541,15 @@ angular.module('webPGQ')
                 } // end switch
             }; // end $scope.displayQueryParamType
 
+            $scope.setQueryParamType = function(paramIdx, value, dropdown)
+            {
+                $scope.query.params[paramIdx].type = value;
+
+                dropdown.hide();
+
+                applyIfNecessary();
+            }; // end $scope.setQueryParamType
+
             function getQueryParams()
             {
                 return $scope.query.params.map(function(param)
