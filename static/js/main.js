@@ -382,15 +382,7 @@ angular.module('webPGQ')
                 if(!$scope.status.socket.connected)
                 {
                     // Not yet connected to web-pgq server.
-                    return promise(function(resolve)
-                    {
-                        sql.once('connected', function()
-                        {
-                            resolve(sql.disconnect());
-                        });
-
-                        $scope.connectSocket();
-                    });
+                    return promise.resolve(true);
                 }
                 else
                 {
