@@ -35,7 +35,23 @@ angular.module('webPGQ.services')
                     {
                         logger.info('Notice:', notice, 'sql');
 
-                        sqlService.emit.apply(sqlService, ['notice'].concat(Array.slice.call(arguments)));
+                        sqlService.emit('notice', notice);
+                    });
+
+                    channel.on('error', function(error)
+                    {
+                        logger.error('Error: ' + (error.message || error.name), error, 'sql');
+
+                        sqlService.emit('error', error);
+                    });
+
+                    channel.on('disconnected', function()
+                    {
+                        logger.info('Disconnected from database.', sqlService.connectionInfo.masked, 'sql');
+                        delete sqlService.connectionInfo;
+                        delete sqlService.serverSettings;
+
+                        sqlService.emit('disconnected');
                     });
 
                     sqlService.emit('ready');
@@ -140,9 +156,6 @@ angular.module('webPGQ.services')
                 return channel.request('disconnect')
                 .then(function()
                 {
-                    logger.success('Disconnected from database.', sqlService.connectionInfo.masked, 'sql');
-                    delete sqlService.connectionInfo;
-                    delete sqlService.serverSettings;
                     return true;
                 })
                 .catch(function(error)
@@ -249,7 +262,7 @@ angular.module('webPGQ.services')
 
                 return sqlService.run(queryDef);
             } // end explain
-        };
+        }; // end sqlService
 
         eventEmitter.inject({prototype: sqlService});
         sqlService.removeListener = sqlService.off;
