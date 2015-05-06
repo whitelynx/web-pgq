@@ -474,6 +474,17 @@ angular.module('webPGQ')
 
             sql.on('ready', _connectDB);
 
+            sql.on('disconnected', function()
+            {
+                setConnectionStatus({
+                    description: "Disconnected from database.",
+                    database: { connected: false }
+                });
+
+                // Reconnect, if needed.
+                _connectDB();
+            });
+
             // Queries //
             var defaultFilename = "untitled.sql";
             $scope.query = {
