@@ -70,27 +70,40 @@ angular.module('webPGQ.services')
             return edge;
         } // end updateEdge
 
-        var tmplDisplayRE = /\$\{child\['([^']*)'\]\}/g;
-        function tmplDisplayReplacement(match, field)
+        var tmplReplacementRE = /\[([<>=])\s*([^\]]*)\]/g;
+        function tmplRenderReplacement(match, indicator, property)
         {
-            return '[' + field + ']';
-        } // end tmplDisplayReplacement
+            /* jshint validthis:true */
+            switch(indicator)
+            {
+                case '=': // use the context's properties
+                    return this[property];
+                case '>': // use the parent node's properties
+                    return this.parent[property];
+                case '<': // use the child node's properties
+                    return this.child[property];
+            } // end switch
+        } // end tmplRenderReplacement
 
         function labelTmpl(tmplString)
         {
-            var tmpl = _.template(tmplString);
+            var tmpl = function(context)
+            {
+                return tmplString.replace(tmplReplacementRE, tmplRenderReplacement.bind(context));
+            };
             tmpl.template = tmplString;
-            tmpl.display = tmplString.replace(tmplDisplayRE, tmplDisplayReplacement);
+            tmpl.display = tmplString;
             return tmpl;
         } // end labelTmpl
 
         // Edge label templates, according to edgeWidthKey.
         var defaultEdgeLabel = _.template("${child[edgeWidthKey]}");
         var edgeLabels = {
-            'Startup Cost': labelTmpl("${child['Startup Cost']}..${child['Total Cost']}"),
-            'Total Cost': labelTmpl("${child['Startup Cost']}..${child['Total Cost']}"),
-            'Actual Startup Time': labelTmpl("${child['Actual Startup Time']}..${child['Actual Total Time']}"),
-            'Actual Total Time': labelTmpl("${child['Actual Startup Time']}..${child['Actual Total Time']}"),
+            'Startup Cost': labelTmpl("[<Startup Cost]..[<Total Cost]"),
+            'Total Cost': labelTmpl("[<Startup Cost]..[<Total Cost]"),
+            'Actual Startup Time': labelTmpl("[<Actual Startup Time]..[<Actual Total Time] (x[<Actual Loops])"),
+            'Actual Total Time': labelTmpl("[<Actual Startup Time]..[<Actual Total Time] (x[<Actual Loops])"),
+            'Actual Loops': labelTmpl("[<Actual Startup Time]..[<Actual Total Time] (x[<Actual Loops])"),
         };
 
         function findReferences(node, key, val)
