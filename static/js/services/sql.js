@@ -14,8 +14,8 @@ var queryID = 0;
 
 
 angular.module('webPGQ.services')
-    .service('sql', ['$exceptionHandler', 'eventEmitter', 'socket', 'logger', 'promise',
-    function($exceptionHandler, eventEmitter, socket, logger, promise)
+    .service('sql', ['$exceptionHandler', '_', 'eventEmitter', 'socket', 'logger', 'promise',
+    function($exceptionHandler, _, eventEmitter, socket, logger, promise)
     {
         var channel;
 
@@ -33,7 +33,9 @@ angular.module('webPGQ.services')
 
                     channel.on('notice', function(notice)
                     {
-                        logger.info('Notice:', notice, 'sql');
+                        var truncated = _.trunc(notice.message, {length: 128, separator: /\s+/g});
+                        // truncated will start with "notice:", so all we need to do now is uppercase the first letter.
+                        logger.info(truncated[0].toUpperCase() + truncated.slice(1), notice, 'sql');
 
                         sqlService.emit('notice', notice);
                     });
