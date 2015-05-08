@@ -690,10 +690,12 @@ angular.module('webPGQ')
             var runSQLCallCount = 0;
             function runSQL(batchDef)
             {
+                batchDef.noticeMessages = batchDef.noticeMessages || [];
+
                 if($scope.query.running)
                 {
                     // Ignore calls to runSQL() while another query is running.
-                    return;
+                    return promise.reject(new Error("Another query is already running!"));
                 } // end if
 
                 if(lastErrorLine !== undefined)
@@ -783,7 +785,14 @@ angular.module('webPGQ')
                 function onNotice(noticeMessage)
                 {
                     console.log('onNotice(): noticeMessage =', noticeMessage);
-                    currentResultSet.noticeMessages.push(noticeMessage);
+                    if(currentResultSet)
+                    {
+                        currentResultSet.noticeMessages.push(noticeMessage);
+                    }
+                    else
+                    {
+                        batchDef.noticeMessages.push(noticeMessage);
+                    } // end if
 
                     queueUpdate();
                 } // end onNotice
