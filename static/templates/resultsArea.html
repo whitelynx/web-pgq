@@ -17,7 +17,7 @@
 	</a>
 </div>
 
-<div id="resultsTabs" class="dimmable attached ui segment">
+<div id="resultsTabs" class="forceReposition dimmable attached ui segment">
 
 	<div class="ui dimmer" ng-class="{active: (resultsTab == 'Query Plan')}" id="plan-diagram-dimmer"
 		ng-include="'templates/tabs/QueryPlan.html'"></div>
@@ -32,7 +32,8 @@
 		scrollable="{ includePadding: false }"
 		ng-include="'templates/tabs/Results.html'"></div>
 
-	<div class="overlaid hiding bottom right attached ui labels" ng-class="{black: resultsTab == 'Messages'}">
+	<div class="forceReposition overlaid hiding bottom right attached ui labels"
+			ng-class="{black: resultsTab == 'Messages'}">
 		<div class="small compact ui label" ng-if="resultSets && resultSets.status">
 			{{ resultSets.status|capitalizeWords }}
 		</div>

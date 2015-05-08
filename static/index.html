@@ -144,6 +144,7 @@
 		<script src="js/directives/digraph.js"></script>
 		<script src="js/directives/dropdown.js"></script>
 		<script src="js/directives/editor.js"></script>
+		<script src="js/directives/force-reposition.js"></script>
 		<script src="js/directives/hiding.js"></script>
 		<script src="js/directives/inspect.js"></script>
 		<script src="js/directives/result-value.js"></script>
@@ -206,7 +207,7 @@
 				</bg-pane>
 
 				<bg-pane min-size="128" id="bottomPane">
-					<div id="resultsArea" ng-include="'templates/resultsArea.html'"></div>
+					<div id="resultsArea" class="forceReposition" ng-include="'templates/resultsArea.html'"></div>
 				</bg-pane>
 			</bg-splitter>
 		</div>
