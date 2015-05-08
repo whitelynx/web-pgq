@@ -6,6 +6,21 @@ angular.module('webPGQ.services')
     .service('map', ['$timeout', '_', 'eventEmitter', 'ol', 'olData', 'promise', 'queueDigest',
         function($timeout, _, eventEmitter, ol, olData, promise, queueDigest)
         {
+            if(!ol.geom.GeometryType)
+            {
+                ol.geom.GeometryType = {
+                    POINT: "Point",
+                    LINE_STRING: "LineString",
+                    LINEAR_RING: "LinearRing",
+                    POLYGON: "Polygon",
+                    MULTI_POINT: "MultiPoint",
+                    MULTI_LINE_STRING: "MultiLineString",
+                    MULTI_POLYGON: "MultiPolygon",
+                    GEOMETRY_COLLECTION: "GeometryCollection",
+                    CIRCLE: "Circle"
+                };
+            } // end if
+
             var layerCollection;
             var waitingLayers = [];
             var maxUpdateDelay = 200;
@@ -66,49 +81,54 @@ angular.module('webPGQ.services')
                     multi: true,
                     style: function(feature, resolution)
                     {
-                        var featureStyle = feature.getStyle();
-                        if(_.isFunction(featureStyle))
+                        var featureStyles = feature.getStyleFunction() || feature.getStyle();
+                        if(_.isFunction(featureStyles))
                         {
-                            featureStyle = featureStyle.call(feature, resolution);
+                            featureStyles = featureStyles.call(feature, resolution);
                         } // end if
-                        if(!featureStyle)
+                        if(!featureStyles)
                         {
                             // Fall back to the layer style, and finally to the default.
-                            featureStyle = (feature.getProperties() || {}).layerStyle || {};
+                            featureStyles = (feature.getProperties() || {}).layerStyle || {};
+                        } // end if
+                        if(!_.isArray(featureStyles))
+                        {
+                            featureStyles = [featureStyles];
                         } // end if
 
-                        var featureStroke, featureFill, featureGeometry, featureImage, featureText, featureZIndex;
-                        if(featureStyle.getStroke)
+                        return featureStyles.map(function(style)
                         {
-                            featureStroke = featureStyle.getStroke();
-                            featureStroke = {
-                                color: [255, 255, 255, 0.6],
-                                lineCap: featureStroke.getLineCap(),
-                                lineDash: [2, 2],
-                                lineJoin: featureStroke.getLineJoin(),
-                                miterLimit: featureStroke.getMiterLimit(),
-                                width: featureStroke.getWidth()
-                            };
-                            featureFill = {
-                                color: featureStyle.getFill().getColor()
-                            };
-                            featureGeometry = featureStyle.getGeometry();
-                            featureImage = featureStyle.getImage();
-                            featureText = featureStyle.getText();
-                            featureZIndex = featureStyle.getZIndex();
-                        }
-                        else
-                        {
-                            featureStroke = featureStyle.stroke;
-                            featureFill = featureStyle.fill;
-                            featureGeometry = featureStyle.geometry;
-                            featureImage = featureStyle.image;
-                            featureText = featureStyle.text;
-                            featureZIndex = featureStyle.zIndex;
-                        } // end if
+                            var featureStroke, featureFill, featureGeometry, featureImage, featureText, featureZIndex;
+                            if(style.getStroke)
+                            {
+                                featureStroke = style.getStroke();
+                                featureStroke = {
+                                    color: [255, 255, 255, 0.6],
+                                    lineCap: featureStroke.getLineCap(),
+                                    lineDash: [2, 2],
+                                    lineJoin: featureStroke.getLineJoin(),
+                                    miterLimit: featureStroke.getMiterLimit(),
+                                    width: featureStroke.getWidth()
+                                };
+                                featureFill = {
+                                    color: style.getFill().getColor()
+                                };
+                                featureGeometry = style.getGeometry();
+                                featureImage = style.getImage();
+                                featureText = style.getText();
+                                featureZIndex = style.getZIndex();
+                            }
+                            else
+                            {
+                                featureStroke = style.stroke;
+                                featureFill = style.fill;
+                                featureGeometry = style.geometry;
+                                featureImage = style.image;
+                                featureText = style.text;
+                                featureZIndex = style.zIndex;
+                            } // end if
 
-                        return [
-                            new ol.style.Style({
+                            return new ol.style.Style({
                                 stroke: featureStroke && new ol.style.Stroke({
                                     color: makeColorTranslucent(featureStroke.color),
                                     lineCap: featureStroke.lineCap,
@@ -124,19 +144,63 @@ angular.module('webPGQ.services')
                                 image: featureImage,
                                 text: featureText,
                                 zIndex: featureZIndex
-                            }),
-                            defaultSelectedStyle
-                        ];
+                            });
+                        })
+                            .concat(defaultSelectedStyle);
                     }
                 });
                 map.addInteraction(select);
 
                 var selectedFeatureCollection = select.getFeatures();
 
+                var sortIncrement = 64800; // = the area of a "square" (in WGS-84 coords) that covers the entire globe.
+                var sorting = {};
+                // (Multi)Polygons and Circles draw on bottom
+                sorting[ol.geom.GeometryType.MULTI_POLYGON] = -sortIncrement;
+                sorting[ol.geom.GeometryType.POLYGON] = -sortIncrement;
+                sorting[ol.geom.GeometryType.CIRCLE] = -sortIncrement;
+
+                sorting[ol.geom.GeometryType.MULTI_LINE_STRING] = 0;
+                sorting[ol.geom.GeometryType.LINE_STRING] = 0;
+                sorting[ol.geom.GeometryType.LINEAR_RING] = 0;
+
+                sorting[ol.geom.GeometryType.MULTI_POINT] = sortIncrement;
+                sorting[ol.geom.GeometryType.POINT] = sortIncrement;
+                // (Multi)Points draw on top
+
+                // (draws on top of anything that returns a lower sort key)
                 function getFeatureSortKey(feature)
                 {
-                    return -(feature.getGeometry().getArea());
+                    return getGeometrySortKey(feature.getGeometry());
                 } // end getFeatureSortKey
+
+                function getGeometrySortKey(geom)
+                {
+                    var sortKey = sorting[geom.getType()];
+
+                    switch(geom.getType())
+                    {
+                        case ol.geom.GeometryType.GEOMETRY_COLLECTION:
+                            // GeometryCollections have no inherent sort; they sort at the minimum of their contained
+                            // geometries' sort keys.
+                            return Math.max.apply(Math, _.map(geom.getGeometries(), getGeometrySortKey));
+
+                        case ol.geom.GeometryType.MULTI_POLYGON:
+                        case ol.geom.GeometryType.POLYGON:
+                            return sortKey - geom.getArea();
+                        case ol.geom.GeometryType.CIRCLE:
+                            return sortKey - geom.getRadius();
+
+                        case ol.geom.GeometryType.MULTI_LINE_STRING:
+                        case ol.geom.GeometryType.LINE_STRING:
+                        case ol.geom.GeometryType.LINEAR_RING:
+                            return sortKey - geom.getLength();
+
+                        case ol.geom.GeometryType.MULTI_POINT:
+                        case ol.geom.GeometryType.POINT:
+                            return sortKey;
+                    } // end switch
+                } // end getGeometrySortKey
 
                 function highlightFeature()
                 {
