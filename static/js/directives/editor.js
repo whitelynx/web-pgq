@@ -15,6 +15,8 @@ angular.module('webPGQ.directives')
             /* jshint validthis:true */
             var scope = this;
 
+            editor.$blockScrolling = Infinity;
+
             var editorElem = angular.element(editor.renderer.getContainerElement());
             var scrollbars = angular.element('.ace_scrollbar', editorElem)
             .css('overflow', 'hidden');
