@@ -7,7 +7,7 @@ Web-based query runner/explainer for PostgreSQL.
 Getting Started
 ---------------
 
-Install dependencies and build openlayers3:
+Install dependencies and build Semantic-UI:
 ```bash
 make
 ```
