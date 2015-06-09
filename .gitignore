@@ -6,4 +6,4 @@ node_modules
 npm-debug.log
 
 # Bower artifacts
-bower_components
+static/vendor

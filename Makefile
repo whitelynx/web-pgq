@@ -1,15 +1,15 @@
-all: bower_components/semantic-ui/dist/semantic.js
+all: static/vendor/semantic-ui/dist/semantic.js
 
 node_modules/.bin/bower:
 	npm install
 
-bower_components: node_modules/.bin/bower
+static/vendor: node_modules/.bin/bower
 	./node_modules/.bin/bower install
 
-bower_components/semantic-ui/dist/semantic.js: bower_components
-	cd bower_components/semantic-ui && npm install && cp ../../semantic-config/semantic.json . && cp ../../semantic-config/theme.config src/ && cp -r src/_site src/site && gulp build
+static/vendor/semantic-ui/dist/semantic.js: static/vendor
+	cd static/vendor/semantic-ui && npm install && cp ../../semantic-config/semantic.json . && cp ../../semantic-config/theme.config src/ && cp -r src/_site src/site && gulp build
 
 clean:
-	rm -r node_modules bower_components
+	rm -r node_modules static/vendor
 
 .PHONY: all

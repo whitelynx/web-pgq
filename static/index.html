@@ -20,23 +20,6 @@
 		==== CDN libs ====
 		-->
 
-		<!-- Non-minified -->
-		<!--
-		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" type="text/css">
-
-		<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
-
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
-		<script>window.jQuery || document.write('<script src="js/vendor/jquery-2.0.3.min.js"><\/script>')</script>
-
-		<script src="http://d3js.org/d3.v3.js"></script>
-		<script src="http://cpettitt.github.io/project/dagre-d3/v0.2.9/dagre-d3.js"></script>
-
-		<link rel="stylesheet" href="perfect-scrollbar/src/perfect-scrollbar.css">
-		<script src="perfect-scrollbar/src/perfect-scrollbar.js"></script>
-		-->
-
-		<!-- Minified -->
 		<!--
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700" type="text/css">
 
@@ -55,15 +38,15 @@
 		<!-- Local copy (offline) -->
 		<link rel="stylesheet" href="css/vendor/SourceSansPro-OpenSans-fonts.css">
 
-		<script src="lodash/lodash.min.js"></script>
+		<script src="vendor/lodash/lodash.min.js"></script>
 
-		<script src="jquery/dist/jquery.min.js"></script>
+		<script src="vendor/jquery/dist/jquery.min.js"></script>
 
 		<script src="js/vendor/d3.v3.min.js"></script>
 		<script src="js/vendor/dagre-d3.min.js"></script>
 
-		<link rel="stylesheet" href="perfect-scrollbar/min/perfect-scrollbar.min.css">
-		<script src="perfect-scrollbar/min/perfect-scrollbar.min.js"></script>
+		<link rel="stylesheet" href="vendor/perfect-scrollbar/min/perfect-scrollbar.min.css">
+		<script src="vendor/perfect-scrollbar/min/perfect-scrollbar.min.js"></script>
 
 
 		<!--
@@ -71,62 +54,39 @@
 		==== Non-CDN (bower or local-only) libs ====
 		-->
 
-		<!-- Non-minified -->
-		<link rel="stylesheet" href="semantic-ui/dist/semantic.css">
-		<script src="semantic-ui/dist/semantic.js"></script>
+		<link rel="stylesheet" href="vendor/semantic-ui/dist/semantic.css">
+		<script src="vendor/semantic-ui/dist/semantic.js"></script>
 
 		<script src="js/vendor/unisocket.js"></script>
 
-		<script src="angular/angular.js"></script>
-		<script src="angular-animate/angular-animate.js"></script>
-		<script src="angular-cookies/angular-cookies.js"></script>
-		<script src="angular-recursion/angular-recursion.js"></script>
-		<script src="angular-sanitize/angular-sanitize.js"></script>
+		<script src="vendor/angular/angular.js"></script>
+		<script src="vendor/angular-animate/angular-animate.js"></script>
+		<script src="vendor/angular-cookies/angular-cookies.js"></script>
+		<script src="vendor/angular-recursion/angular-recursion.js"></script>
+		<script src="vendor/angular-sanitize/angular-sanitize.js"></script>
 
-		<script src="ace-builds/src-noconflict/ace.js"></script>
-		<script src="ace-builds/src-noconflict/ext-language_tools.js"></script>
-		<script src="angular-ui-ace/ui-ace.js"></script>
+		<script src="vendor/ace-builds/src-noconflict/ace.js"></script>
+		<script src="vendor/ace-builds/src-noconflict/ext-language_tools.js"></script>
+		<script src="vendor/angular-ui-ace/ui-ace.js"></script>
 
-		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.js"></script>
+		<script src="vendor/angular-tiny-eventemitter/dist/angular-tiny-eventemitter.js"></script>
 
-		<script src="Sortable/Sortable.js"></script>
-		<script src="Sortable/ng-sortable.js"></script>
+		<script src="vendor/Sortable/Sortable.js"></script>
+		<script src="vendor/Sortable/ng-sortable.js"></script>
 
-		<link rel="stylesheet" href="openlayers3/build/ol.css">
-		<!--script src="openlayers3/build/ol-debug.js"></script-->
-		<script src="openlayers3/build/ol.js"></script>
-		<script src="angular-openlayers-directive/dist/angular-openlayers-directive.js"></script>
+		<link rel="stylesheet" href="vendor/openlayers3/build/ol.css">
+		<!--script src="vendor/openlayers3/build/ol-debug.js"></script-->
+		<script src="vendor/openlayers3/build/ol.js"></script>
+		<script src="vendor/angular-openlayers-directive/dist/angular-openlayers-directive.js"></script>
 
-		<link rel="stylesheet" href="bg-splitter/css/style.css">
-		<script src="bg-splitter/js/splitter.js"></script>
+		<link rel="stylesheet" href="vendor/bg-splitter/css/style.css">
+		<script src="vendor/bg-splitter/js/splitter.js"></script>
 
-		<link rel="stylesheet" href="highlightjs/styles/railscasts.css">
-		<script src="highlightjs/highlight.pack.js"></script>
+		<link rel="stylesheet" href="vendor/highlightjs/styles/railscasts.css">
+		<script src="vendor/highlightjs/highlight.pack.js"></script>
 
-		<script src="moment/moment.js"></script>
-		<script src="moment-duration-format/lib/moment-duration-format.js"></script>
-
-		<!-- Minified -->
-		<!--
-		<link rel="stylesheet" href="semantic-ui/dist/semantic.min.css">
-		<script src="semantic-ui/dist/semantic.min.js"></script>
-
-		<script src="js/vendor/unisocket.js"></script>
-
-		<script src="angular/angular.min.js"></script>
-		<script src="angular-animate/angular-animate.min.js"></script>
-		<script src="angular-cookies/angular-cookies.min.js"></script>
-
-		<script src="ace-builds/src-min-noconflict/ace.js"></script>
-		<script src="ace-builds/src-min-noconflict/ext-language_tools.js"></script>
-		<script src="angular-ui-ace/ui-ace.min.js"></script>
-
-		<script src="angular-tiny-eventemitter/dist/angular-tiny-eventemitter.min.js"></script>
-
-		<link rel="stylesheet" href="css/vendor/ol.css">
-		<script src="js/vendor/ol.js"></script>
-		<script src="angular-openlayers-directive/dist/angular-openlayers-directive.min.js"></script>
-		-->
+		<script src="vendor/moment/moment.js"></script>
+		<script src="vendor/moment-duration-format/lib/moment-duration-format.js"></script>
 
 
 		<!--
