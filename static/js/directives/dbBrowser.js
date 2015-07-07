@@ -80,10 +80,10 @@ angular.module('webPGQ.directives')
             var queryPromise = sql.run({
                 queries: [
                     { text: 'select * from pg_catalog.pg_tables', rowMode: '' },
-                    { text: 'select p.*, ns.nspname as schemaname ' +
-                            'from pg_catalog.pg_proc p ' +
-                            'left join pg_namespace ns on ns.oid = p.pronamespace', rowMode: '' },
-                    { text: 'select * from pg_catalog.pg_views', rowMode: '' }
+                    //{ text: 'select p.*, ns.nspname as schemaname ' +
+                    //        'from pg_catalog.pg_proc p ' +
+                    //        'left join pg_namespace ns on ns.oid = p.pronamespace', rowMode: '' },
+                    //{ text: 'select * from pg_catalog.pg_views', rowMode: '' }
                 ],
                 rollback: true
             });
