@@ -33,8 +33,13 @@
 	<div class="ui label">
 		<div class="ui large header">Selected features</div>
 
+		<div class="floating tool mini icon ui button" ng-click="toggleExpandedFeatures(!anySelectedFeatureExpanded)">
+			<i class="icon" ng-class="{expand: anySelectedFeatureExpanded, compress: !anySelectedFeatureExpanded}"></i>
+		</div>
+
 		<div class="ui link list">
 			<accordion class="hoverable item" ng-repeat="feature in selectedFeatures track by $index"
+					accordion-open="feature.expanded"
 					ng-mouseenter="feature.__highlight()" ng-mouseleave="feature.__unhighlight()">
 				<strong class="title">
 					<i class="dropdown icon"></i>
