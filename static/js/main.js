@@ -546,6 +546,7 @@ angular.module('webPGQ')
 
             $scope.setQueryParamType = function(paramIdx, value, dropdown)
             {
+                value = value || 'null';
                 $scope.query.params[paramIdx].type = value;
 
                 dropdown.hide();
