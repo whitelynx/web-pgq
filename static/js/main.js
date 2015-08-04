@@ -518,7 +518,6 @@ angular.module('webPGQ')
                 {
                     $timeout(function()
                     {
-                        $('.ui.dropdown').dropdown();
                         $("#queryParam_" + $scope.query.params.length).focus();
                     }, 0, false);
                 });
