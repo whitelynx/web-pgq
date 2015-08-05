@@ -8,6 +8,7 @@ static/vendor: node_modules/.bin/bower
 
 static/vendor/semantic-ui/dist/semantic.js: static/vendor
 	# Unintuitively, the working directory is reset to the top-level directory before running each line below.
+	sed -i '/^    "install": "gulp install"/d' static/vendor/semantic-ui/package.json
 	cd static/vendor/semantic-ui && npm install
 	cp semantic-config/semantic.json static/vendor/semantic-ui
 	cp semantic-config/theme.config static/vendor/semantic-ui/src/
