@@ -16,6 +16,6 @@ static/vendor/semantic-ui/dist/semantic.js: static/vendor
 	cd static/vendor/semantic-ui && gulp build
 
 clean:
-	rm -r node_modules static/vendor
+	rm -rf node_modules static/vendor
 
 .PHONY: all
