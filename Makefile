@@ -13,7 +13,7 @@ static/vendor/semantic-ui/dist/semantic.js: static/vendor
 	cp semantic-config/semantic.json static/vendor/semantic-ui
 	cp semantic-config/theme.config static/vendor/semantic-ui/src/
 	cp -r static/vendor/semantic-ui/src/_site static/vendor/semantic-ui/src/site
-	cd static/vendor/semantic-ui && gulp build
+	cd static/vendor/semantic-ui && node_modules/.bin/gulp build
 
 clean:
 	rm -rf node_modules static/vendor
