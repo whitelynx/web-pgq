@@ -189,7 +189,7 @@ angular.module('webPGQ')
 
 
             // Connections //
-            $scope.connections = JSON.parse($cookies.connections || '{}');
+            $scope.connections = $cookies.getObject('connections') || {};
             for(var key in $scope.connections)
             {
                 $scope.connections[key] = new sql.ConnectionInfo($scope.connections[key]);
@@ -197,7 +197,7 @@ angular.module('webPGQ')
 
             $scope.$watchCollection('connections', function(value)
             {
-                $cookies.connections = JSON.stringify(value);
+                $cookies.putObject('connections', value);
             });
 
             var currentConnectionInfo;
