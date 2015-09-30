@@ -35,6 +35,11 @@
             element.popup(popupOpts);
         } // end update
 
+        element.on('$destroy', function()
+        {
+            element.popup('destroy');
+        });
+
         attrs.$observe('tooltip', update);
         attrs.$observe('tooltipHtml', update);
         attrs.$observe('tooltipTitle', update);
