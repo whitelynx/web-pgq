@@ -1335,15 +1335,16 @@ angular.module('webPGQ')
 
             function setPermalink()
             {
-                console.log("setPermalink() called.");
+                var state = {
+                    query: $scope.query.text || null,
+                    queryParams: $scope.query.params.length > 0 ? JSON.stringify($scope.query.params) : null,
+                    fileName: ($scope.query.fileName != defaultFilename) ? $scope.query.fileName : null,
+                    connectionName: $scope.currentConnection || null
+                };
+                console.log("setPermalink() called; state:", state);
                 setPermalinkTimerID = undefined;
                 return $location
-                    .search({
-                        query: $scope.query.text || null,
-                        queryParams: $scope.query.params.length > 0 ? JSON.stringify($scope.query.params) : null,
-                        fileName: ($scope.query.fileName != defaultFilename) ? $scope.query.fileName : null,
-                        connectionName: $scope.currentConnection || null
-                    })
+                    .search(state)
                     .replace();
             } // end setPermalink
 
