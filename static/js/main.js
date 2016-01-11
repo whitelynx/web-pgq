@@ -572,7 +572,7 @@ angular.module('webPGQ')
             } // end getQueryParams
 
             var queryParamRE = /\$(\d+)/g;
-            var commentOrStringRE = /--.*\n|\/\*.*?(?:\n.*?)*?\*\/|\$([a-zA-Z_]\w*)?\$.*?\$\1\$|(['"]).*?\2/g;
+            var commentOrStringRE = /--.*\n|\/\*.*?(?:\n.*?)*?\*\/|\$([a-zA-Z_]\w*)?\$(?:\n.*?)*?\$\1\$|(['"]).*?\2/g;
             var statementSeparatorRE = /\s*;+\s*/g;
             var whitespaceOrCommentOnlyRE = /^\s*(?:(?:--.*$|\/\*.*?(?:\n.*?)*?\*\/)\s*)*$/g;
             function getActiveQueries()
