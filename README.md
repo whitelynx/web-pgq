@@ -3,6 +3,7 @@ web-pgq
 
 Web-based query runner/explainer for PostgreSQL.
 
+> **Note:** This project has been deprecated in favor of [querytron](https://gitlab.com/whitelynx/querytron).
 
 Getting Started
 ---------------
